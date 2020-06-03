@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using PixelGlueCore.ECS;
 
-namespace PixelGlueCore
+namespace PixelGlueCore.Scenes
 {
     public static class SceneFactory
     {

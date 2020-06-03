@@ -1,6 +1,7 @@
 using PixelGlueCore.ECS.Components;
 using Microsoft.Xna.Framework.Input;
 using System;
+using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -65,11 +66,8 @@ namespace PixelGlueCore.ECS.Systems
                                 case Keys.T:
             var testScene2 = new TestingScene2();
             testScene2.Id = 2;
-            testScene2.Systems.Add(new NetworkSystem(testScene2));
             testScene2.Systems.Add(new MoveSystem());
             testScene2.Systems.Add(new CameraSystem());
-            testScene2.Systems.Add(new GCMonitor());
-            testScene2.Systems.Add(new SmartFramerate(4));
             SceneManager.ActivateScene(testScene2);
             SceneManager.DeactivateScene<TestingScene>();
                                 break;

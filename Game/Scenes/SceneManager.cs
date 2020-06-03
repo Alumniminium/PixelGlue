@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using PixelGlueCore.ECS;
 
-namespace PixelGlueCore
+namespace PixelGlueCore.Scenes
 {
     public static class SceneManager
     {

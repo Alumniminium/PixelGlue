@@ -7,6 +7,7 @@ using PixelGlueCore.Networking;
 using System.Linq;
 using TerribleSockets.Packets;
 using PixelGlueCore.Entities;
+using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.Networking.Handlers
 {

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Helpers;
+using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.ECS.Systems
 {

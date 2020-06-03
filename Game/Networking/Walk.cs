@@ -4,17 +4,19 @@ using Microsoft.Xna.Framework;
 using System;
 using TerribleSockets.Packets;
 using PixelGlueCore.ECS;
+using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.Networking.Handlers
 {
     public static class Walk
     {
         static Random Random = new Random();
-        public static void Handle(MsgWalk packet, Scene scene)
+        public static void Handle(MsgWalk packet)
         {
             var uniqueId = packet.UniqueId;
             var location = new Vector2(packet.X, packet.Y);
             var tickCount = packet.TickCount;
+            var scene = SceneManager.ActiveScenes[SceneManager.ActiveScenes.Count-1];
 
             if (!scene.GameObjects.TryGetValue(uniqueId, out var entity))
             {

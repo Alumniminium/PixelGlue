@@ -7,7 +7,7 @@ namespace PixelGlueCore.Networking
 {
     public static class PacketHandler
     {
-        public static void Handle(byte[] buffer, Scene scene)
+        public static void Handle(byte[] buffer)
         {
             var packetId = BitConverter.ToUInt16(buffer, 4);
             switch (packetId)
@@ -19,7 +19,7 @@ namespace PixelGlueCore.Networking
                     }
                 case 1001:
                     {
-                        Walk.Handle(buffer,scene);
+                        Walk.Handle(buffer);
                         break;
                     }
                 case 1002:

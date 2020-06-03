@@ -6,9 +6,8 @@ using System;
 using TiledSharp;
 using PixelGlueCore.ECS;
 using Microsoft.Xna.Framework.Content;
-using PixelGlueCore.Helpers;
 
-namespace PixelGlueCore
+namespace PixelGlueCore.Loaders.TiledSharp
 {
     public static class TmxMapRenderer
     {

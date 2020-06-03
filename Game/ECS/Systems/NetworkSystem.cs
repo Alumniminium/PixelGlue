@@ -4,6 +4,7 @@ using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.Enums;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Networking;
+using PixelGlueCore.Scenes;
 using System.Collections.Concurrent;
 using TerribleSockets.Client;
 using TerribleSockets.Packets;
@@ -20,10 +21,9 @@ namespace PixelGlueCore.ECS.Systems
         private static ConcurrentQueue<byte[]> PendingSends { get; set; } = new ConcurrentQueue<byte[]>();
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Owner { get; set; }
-        public NetworkSystem(Scene owner)
+        public Scene Owner => SceneManager.ActiveScenes[SceneManager.ActiveScenes.Count-1];
+        public NetworkSystem()
         {
-            Owner = owner;
             ReceiveQueue.Start(Receive);
             Socket.OnDisconnect += Disconnected;
             Socket.OnConnected += Connected;
@@ -47,7 +47,7 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             while (PendingPackets.TryDequeue(out var packet))
-                PacketHandler.Handle(packet,Owner);
+                PacketHandler.Handle(packet);
 
             while (PendingSends.TryDequeue(out var packet))
                 Socket.Send(packet);
