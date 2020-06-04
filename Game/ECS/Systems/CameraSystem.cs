@@ -23,22 +23,20 @@ namespace PixelGlueCore.ECS.Systems
 
                 var camera =scene.Camera;
 
-                var camX = ((int)loc.Position.X /scene.Map.TileWidth) *scene.Map.TileWidth;
-                var camY = ((int)loc.Position.Y /scene.Map.TileHeight) *scene.Map.TileHeight;
-                var halfWidth = PixelGlue.VirtualScreenWidth / 2;
-                var halfHeight = PixelGlue.VirtualScreenHeight / 2;
-
-                var x = Math.Max(0, Math.Min(scene.Map.Width *scene.Map.TileWidth - PixelGlue.VirtualScreenWidth, (camX - halfWidth)));
-                var y = Math.Max(0, Math.Min(scene.Map.Width *scene.Map.TileWidth - PixelGlue.VirtualScreenHeight, (camY - halfHeight)));
+                var camX = ((int)loc.IntegerPosition.X /scene.Map.TileWidth) *scene.Map.TileWidth;
+                var camY = ((int)loc.IntegerPosition.Y /scene.Map.TileHeight) *scene.Map.TileHeight;
+                
+                var x = Math.Max(0, Math.Min(scene.Map.Width *scene.Map.TileWidth - PixelGlue.VirtualScreenWidth, (camX - PixelGlue.HalfVirtualScreenWidth)));
+                var y = Math.Max(0, Math.Min(scene.Map.Width *scene.Map.TileWidth - PixelGlue.VirtualScreenHeight, (camY -  PixelGlue.HalfVirtualScreenHeight)));
 
                 camera.ScreenRect = new Rectangle(x, y, PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
 
-                var Limits = new Rectangle(halfWidth, halfHeight,scene.Map.Width *scene.Map.TileWidth,scene.Map.Height *scene.Map.TileHeight);
+                var Limits = new Rectangle(PixelGlue.HalfVirtualScreenWidth, PixelGlue.HalfVirtualScreenHeight,scene.Map.Width *scene.Map.TileWidth,scene.Map.Height *scene.Map.TileHeight);
                 var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
                 var limitWorldMin = new Vector2(Limits.Left, Limits.Top);
                 var limitWorldMax = new Vector2(Limits.Right, Limits.Bottom);
 
-                var cameraPos = Vector2.Clamp(loc.Position, limitWorldMin, limitWorldMax - cameraSize);
+                var cameraPos = Vector2.Clamp(loc.IntegerPosition, limitWorldMin, limitWorldMax - cameraSize);
 
                 camera.Transform = Matrix.CreateTranslation(-cameraPos.X -scene.Map.TileWidth / 2, -cameraPos.Y, 0)
                                                      * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight, 2f)

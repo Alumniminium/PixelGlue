@@ -16,7 +16,7 @@ namespace PixelGlueCore
             FConsole.WriteLine("Setting Thread Priority to highest...");
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             FConsole.WriteLine("Initializing the engine...");
-            var engine = new Engine(false);
+            var engine = new Engine(true);
             engine.IsFixedTimeStep = false;
             PixelGlue.Profiling = true;
             FConsole.WriteLine("Initializing the scene...");
@@ -33,6 +33,7 @@ namespace PixelGlueCore
             globalScene.Systems.Add(new GCMonitor());
             globalScene.Systems.Add(new SmartFramerate(4));
             globalScene.Systems.Add(new NetworkSystem());
+            globalScene.Systems.Add(new DialogSystem());
 
 
             SceneManager.Initialize(engine.Content);

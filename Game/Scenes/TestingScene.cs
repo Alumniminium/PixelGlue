@@ -53,7 +53,7 @@ namespace PixelGlueCore.Scenes
                 if (pos.Position.Y < Camera.ScreenRect.Top - overdraw || pos.Position.Y > Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f,origin, Vector2.One, SpriteEffects.None, 0f);
+                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.IntegerPosition, drawable.SrcRect, Color.White, 0f,origin, Vector2.One, SpriteEffects.None, 0f);
                 renderedObjectsCounter++;
             }
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);

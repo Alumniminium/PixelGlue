@@ -2,14 +2,16 @@ using PixelGlueCore.ECS.Components;
 using Microsoft.Xna.Framework.Input;
 using System;
 using PixelGlueCore.Scenes;
+using Microsoft.Xna.Framework;
+using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.ECS.Systems
 {
     public class InputSystem : IEntitySystem
     {
         public string Name { get; set; } = "Input System";
-        public bool IsActive  { get; set; } 
-        public bool IsReady { get; set; } 
+        public bool IsActive { get; set; }
+        public bool IsReady { get; set; }
 
         public void Update(double deltaTime)
         {
@@ -27,6 +29,7 @@ namespace PixelGlueCore.ECS.Systems
 
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
+                    inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
 
                     if (inputComponent.Mouse.ScrollWheelValue > inputComponent.ScrollWheelValue)
                         camera.Zoom = camera.Zoom * 2;
@@ -63,15 +66,17 @@ namespace PixelGlueCore.ECS.Systems
                             case Keys.P:
                                 PixelGlue.Profiling = !PixelGlue.Profiling;
                                 break;
-                                case Keys.T:
-            var testScene2 = new TestingScene2();
-            testScene2.Id = 2;
-            testScene2.Systems.Add(new MoveSystem());
-            testScene2.Systems.Add(new CameraSystem());
-            SceneManager.ActivateScene(testScene2);
-            SceneManager.DeactivateScene<TestingScene>();
+                            case Keys.T:
+                                var testScene2 = new TestingScene2();
+                                testScene2.Id = 2;
+                                testScene2.Systems.Add(new MoveSystem());
+                                testScene2.Systems.Add(new CameraSystem());
+                                SceneManager.ActivateScene(testScene2);
+                                SceneManager.DeactivateScene<TestingScene>();
                                 break;
-                                case Keys.O:
+                            case Keys.O:
+                                var player = SceneManager.Find<Player>();
+                                player.AddComponent(new DialogComponent(1));
                                 break;
                         }
                     }
