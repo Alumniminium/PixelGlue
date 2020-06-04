@@ -4,7 +4,7 @@ namespace Server
 {
     public static class Collections
     {
-        public static ConcurrentDictionary<uint, Player> Players = new ConcurrentDictionary<uint, Player>();
-        public static ConcurrentDictionary<uint, Npc> Npcs = new ConcurrentDictionary<uint, Npc>();
+        public static ConcurrentDictionary<int, Player> Players = new ConcurrentDictionary<int, Player>();
+        public static ConcurrentDictionary<int, Npc> Npcs = new ConcurrentDictionary<int, Npc>();
     }
 }

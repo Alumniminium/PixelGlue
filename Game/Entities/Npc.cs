@@ -3,13 +3,11 @@ using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore
 {
-    public class Npc : GameObject
+    public class Npc : PixelEntity
     {
-        public Npc(BaseEntity baseEntity, int x, int y)
+        public Npc()
         {
-            AddComponent(new PositionComponent(x, y, 0));
-            AddComponent(new MoveComponent(50, x, y));
-            AddComponent(new DrawableComponent(baseEntity.TextureName, baseEntity.SrcRect));
+            
         }
     }
 }

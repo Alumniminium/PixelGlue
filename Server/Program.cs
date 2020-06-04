@@ -22,7 +22,7 @@ namespace Server
             var t = new Thread(() =>
             {
                 Console.WriteLine($"Heartbeat Thread started.");
-                for (uint i = 10; i < BotCount; i++)
+                for (int i = 10; i < BotCount; i++)
                     Collections.Npcs.TryAdd(1 + i, new Npc(i));
                 while (true)
                 {

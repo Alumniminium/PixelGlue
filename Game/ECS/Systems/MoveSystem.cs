@@ -16,13 +16,13 @@ namespace PixelGlueCore.ECS.Systems
             //ThreadPool.UnsafeQueueUserWorkItem((o) =>
             //{
             foreach (var scene in SceneManager.ActiveScenes)
-                foreach (var kvp in scene.GameObjects)
+                foreach (var kvp in scene.Entities)
                 {
-                    if (!kvp.Value.TryGetComponent<MoveComponent>(out var movable))
+                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key,out var movable))
                         continue;
                     if (movable.Destination == Vector2.Zero)
                         continue;
-                    if (!kvp.Value.TryGetComponent<PositionComponent>(out var position))
+                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key,out var position))
                         continue;
                     if (movable.Destination != position.Position)
                     {

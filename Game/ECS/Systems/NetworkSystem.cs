@@ -1,6 +1,3 @@
-using PixelGlueCore;
-using PixelGlueCore.ECS.Components;
-using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.Enums;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Networking;
@@ -56,9 +53,9 @@ namespace PixelGlueCore.ECS.Systems
         private void SyncObjects()
         {
             foreach (var scene in SceneManager.ActiveScenes)
-                foreach (var kvp in scene.GameObjects)
+                foreach (var kvp in scene.Entities)
                 {
-                    if (!kvp.Value.TryGetComponent<Networked>(out var networked))
+                    if (!scene.TryGetComponent<Networked>(kvp.Key,out var networked))
                         continue;
 
                 }

@@ -9,10 +9,10 @@ namespace TerribleSockets.Packets
         public int Length;
         public ushort Id;
         public int TickCount;
-        public uint UniqueId;
+        public int UniqueId;
         public int X, Y;
 
-        public static MsgWalk Create(uint uniqueId, int x, int y)
+        public static MsgWalk Create(int uniqueId, int x, int y)
         {
             var msg = stackalloc MsgWalk[1];
             msg->Length = sizeof(MsgWalk);

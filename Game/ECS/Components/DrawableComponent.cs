@@ -7,8 +7,11 @@ namespace PixelGlueCore.ECS.Components
     {
         public string TextureName { get; set; }
         public Rectangle SrcRect { get; set; }
-        public DrawableComponent(string textureName, Rectangle srcRect)
+        public int PixelOwnerId { get; set; }
+
+        public DrawableComponent(int ownerId, string textureName, Rectangle srcRect)
         {
+            PixelOwnerId = ownerId;
             TextureName = textureName;
             SrcRect = srcRect;
         }

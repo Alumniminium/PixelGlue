@@ -16,16 +16,16 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
-                foreach (var kvp in scene.GameObjects)
+                foreach (var kvp in scene.Entities)
                 {
-                    if (!kvp.Value.TryGetComponent<InputComponent>(out var inputComponent))
+                    if (!scene.TryGetComponent<InputComponent>(kvp.Key,out var inputComponent))
                         continue;
-                    if (!kvp.Value.TryGetComponent<MoveComponent>(out var moveComponent))
+                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key,out var moveComponent))
                         continue;
-                    if (!kvp.Value.TryGetComponent<PositionComponent>(out var positionComponent))
+                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key,out var positionComponent))
                         continue;
 
-                    kvp.Value.TryGetComponent<CameraFollowTagComponent>(out var camera);
+                    scene.TryGetComponent<CameraFollowTagComponent>(kvp.Key,out var camera);
 
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
@@ -76,7 +76,7 @@ namespace PixelGlueCore.ECS.Systems
                                 break;
                             case Keys.O:
                                 var player = SceneManager.Find<Player>();
-                                player.AddComponent(new DialogComponent(1));
+                                scene.AddComponent(player.UniqueId,new DialogComponent(player.UniqueId,1));
                                 break;
                         }
                     }

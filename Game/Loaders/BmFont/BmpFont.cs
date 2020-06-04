@@ -47,7 +47,7 @@ namespace PixelGlueCore.Loaders
                 {
                     var position = new Vector2(dx + fc.FontChar.XOffset, dy + fc.FontChar.YOffset);
 
-                    spriteBatch.Draw(fontTexture, position, fc.SrcRect, Color.White);
+                    spriteBatch.Draw(fontTexture, position, fc.SrcRect, Color.Black);
                     dx += fc.FontChar.XAdvance;
                 }
             }

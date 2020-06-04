@@ -8,15 +8,18 @@ namespace PixelGlueCore.ECS.Components
         public float Speed { get; set; }
         public bool Moving { get; set; }
         public Vector2 Destination { get; set; }
+        public int PixelOwnerId { get; set; }
 
-        public MoveComponent(float speed, int destX, int destY)
+        public MoveComponent(int ownerId, float speed, int destX, int destY)
         {
+            PixelOwnerId = ownerId;
             Speed = speed;
             Moving = false;
             Destination = new Vector2(destX, destY);
         }
-        public MoveComponent(float speed)
+        public MoveComponent(int ownerId, float speed)
         {
+            PixelOwnerId=ownerId;
             Speed = speed;
             Moving = false;
             Destination = Vector2.Zero;

@@ -35,6 +35,7 @@ namespace PixelGlueCore
             _graphics.SynchronizeWithVerticalRetrace = vsync;
             _graphics.PreferHalfPixelOffset = false;
             _graphics.ApplyChanges();
+            PixelGlue.Device=_graphics.GraphicsDevice;
         }
         protected override void LoadContent()
         {

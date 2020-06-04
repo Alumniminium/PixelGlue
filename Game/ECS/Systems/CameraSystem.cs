@@ -14,11 +14,11 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
-            foreach (var kvp in scene.GameObjects)
+            foreach (var kvp in scene.Entities)
             {
-                if (!kvp.Value.TryGetComponent<PositionComponent>(out var loc))
+                if (!scene.TryGetComponent<PositionComponent>(kvp.Key,out var loc))
                     continue;
-                if (!kvp.Value.TryGetComponent<CameraFollowTagComponent>(out var follow))
+                if (!scene.TryGetComponent<CameraFollowTagComponent>(kvp.Key,out var follow))
                     continue;
 
                 var camera =scene.Camera;

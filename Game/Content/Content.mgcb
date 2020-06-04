@@ -85,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/profontwindows_0.png;profontwindows_0.png
 
+#begin ../../Build/Content/selectionrect4x4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/selectionrect4x4.png;selectionrect4x4.png
+
 #begin ../../Build/Content/tileset_complete.png
 /importer:TextureImporter
 /processor:TextureProcessor

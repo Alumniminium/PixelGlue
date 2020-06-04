@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Loaders.TiledSharp;
+using PixelGlueCore.Helpers;
+using PixelGlueCore.Networking;
 
 namespace PixelGlueCore.Scenes
 {
@@ -14,10 +16,9 @@ namespace PixelGlueCore.Scenes
         public override void Initialize()
         {
             Camera = new Camera();
-            GameObjects.Add(0, (Camera)Camera);
+            Entities.Add(0, (Camera)Camera);
 
-            var player = new Player(256,256);
-            GameObjects.Add(player.UniqueId, player);
+            CreateEntity<Player>(1,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16)),new CameraFollowTagComponent(1,1),new Networked(1));
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)
@@ -41,11 +42,11 @@ namespace PixelGlueCore.Scenes
 
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 0, Camera);
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 1, Camera);
-            foreach (var kvp in GameObjects)
+            foreach (var kvp in Entities)
             {
-                if (!kvp.Value.TryGetComponent<DrawableComponent>(out var drawable))
+                if (!TryGetComponent<DrawableComponent>(kvp.Key,out var drawable))
                     continue;
-                if (!kvp.Value.TryGetComponent<PositionComponent>(out var pos))
+                if (!TryGetComponent<PositionComponent>(kvp.Key,out var pos))
                     continue;
 
                 if (pos.Position.X < Camera.ScreenRect.Left - overdraw || pos.Position.X > Camera.ScreenRect.Right + overdraw)

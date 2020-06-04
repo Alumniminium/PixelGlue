@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Helpers;
 using System;
 
@@ -14,6 +15,7 @@ namespace PixelGlueCore
         public const int HalfVirtualScreenWidth =VirtualScreenWidth/2;
         public const int HalfVirtualScreenHeight = VirtualScreenHeight/2;
         public static bool Profiling { get; set; }
+        public static GraphicsDevice Device { get; set; }
         public static Profiler UpdateProfiler { get; set; } = new Profiler();
         public static Profiler DrawProfiler { get; set; } = new Profiler();
     }

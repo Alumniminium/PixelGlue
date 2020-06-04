@@ -20,7 +20,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
 
             map.TileArray = new DrawableComponent[map.TileLayers.Count][];
             for (int i = 0; i < map.TileArray.Length; i++)
-                map.TileArray[i] = new DrawableComponent[map.Width * map.Width * map.Height];
+                map.TileArray[i] = new DrawableComponent[map.Width * map.Height];
 
             var tilesetTilesWide = AssetManager.Textures[map.Tilesets[0].Name].Width / tileSize;
             var tilesetTilesHigh = AssetManager.Textures[map.Tilesets[0].Name].Height / tileSize;
@@ -41,8 +41,8 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                   // FConsole.WriteLine($"{x * map.Width + y}/{map.TileArray[c].Length}");
-                    map.TileArray[c][x * map.Width + y] = new DrawableComponent(map.Tilesets[0].Name, tilesetRec);
+                    map.TileArray[c][y * map.Width + x] = new DrawableComponent(304938,map.Tilesets[0].Name, tilesetRec);
+                    #warning this hardcoded number is evidence for my incompetence. I didn't consider the map tiles to be entities too. Who the fuck owns them?!
                 }
             }
             map.Layers = null;
@@ -60,7 +60,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
             {
                 for (int y = cam.ScreenRect.Top - overdraw; y < cam.ScreenRect.Bottom + overdraw; y += map.TileHeight)
                 {
-                    var index = x / map.TileWidth * map.Width + y / map.TileHeight;
+                    var index = y / map.TileWidth * map.Width + x / map.TileHeight;
                     if (index >= map.TileArray[l].Length || index < 0)
                         continue;
 

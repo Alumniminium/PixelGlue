@@ -4,10 +4,10 @@ namespace Server
 {
     public class Npc
     {
-        public uint UniqueId;
+        public int UniqueId;
         public int X, Y = 256;
         public DateTime LastMove;
-        public Npc(uint uid)
+        public Npc(int uid)
         {
             UniqueId = uid;
             X = 256 + 64;

@@ -7,5 +7,11 @@ namespace PixelGlueCore.Networking
         public int ServerX { get; }
 
         public int ServerY { get; }
+        public int PixelOwnerId { get; set; }
+
+        public Networked(int ownerId)
+        {
+            PixelOwnerId=ownerId;
+        }
     }
 }

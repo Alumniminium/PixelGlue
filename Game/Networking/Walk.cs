@@ -18,16 +18,19 @@ namespace PixelGlueCore.Networking.Handlers
             var tickCount = packet.TickCount;
             var scene = SceneManager.ActiveScenes[SceneManager.ActiveScenes.Count-1];
 
-            if (!scene.GameObjects.TryGetValue(uniqueId, out var entity))
+            if (!scene.Entities.TryGetValue(uniqueId, out var entity))
             {
                 var srcEntity = Database.Entities[Random.Next(0, Database.Entities.Count)];
-                var newEntity = new Npc(srcEntity, packet.X, packet.Y);
-                newEntity.UniqueId = uniqueId;
-                scene.GameObjects.Add(newEntity.UniqueId, newEntity);
+                
+                var drawable =new DrawableComponent(uniqueId,srcEntity.TextureName, srcEntity.SrcRect);
+                var position =new PositionComponent(uniqueId,packet.X,packet.Y,0);
+                var movable = new MoveComponent(uniqueId,50, packet.X, packet.Y);
+
+                scene.CreateEntity<Npc>(uniqueId,drawable,position,movable);
             }
             else
             {
-                if (entity.TryGetComponent<MoveComponent>(out var movable))
+                if (scene.TryGetComponent<MoveComponent>(uniqueId,out var movable))
                     movable.Destination = location;
             }
         }

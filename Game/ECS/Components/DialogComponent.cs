@@ -15,10 +15,14 @@ namespace PixelGlueCore.ECS.Components
                 UpdateRequired = true;
             }
         }
+
+        public int PixelOwnerId { get; set; }
+
         public bool UpdateRequired=true;
 
-        public DialogComponent(int id, int stage = 0)
+        public DialogComponent(int ownerId,int id, int stage = 0)
         {
+            PixelOwnerId=ownerId;
             Id = id;
             Stage = stage;
         }

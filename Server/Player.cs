@@ -7,7 +7,7 @@ namespace Server
     public class Player
     {
         public string Name;
-        public uint UniqueId;
+        public int UniqueId;
         public Vector2 Location;
         public ClientSocket Socket;
         public string Username;

@@ -12,5 +12,6 @@ namespace PixelGlueCore.ECS.Components
         public KeyboardState OldKeyboard { get; set; }
         public GamePadState OldGamePad{get;set;}
         public float ScrollWheelValue { get; set; }
+        public int PixelOwnerId { get; set; }
     }
 }

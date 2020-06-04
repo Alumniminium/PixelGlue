@@ -9,7 +9,7 @@ namespace TerribleSockets.Packets
     {
         public int Length;
         public ushort Id;
-        public uint UniqueId;
+        public int UniqueId;
         public fixed byte Username[32];
         public fixed byte Password[32];
 

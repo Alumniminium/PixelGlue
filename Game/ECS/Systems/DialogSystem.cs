@@ -14,9 +14,9 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
-                foreach (var kvp in scene.GameObjects)
+                foreach (var kvp in scene.Entities)
                 {
-                    if (!kvp.Value.TryGetComponent<DialogComponent>(out var dialog))
+                    if (!scene.TryGetComponent<DialogComponent>(kvp.Key,out var dialog))
                         continue;
                     if(!dialog.UpdateRequired)
                         return;

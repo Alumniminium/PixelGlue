@@ -8,11 +8,11 @@ namespace TerribleSockets.Packets
     {
         public int Length;
         public ushort Id;
-        public uint UniqueId;
+        public int UniqueId;
         public long TickCount;
         public short Ping;
 
-        public static MsgPing Create(uint uniqueId)
+        public static MsgPing Create(int uniqueId)
         {
             var msg = stackalloc MsgPing[1];
             msg->Length = sizeof(MsgPing);
