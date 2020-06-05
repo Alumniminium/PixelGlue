@@ -1,10 +1,9 @@
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.World;
 using Microsoft.Xna.Framework;
-using System;
 using TerribleSockets.Packets;
-using PixelGlueCore.ECS;
 using PixelGlueCore.Scenes;
+using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.Networking.Handlers
 {

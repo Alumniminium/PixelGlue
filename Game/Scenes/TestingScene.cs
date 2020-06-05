@@ -52,10 +52,6 @@ namespace PixelGlueCore.Scenes
             }
             
             sb.End();
-            sb.Begin(samplerState: SamplerState.PointClamp);
-            //AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(Map.TileArray[0].Length * Map.TileArray.Length) + Entities.Count + Components.Values.Sum(p=>p.Count)}, Rendered: {renderedObjectsCounter})", new Vector2(16, 16), sb);
-            AssetManager.Fonts["profont"].Draw($"Position: {Camera.ScreenRect.X},{Camera.ScreenRect.Y}", new Vector2(16, 164), sb);
-            sb.End();
             base.Draw(this, sb);
         }
     }

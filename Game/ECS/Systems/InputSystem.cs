@@ -50,40 +50,7 @@ namespace PixelGlueCore.ECS.Systems
                     var currentKeys = inputComponent.Keyboard.GetPressedKeys();
                     var lastKeys = inputComponent.OldKeys;
                     var destination = positionComponent.Position;
-
-                    for (int i = 0; i < currentKeys.Length; i++)
-                    {
-                        var key = currentKeys[i];
-                        for (int j = 0; j < lastKeys?.Length; j++)
-                        {
-                            if (lastKeys[j] == key)
-                                return;
-                        }
-
-                        if (UserKeybinds.KeybindsToGeneric.TryGetValue(key, out var pixelButton))
-                        {
-                            switch (pixelButton)
-                            {
-                                case PixelGlueButtons.EscapeMenu:
-                                    Environment.Exit(0);
-                                    break;
-                                case PixelGlueButtons.DbgProfiling:
-                                    PixelGlue.Profiling = !PixelGlue.Profiling;
-                                    break;
-                                case PixelGlueButtons.DbgSwitchScene:
-                                    SwitchScene();
-                                    break;
-                                case PixelGlueButtons.DbgOpenDialog:
-                                    OpenDialog(scene);
-                                    break;
-                                case PixelGlueButtons.DbgBoundingBoxes:
-                                    foreach(var entity in scene.Entities)
-                                        scene.AddComponent(entity.Key,new DbgBoundingBoxComponent(entity.Key));
-                                break;
-
-                            }
-                        }
-                    }
+                    
                     for (int i = 0; i < currentKeys.Length; i++)
                     {
                         var key = currentKeys[i];
@@ -111,10 +78,44 @@ namespace PixelGlueCore.ECS.Systems
                             }
                         }
                     }
-                    inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
 
                     if (destination != positionComponent.Position)
                         moveComponent.Destination = destination;
+
+                    for (int i = 0; i < currentKeys.Length; i++)
+                    {
+                        var key = currentKeys[i];
+                        for (int j = 0; j < lastKeys?.Length; j++)
+                        {
+                            if (lastKeys[j] == key)
+                                return;
+                        }
+
+                        if (UserKeybinds.KeybindsToGeneric.TryGetValue(key, out var pixelButton))
+                        {
+                            switch (pixelButton)
+                            {
+                                case PixelGlueButtons.EscapeMenu:
+                                    Environment.Exit(0);
+                                    break;
+                                case PixelGlueButtons.DbgProfiling:
+                                    PixelGlue.Profiling = !PixelGlue.Profiling;
+                                    break;
+                                case PixelGlueButtons.DbgSwitchScene:
+                                    SwitchScene();
+                                    break;
+                                case PixelGlueButtons.DbgOpenDialog:
+                                    OpenDialog(scene);
+                                    break;
+                                case PixelGlueButtons.DbgBoundingBoxes:
+                                    var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
+                                    system.IsActive = !system.IsActive;
+                                break;
+
+                            }
+                        }
+                    }
+                    inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
                 }
         }
 

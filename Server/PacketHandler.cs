@@ -19,7 +19,7 @@ namespace Server
 
                         Console.WriteLine($"Login request for {user} using password {pass}");
 
-                        msgLogin.UniqueId = Core.Random.Next(0, 10000);
+                        msgLogin.UniqueId = Core.Random.Next(1_000_000, 10_000_000);
                         var player = new Player(socket)
                         {
                             UniqueId = msgLogin.UniqueId,

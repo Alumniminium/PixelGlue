@@ -1,9 +1,6 @@
-using PixelGlueCore.ECS.Components;
-using PixelGlueCore.Scenes;
 using System;
-using System.Collections.Generic;
 
-namespace PixelGlueCore.ECS
+namespace PixelGlueCore.Entities
 {
     public class PixelEntity
     {

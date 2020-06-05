@@ -10,8 +10,8 @@ namespace Server
         public Npc(int uid)
         {
             UniqueId = uid;
-            X = 256 + 64;
-            Y = 256 + 128 + 8;
+            X = 256 + 128;
+            Y = 256 + 128;
         }
     }
 }

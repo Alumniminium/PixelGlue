@@ -13,4 +13,19 @@ namespace PixelGlueCore.Helpers
             return _blankTexture;
         }
     }
+    public static class Vector2Ext
+    {
+        public static Vector2 DrawablePosition(this Vector2 vector)
+        {
+            var sx = PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth;
+            var sy = PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight;
+            var tpx = 1f/sx;
+            var tpy = 1f/sy;
+            var floor = Vector2.Floor(vector);
+            var delta = ((vector-floor) / tpx) * tpx;
+            //delta.X = (delta.X / tpx) * tpx;
+            //delta.Y = (delta.Y / tpy) * tpy;
+            return floor+delta;
+        }
+    }
 }

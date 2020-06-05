@@ -2,6 +2,7 @@ using PixelGlueCore.ECS.Components;
 using Microsoft.Xna.Framework;
 using System;
 using PixelGlueCore.Scenes;
+using PixelGlueCore.Helpers;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -36,7 +37,7 @@ namespace PixelGlueCore.ECS.Systems
                 var limitWorldMin = new Vector2(Limits.Left, Limits.Top);
                 var limitWorldMax = new Vector2(Limits.Right, Limits.Bottom);
 
-                var cameraPos = Vector2.Clamp(loc.IntegerPosition, limitWorldMin, limitWorldMax - cameraSize);
+                var cameraPos = Vector2.Clamp(loc.Position.DrawablePosition(), limitWorldMin, limitWorldMax - cameraSize);
 
                 camera.Transform = Matrix.CreateTranslation(-cameraPos.X -scene.Map.TileWidth / 2, -cameraPos.Y, 0)
                                                      * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight, 2f)

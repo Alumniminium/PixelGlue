@@ -40,21 +40,6 @@ namespace PixelGlueCore.ECS
             IsReady = true;
         }
 
-        internal T CreateEntity<T>(int uniqueId, params IEntityComponent[] components) where T : PixelEntity, new()
-        {
-            var entity = new T();
-            entity.UniqueId = uniqueId;
-            Entities.TryAdd(entity.UniqueId, entity);
-            foreach (var component in components)
-                AddComponent(uniqueId, component);
-            return entity;
-        }
-
-        internal void Destroy(Player player)
-        {
-            Entities.TryRemove(player.UniqueId, out _);
-        }
-
         public virtual void LoadContent(ContentManager cm)
         {
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont", cm);
@@ -106,6 +91,22 @@ namespace PixelGlueCore.ECS
             sb.End();
         }
 
+        internal T CreateEntity<T>(int uniqueId, params IEntityComponent[] components) where T : PixelEntity, new()
+        {
+            var entity = new T();
+            entity.UniqueId = uniqueId;
+            Entities.TryAdd(entity.UniqueId, entity);
+            foreach (var component in components)
+                AddComponent(uniqueId, component);
+            AddComponent(uniqueId,new DbgBoundingBoxComponent(uniqueId));
+            return entity;
+        }
+
+        internal void Destroy(PixelEntity entity)
+        {
+            Entities.TryRemove(entity.UniqueId, out _);
+            Components.TryRemove(entity.UniqueId,out _);
+        }
 
         public void AddComponent(int ownerId, IEntityComponent component)
         {
@@ -151,11 +152,20 @@ namespace PixelGlueCore.ECS
             return false;
         }
 
-
-        public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
-
-        public override int GetHashCode() => HashCode.Combine(Id);
-
+        internal T GetSystem<T>()
+        {
+            foreach(var sys in Systems)
+                if(sys is T)
+                    return (T)sys;
+            return default(T);
+        }
+        internal T GetUISystem<T>()
+        {
+            foreach(var sys in UISystems)
+                if(sys is T)
+                    return (T)sys;
+            return default(T);
+        }
         public T Find<T>() where T : PixelEntity, new()
         {
             foreach (var kvp in Entities)
@@ -165,17 +175,20 @@ namespace PixelGlueCore.ECS
             }
             return null;
         }
-        public T Get<T>(int uniqueId) where T : PixelEntity, new()
+        public T GetEntity<T>(int uniqueId) where T : PixelEntity, new()
         {
             if (Entities.TryGetValue(uniqueId, out var entity))
                 return (T)entity;
             return null;
         }
-        public PixelEntity Get(int uniqueId)
+        public PixelEntity GetEntity(int uniqueId)
         {
             if (Entities.TryGetValue(uniqueId, out var entity))
                 return entity;
             return null;
         }
+
+        public override int GetHashCode() =>Id;
+        public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }
 }

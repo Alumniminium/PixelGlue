@@ -29,7 +29,7 @@ namespace Server
                     foreach (var kvp in Collections.Npcs)
                     {
                         var npc = kvp.Value;
-                        if (DateTime.Now >= npc.LastMove.AddMilliseconds(1450))
+                        if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
                             npc.X += Random.Next(-1, 2) * 16;

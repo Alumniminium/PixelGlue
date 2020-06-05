@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.ECS.Components;
+using PixelGlueCore.Helpers;
 using PixelGlueCore.Loaders.TiledSharp;
 using PixelGlueCore.Scenes;
 
@@ -38,7 +39,7 @@ namespace PixelGlueCore.ECS.Systems
                 if (pos.Position.Y < scene.Camera.ScreenRect.Top - overdraw || pos.Position.Y > scene.Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.Textures[drawable.TextureName], new Rectangle((int)pos.IntegerPosition.X, (int)pos.IntegerPosition.Y, scene.Map.TileWidth, scene.Map.TileHeight), drawable.SrcRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position.DrawablePosition(), drawable.SrcRect, Color.White, 0f, Vector2.Zero,Vector2.One, SpriteEffects.None, 0f);
                 renderedObjectsCounter++;
             }
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 2, scene.Camera);
