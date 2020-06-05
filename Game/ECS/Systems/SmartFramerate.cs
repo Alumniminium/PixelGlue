@@ -33,7 +33,7 @@ namespace PixelGlueCore.ECS.Systems
                 counter = 0;
             }
         }
-        public void Draw(SpriteBatch sb)
+        public void Draw(Scene scene, SpriteBatch sb)
         {
             sb.Begin(samplerState: SamplerState.PointClamp);
             AssetManager.Fonts["profont"].Draw("FPS: " + updateRate.ToString("##0.00"), new Vector2(16, 64), sb);

@@ -74,11 +74,15 @@ namespace PixelGlueCore.ECS
         }
         public virtual void Draw(SpriteBatch sb)
         {
+            if (Camera == null)
+                return;
+            sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
                     Systems[i].Draw(sb);
             }
+            sb.End();
         }
 
 

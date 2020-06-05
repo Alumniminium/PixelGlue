@@ -22,7 +22,7 @@ namespace PixelGlueCore.ECS.Systems
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(Scene scene,SpriteBatch spriteBatch)
         {
             
         }

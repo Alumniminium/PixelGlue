@@ -23,6 +23,7 @@ namespace PixelGlueCore.Scenes
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             Systems.Add(new SmartFramerate(4));
+            Systems.Add(new EntityRenderSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem());
             base.Initialize();
         }
@@ -38,32 +39,10 @@ namespace PixelGlueCore.Scenes
         {
             base.Update(gameTime);
         }
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Scene scene, SpriteBatch sb)
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
 
-            int renderedObjectsCounter = 0;
-            var overdraw = Map.TileWidth * 2;
-
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 0, Camera);
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 1, Camera);
-            foreach (var kvp in Entities)
-            {
-                if (!TryGetComponent<DrawableComponent>(kvp.Key,out var drawable))
-                    continue;
-                if (!TryGetComponent<PositionComponent>(kvp.Key,out var pos))
-                    continue;
-
-                if (pos.Position.X < Camera.ScreenRect.Left - overdraw || pos.Position.X > Camera.ScreenRect.Right + overdraw)
-                    continue;
-                if (pos.Position.Y < Camera.ScreenRect.Top - overdraw || pos.Position.Y > Camera.ScreenRect.Bottom + overdraw)
-                    continue;
-
-                sb.Draw(AssetManager.Textures[drawable.TextureName], new Rectangle((int)pos.IntegerPosition.X,(int)pos.IntegerPosition.Y,Map.TileWidth,Map.TileHeight), drawable.SrcRect, Color.White, 0f,Vector2.Zero, SpriteEffects.None, 0f);
-                renderedObjectsCounter++;
-            }
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);
-            
             if(TryGetComponent<InputComponent>(out var input))
             {
                 var pos = Camera.ScreenToWorld(input.Mouse.Position.ToVector2());
@@ -74,10 +53,10 @@ namespace PixelGlueCore.Scenes
             
             sb.End();
             sb.Begin(samplerState: SamplerState.PointClamp);
-            AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(Map.TileArray[0].Length * Map.TileArray.Length) + Entities.Count + Components.Values.Sum(p=>p.Count)}, Rendered: {renderedObjectsCounter})", new Vector2(16, 16), sb);
+            //AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(Map.TileArray[0].Length * Map.TileArray.Length) + Entities.Count + Components.Values.Sum(p=>p.Count)}, Rendered: {renderedObjectsCounter})", new Vector2(16, 16), sb);
             AssetManager.Fonts["profont"].Draw($"Position: {Camera.ScreenRect.X},{Camera.ScreenRect.Y}", new Vector2(16, 164), sb);
             sb.End();
-            base.Draw(sb);
+            base.Draw(this, sb);
         }
     }
 }

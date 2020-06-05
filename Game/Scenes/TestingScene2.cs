@@ -32,7 +32,7 @@ namespace PixelGlueCore.Scenes
         {
             base.Update(gameTime);
         }
-        public override void Draw(SpriteBatch sb)
+        public override void Draw(Scene scene, SpriteBatch sb)
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
 
@@ -61,7 +61,7 @@ namespace PixelGlueCore.Scenes
 
             sb.End();
             
-            base.Draw(sb);
+            base.Draw(this,sb);
         }
     }
 }
