@@ -19,6 +19,7 @@ namespace PixelGlueCore.ECS
         public ConcurrentDictionary<int, PixelEntity> Entities;
         public ConcurrentDictionary<int, List<IEntityComponent>> Components;
         public List<IEntitySystem> Systems;
+        public List<IEntitySystem> UISystems;
         public Camera Camera;
         public TmxMap Map;
 
@@ -27,12 +28,15 @@ namespace PixelGlueCore.ECS
             Components = new ConcurrentDictionary<int, List<IEntityComponent>>();
             Entities = new ConcurrentDictionary<int, PixelEntity>();
             Systems = new List<IEntitySystem>();
+            UISystems = new List<IEntitySystem>();
         }
 
         public virtual void Initialize()
         {
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
+            for (int i = 0; i < UISystems.Count; i++)
+                UISystems[i].Initialize();
             IsReady = true;
         }
 
@@ -63,6 +67,11 @@ namespace PixelGlueCore.ECS
                 if (Systems[i].IsActive && Systems[i].IsReady)
                     Systems[i].Update(deltaTime.ElapsedGameTime.TotalSeconds);
             }
+            for (int i = 0; i < UISystems.Count; i++)
+            {
+                if (UISystems[i].IsActive && UISystems[i].IsReady)
+                    UISystems[i].Update(deltaTime.ElapsedGameTime.TotalSeconds);
+            }
         }
         public virtual void FixedUpdate(double deltaTime)
         {
@@ -71,8 +80,13 @@ namespace PixelGlueCore.ECS
                 if (Systems[i].IsActive && Systems[i].IsReady)
                     Systems[i].FixedUpdate(deltaTime);
             }
+            for (int i = 0; i < UISystems.Count; i++)
+            {
+                if (UISystems[i].IsActive && UISystems[i].IsReady)
+                    UISystems[i].FixedUpdate(deltaTime);
+            }
         }
-        public virtual void Draw(SpriteBatch sb)
+        public virtual void Draw(Scene scene, SpriteBatch sb)
         {
             if (Camera == null)
                 return;
@@ -80,7 +94,14 @@ namespace PixelGlueCore.ECS
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].Draw(sb);
+                    Systems[i].Draw(scene, sb);
+            }
+            sb.End();
+            sb.Begin(samplerState: SamplerState.PointClamp);
+            for (int i = 0; i < UISystems.Count; i++)
+            {
+                if (UISystems[i].IsActive && UISystems[i].IsReady)
+                    UISystems[i].Draw(scene, sb);
             }
             sb.End();
         }

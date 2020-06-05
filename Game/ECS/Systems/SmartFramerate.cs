@@ -35,10 +35,8 @@ namespace PixelGlueCore.ECS.Systems
         }
         public void Draw(Scene scene, SpriteBatch sb)
         {
-            sb.Begin(samplerState: SamplerState.PointClamp);
             AssetManager.Fonts["profont"].Draw("FPS: " + updateRate.ToString("##0.00"), new Vector2(16, 64), sb);
             AssetManager.Fonts["profont"].Draw($"Draw: {PixelGlue.DrawProfiler.Time:##0.00}ms, Update: {PixelGlue.UpdateProfiler.Time:##0.00}ms", new Vector2(16, 96), sb);
-            sb.End();
         }
     }
 }

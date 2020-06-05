@@ -81,7 +81,7 @@ namespace PixelGlueCore
 
             foreach (var scene in SceneManager.ActiveScenes)
                 if (scene.IsReady)
-                    scene.Draw(_spriteBatch);
+                    scene.Draw(scene,_spriteBatch);
 
             base.Draw(gameTime);
             PixelGlue.DrawProfiler.StopMeasuring();

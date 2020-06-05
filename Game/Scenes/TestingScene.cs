@@ -22,7 +22,7 @@ namespace PixelGlueCore.Scenes
             Entities.TryAdd(0, (Camera)Camera);
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
-            Systems.Add(new SmartFramerate(4));
+            UISystems.Add(new SmartFramerate(4));
             Systems.Add(new EntityRenderSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem());
             base.Initialize();

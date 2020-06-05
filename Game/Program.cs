@@ -23,15 +23,12 @@ namespace PixelGlueCore
 
             var testScene = new TestingScene();
             testScene.Id = 1;
-            testScene.Systems.Add(new MoveSystem());
-            testScene.Systems.Add(new CameraSystem());
-
 
             var globalScene = new Scene();
             globalScene.Id=0;
             globalScene.Systems.Add(new InputSystem());
-            globalScene.Systems.Add(new GCMonitor());
-            globalScene.Systems.Add(new SmartFramerate(4));
+            globalScene.UISystems.Add(new GCMonitor());
+            globalScene.UISystems.Add(new SmartFramerate(4));
             globalScene.Systems.Add(new NetworkSystem());
             globalScene.Systems.Add(new DialogSystem());
 
