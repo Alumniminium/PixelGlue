@@ -1,25 +1,48 @@
-using System;
-using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.Configuration
 {
-    public class UserKeybinds
+    public static class UserKeybinds
     {
-        public Keys Up = Keys.W;
-        public Keys Down = Keys.Down;
-        public Keys Left=Keys.Left;
-        public Keys Right=Keys.Right;
-        public Keys Exit=Keys.Escape;
-        public Keys Console=Keys.OemTilde;
-    }
-    public class UserGamepadBinds
-    {
-        public Buttons Up = Buttons.DPadUp;
-        public Buttons Down =Buttons.DPadDown;
-        public Buttons Left=Buttons.DPadLeft;
-        public Buttons Right=Buttons.DPadRight;
-        public Buttons Exit=Buttons.Start;
-        public Buttons Console=Buttons.Back;
+        public static Dictionary<PixelGlueButtons, (Keys defaultBind, Keys userBind)> GenericToKeybinds = new Dictionary<PixelGlueButtons, (Keys defaultBind, Keys userBind)>
+        {
+            [PixelGlueButtons.Up] = (Keys.W, Keys.W),
+            [PixelGlueButtons.Down] = (Keys.S, Keys.S),
+            [PixelGlueButtons.Left] = (Keys.A, Keys.A),
+            [PixelGlueButtons.Right] = (Keys.D, Keys.D),
+            [PixelGlueButtons.Activate] = (Keys.E, Keys.E),
+            [PixelGlueButtons.DbgSwitchScene] = (Keys.T, Keys.T),
+            [PixelGlueButtons.DbgOpenDialog] = (Keys.O, Keys.O),
+            [PixelGlueButtons.EscapeMenu] = (Keys.Escape, Keys.Escape),
+            [PixelGlueButtons.ConsoleToggle] = (Keys.OemTilde, Keys.OemTilde),
+            [PixelGlueButtons.DbgBoundingBoxes] = (Keys.B, Keys.Back),
+        };
+        public static Dictionary<Keys, PixelGlueButtons> KeybindsToGeneric = new Dictionary<Keys, PixelGlueButtons>
+        {
+            [Keys.W] = PixelGlueButtons.Up,
+            [Keys.S] = PixelGlueButtons.Down,
+            [Keys.A] = PixelGlueButtons.Left,
+            [Keys.D] = PixelGlueButtons.Right,
+            [Keys.E] = PixelGlueButtons.Activate,
+            [Keys.T] = PixelGlueButtons.DbgSwitchScene,
+            [Keys.O] = PixelGlueButtons.DbgOpenDialog,
+            [Keys.Escape] = PixelGlueButtons.EscapeMenu,
+            [Keys.OemTilde] = PixelGlueButtons.ConsoleToggle,
+            [Keys.B] = PixelGlueButtons.DbgBoundingBoxes,
+        };
+        public static Dictionary<PixelGlueButtons, Buttons[]> GamepadMap = new Dictionary<PixelGlueButtons, Buttons[]>()
+        {
+            [PixelGlueButtons.Up] = new[] { Buttons.DPadUp },
+            [PixelGlueButtons.Down] = new[] { Buttons.DPadDown },
+            [PixelGlueButtons.Left] = new[] { Buttons.DPadLeft },
+            [PixelGlueButtons.Right] = new[] { Buttons.DPadRight },
+            [PixelGlueButtons.Activate] = new[] { Buttons.A },
+            [PixelGlueButtons.DbgSwitchScene] = new[] { Buttons.Y },
+            [PixelGlueButtons.DbgOpenDialog] = new[] { Buttons.B },
+            [PixelGlueButtons.EscapeMenu] = new[] { Buttons.Start },
+            [PixelGlueButtons.ConsoleToggle] = new[] { Buttons.Back },
+        };
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TiledSharp;
 using System;
 using PixelGlueCore.ECS.Components;
+using System.Collections.Concurrent;
 
 namespace PixelGlueCore.ECS
 {
@@ -15,16 +16,16 @@ namespace PixelGlueCore.ECS
         public int Id;
         public bool IsActive;
         public bool IsReady;
-        public Dictionary<int, PixelEntity> Entities;
-        public Dictionary<int,List<IEntityComponent>> Components;
+        public ConcurrentDictionary<int, PixelEntity> Entities;
+        public ConcurrentDictionary<int, List<IEntityComponent>> Components;
         public List<IEntitySystem> Systems;
         public Camera Camera;
         public TmxMap Map;
 
         public Scene()
         {
-            Components = new Dictionary<int, List<IEntityComponent>>();
-            Entities = new Dictionary<int, PixelEntity>();
+            Components = new ConcurrentDictionary<int, List<IEntityComponent>>();
+            Entities = new ConcurrentDictionary<int, PixelEntity>();
             Systems = new List<IEntitySystem>();
         }
 
@@ -38,11 +39,16 @@ namespace PixelGlueCore.ECS
         internal T CreateEntity<T>(int uniqueId, params IEntityComponent[] components) where T : PixelEntity, new()
         {
             var entity = new T();
-            entity.UniqueId=uniqueId;
-            Entities.TryAdd(entity.UniqueId,entity);
-            foreach(var component in components)
-                AddComponent(uniqueId,component);
+            entity.UniqueId = uniqueId;
+            Entities.TryAdd(entity.UniqueId, entity);
+            foreach (var component in components)
+                AddComponent(uniqueId, component);
             return entity;
+        }
+
+        internal void Destroy(Player player)
+        {
+            Entities.TryRemove(player.UniqueId, out _);
         }
 
         public virtual void LoadContent(ContentManager cm)
@@ -68,23 +74,28 @@ namespace PixelGlueCore.ECS
         }
         public virtual void Draw(SpriteBatch sb)
         {
+            for (int i = 0; i < Systems.Count; i++)
+            {
+                if (Systems[i].IsActive && Systems[i].IsReady)
+                    Systems[i].Draw(sb);
+            }
         }
 
 
         public void AddComponent(int ownerId, IEntityComponent component)
         {
-            if(!Components.TryGetValue(ownerId, out var owned))
-                {
-                    owned = new List<IEntityComponent>();
-                    Components.TryAdd(ownerId,owned);
-                }
+            if (!Components.TryGetValue(ownerId, out var owned))
+            {
+                owned = new List<IEntityComponent>();
+                Components.TryAdd(ownerId, owned);
+            }
             owned.Add(component);
         }
         public bool TryGetComponent<T>(int ownerId, out T component) where T : IEntityComponent
         {
             component = default;
 
-            if(!Components.TryGetValue(ownerId,out var owned))
+            if (!Components.TryGetValue(ownerId, out var owned))
                 return false;
 
             foreach (var comp in owned)
@@ -97,10 +108,49 @@ namespace PixelGlueCore.ECS
             }
             return false;
         }
+        public bool TryGetComponent<T>(out T component) where T : IEntityComponent
+        {
+            component = default;
+
+            foreach (var entityComponentPair in Components)
+            {
+                foreach (var comp in entityComponentPair.Value)
+                {
+                    if (comp is T)
+                    {
+                        component = (T)comp;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
 
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
 
         public override int GetHashCode() => HashCode.Combine(Id);
+
+        public T Find<T>() where T : PixelEntity, new()
+        {
+            foreach (var kvp in Entities)
+            {
+                if (kvp.Value is T)
+                    return (T)kvp.Value;
+            }
+            return null;
+        }
+        public T Get<T>(int uniqueId) where T : PixelEntity, new()
+        {
+            if (Entities.TryGetValue(uniqueId, out var entity))
+                return (T)entity;
+            return null;
+        }
+        public PixelEntity Get(int uniqueId)
+        {
+            if (Entities.TryGetValue(uniqueId, out var entity))
+                return entity;
+            return null;
+        }
     }
 }

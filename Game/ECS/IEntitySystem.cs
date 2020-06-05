@@ -21,5 +21,10 @@ namespace PixelGlueCore.ECS.Systems
         {
 
         }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            
+        }
     }
 }

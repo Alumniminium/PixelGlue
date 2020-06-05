@@ -9,21 +9,21 @@ using PixelGlueCore.Loaders.TiledSharp;
 using PixelGlueCore.ECS.Systems;
 using System.Collections.Generic;
 using PixelGlueCore.Networking;
+using System.Linq;
 
 namespace PixelGlueCore.Scenes
 {
     public class TestingScene : Scene
     {
-        public UIRectangle RedSquare = new UIRectangle(10,10,100,100,Color.Red);
+        public UIRectangle RedSquare = new UIRectangle(10,10,16,16,Color.Red);
         public override void Initialize()
         {
             Camera = new Camera();
-            Entities.Add(0, (Camera)Camera);
-            CreateEntity<Player>(1,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16)),new CameraFollowTagComponent(1,1),new Networked(1));
-            
+            Entities.TryAdd(0, (Camera)Camera);
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             Systems.Add(new SmartFramerate(4));
+            Systems.Add(new DbgBoundingBoxRenderSystem());
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)
@@ -64,7 +64,7 @@ namespace PixelGlueCore.Scenes
             }
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);
             
-            if(TryGetComponent<InputComponent>(1,out var input))
+            if(TryGetComponent<InputComponent>(out var input))
             {
                 var pos = Camera.ScreenToWorld(input.Mouse.Position.ToVector2());
                 RedSquare.RenderRect.X = (int)pos.X;
@@ -74,11 +74,8 @@ namespace PixelGlueCore.Scenes
             
             sb.End();
             sb.Begin(samplerState: SamplerState.PointClamp);
-            AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(Map.TileArray[0].Length * Map.TileArray.Length) + Entities.Count}, Rendered: {renderedObjectsCounter})", new Vector2(16, 16), sb);
+            AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(Map.TileArray[0].Length * Map.TileArray.Length) + Entities.Count + Components.Values.Sum(p=>p.Count)}, Rendered: {renderedObjectsCounter})", new Vector2(16, 16), sb);
             AssetManager.Fonts["profont"].Draw($"Position: {Camera.ScreenRect.X},{Camera.ScreenRect.Y}", new Vector2(16, 164), sb);
-            AssetManager.Fonts["profont"].Draw($"Camera Rect: {Camera.ScreenRect.X},{Camera.ScreenRect.Y} w{Camera.ScreenRect.Width},h{Camera.ScreenRect.Height}", new Vector2(16, 192), sb);
-            AssetManager.Fonts["emoji"].Draw($"", new Vector2(PixelGlue.ScreenWidth/2, PixelGlue.ScreenHeight/2), sb);
-            (Systems[^1] as SmartFramerate).Draw(sb);
             sb.End();
             base.Draw(sb);
         }

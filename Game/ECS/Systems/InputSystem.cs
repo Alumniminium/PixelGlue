@@ -4,6 +4,8 @@ using System;
 using PixelGlueCore.Scenes;
 using Microsoft.Xna.Framework;
 using PixelGlueCore.Entities;
+using PixelGlueCore.Configuration;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -18,14 +20,14 @@ namespace PixelGlueCore.ECS.Systems
             foreach (var scene in SceneManager.ActiveScenes)
                 foreach (var kvp in scene.Entities)
                 {
-                    if (!scene.TryGetComponent<InputComponent>(kvp.Key,out var inputComponent))
+                    if (!scene.TryGetComponent<InputComponent>(kvp.Key, out var inputComponent))
                         continue;
-                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key,out var moveComponent))
+                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key, out var moveComponent))
                         continue;
-                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key,out var positionComponent))
+                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key, out var positionComponent))
                         continue;
 
-                    scene.TryGetComponent<CameraFollowTagComponent>(kvp.Key,out var camera);
+                    scene.TryGetComponent<CameraFollowTagComponent>(kvp.Key, out var camera);
 
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
@@ -47,6 +49,7 @@ namespace PixelGlueCore.ECS.Systems
 
                     var currentKeys = inputComponent.Keyboard.GetPressedKeys();
                     var lastKeys = inputComponent.OldKeyboard.GetPressedKeys();
+                    var destination = positionComponent.Position;
 
                     for (int i = 0; i < currentKeys.Length; i++)
                     {
@@ -57,48 +60,67 @@ namespace PixelGlueCore.ECS.Systems
                                 return;
                         }
 
-                        switch (key)
+                        if (UserKeybinds.KeybindsToGeneric.TryGetValue(key, out var pixelButton))
                         {
-                            case Keys.Escape:
-                                Environment.Exit(0);
+                            switch (pixelButton)
+                            {
+                                case PixelGlueButtons.EscapeMenu:
+                                    Environment.Exit(0);
+                                    break;
+                                case PixelGlueButtons.DbgProfiling:
+                                    PixelGlue.Profiling = !PixelGlue.Profiling;
+                                    break;
+                                case PixelGlueButtons.DbgSwitchScene:
+                                    SwitchScene();
+                                    break;
+                                case PixelGlueButtons.DbgOpenDialog:
+                                    OpenDialog(scene);
+                                    break;
+                                case PixelGlueButtons.Up:
+                                    if (!moveComponent.Moving)
+                                        destination.Y -= scene.Map.TileHeight;
+                                    break;
+                                case PixelGlueButtons.Down:
+                                    if (!moveComponent.Moving)
+                                        destination.Y += scene.Map.TileHeight;
+                                    break;
+                                case PixelGlueButtons.Left:
+                                    if (!moveComponent.Moving)
+                                        destination.X -= scene.Map.TileWidth;
+                                    break;
+                                case PixelGlueButtons.Right:
+                                    if (!moveComponent.Moving)
+                                        destination.X += scene.Map.TileWidth;
+                                    break;
+                                case PixelGlueButtons.DbgBoundingBoxes:
+                                    foreach(var entity in scene.Entities)
+                                        scene.AddComponent(entity.Key,new DbgBoundingBoxComponent(entity.Key));
                                 break;
 
-                            case Keys.P:
-                                PixelGlue.Profiling = !PixelGlue.Profiling;
-                                break;
-                            case Keys.T:
-                                var testScene2 = new TestingScene2();
-                                testScene2.Id = 2;
-                                testScene2.Systems.Add(new MoveSystem());
-                                testScene2.Systems.Add(new CameraSystem());
-                                SceneManager.ActivateScene(testScene2);
-                                SceneManager.DeactivateScene<TestingScene>();
-                                break;
-                            case Keys.O:
-                                var player = SceneManager.Find<Player>();
-                                scene.AddComponent(player.UniqueId,new DialogComponent(player.UniqueId,1));
-                                break;
+                            }
                         }
                     }
                     lastKeys = currentKeys;
 
-
-                    if (moveComponent.Moving)
-                        return;
-
-                    var destination = positionComponent.Position;
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.A))
-                        destination.X -= scene.Map.TileWidth;
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.D))
-                        destination.X += scene.Map.TileWidth;
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.W))
-                        destination.Y -= scene.Map.TileHeight;
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.S))
-                        destination.Y += scene.Map.TileHeight;
-
                     if (destination != positionComponent.Position)
                         moveComponent.Destination = destination;
                 }
+        }
+
+        private static void SwitchScene()
+        {
+            var testScene2 = new TestingScene2();
+            testScene2.Id = 2;
+            testScene2.Systems.Add(new MoveSystem());
+            testScene2.Systems.Add(new CameraSystem());
+            SceneManager.ActivateScene(testScene2);
+            SceneManager.DeactivateScene<TestingScene>();
+        }
+
+        private static void OpenDialog(Scene scene)
+        {
+            var player = scene.Find<Player>();
+            scene.AddComponent(player.UniqueId, new DialogComponent(player.UniqueId, 1));
         }
     }
 }

@@ -52,27 +52,5 @@ namespace PixelGlueCore.Scenes
                 }
             });
         }
-
-        public static T Find<T>() where T : PixelEntity
-        {
-            foreach (var scene in ActiveScenes)
-            {
-                foreach (var kvp in scene.Entities)
-                    if (kvp.Value is T)
-                        return (T)kvp.Value;
-            }
-            return null;
-        }
-
-        public static PixelEntity Find(uint uniqueId)
-        {
-            foreach (var scene in ActiveScenes)
-            {
-                foreach (var kvp in scene.Entities)
-                    if (kvp.Key == uniqueId)
-                        return kvp.Value;
-            }
-            return null;
-        }
     }
 }

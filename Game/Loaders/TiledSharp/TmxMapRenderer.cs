@@ -41,8 +41,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                    map.TileArray[c][y * map.Width + x] = new DrawableComponent(304938,map.Tilesets[0].Name, tilesetRec);
-                    #warning this hardcoded number is evidence for my incompetence. I didn't consider the map tiles to be entities too. Who the fuck owns them?!
+                    map.TileArray[c][y * map.Width + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec);
                 }
             }
             map.Layers = null;

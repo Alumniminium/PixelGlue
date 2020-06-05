@@ -8,6 +8,7 @@ using System.Linq;
 using TerribleSockets.Packets;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Scenes;
+using Microsoft.Xna.Framework;
 
 namespace PixelGlueCore.Networking.Handlers
 {
@@ -16,15 +17,14 @@ namespace PixelGlueCore.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var (user, pass) = packet.GetUserPass();
-            //Networked networked;
-
-            var player = SceneManager.Find<Player>();//PixelGlue.CurrentScenes.Where(ob=> ob.GameObjects.First(g => g.Value.TryGetComponent<Networked>(out networked)))).Value;
-
+            var scene = SceneManager.ActiveScenes[^1];
+            var player = scene.CreateEntity<Player>(packet.UniqueId,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16)),new CameraFollowTagComponent(1,1),new Networked(1));
             FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
 
             if (player.UniqueId == 0)
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " failed to authenticate! (not implemented)");
+                scene.Destroy(player);
             }
             else
             {

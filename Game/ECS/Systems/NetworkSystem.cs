@@ -57,7 +57,7 @@ namespace PixelGlueCore.ECS.Systems
                 {
                     if (!scene.TryGetComponent<Networked>(kvp.Key,out var networked))
                         continue;
-
+        
                 }
         }
 

@@ -16,7 +16,7 @@ namespace PixelGlueCore.Scenes
         public override void Initialize()
         {
             Camera = new Camera();
-            Entities.Add(0, (Camera)Camera);
+            Entities.TryAdd(0, (Camera)Camera);
 
             CreateEntity<Player>(1,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16)),new CameraFollowTagComponent(1,1),new Networked(1));
             base.Initialize();

@@ -15,5 +15,5 @@ namespace PixelGlueCore.ECS.Components
             TextureName = textureName;
             SrcRect = srcRect;
         }
-    }
+    }    
 }

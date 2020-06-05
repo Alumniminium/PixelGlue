@@ -10,7 +10,6 @@ namespace PixelGlueCore.Networking.Handlers
 {
     public static class Walk
     {
-        static Random Random = new Random();
         public static void Handle(MsgWalk packet)
         {
             var uniqueId = packet.UniqueId;
@@ -20,13 +19,13 @@ namespace PixelGlueCore.Networking.Handlers
 
             if (!scene.Entities.TryGetValue(uniqueId, out var entity))
             {
-                var srcEntity = Database.Entities[Random.Next(0, Database.Entities.Count)];
+                var srcEntity = Database.Entities[PixelGlue.Random.Next(0, Database.Entities.Count)];
                 
                 var drawable =new DrawableComponent(uniqueId,srcEntity.TextureName, srcEntity.SrcRect);
                 var position =new PositionComponent(uniqueId,packet.X,packet.Y,0);
                 var movable = new MoveComponent(uniqueId,50, packet.X, packet.Y);
 
-                scene.CreateEntity<Npc>(uniqueId,drawable,position,movable);
+                scene.CreateEntity<PixelEntity>(uniqueId,drawable,position,movable);
             }
             else
             {

@@ -21,7 +21,7 @@ namespace PixelGlueCore.ECS.Systems
                     if(!dialog.UpdateRequired)
                         return;
                     
-                    var player = SceneManager.Find<Player>();
+                    var player = scene.Find<Player>();
                     dialog.UpdateRequired=false;
 
                     switch(dialog.Id)

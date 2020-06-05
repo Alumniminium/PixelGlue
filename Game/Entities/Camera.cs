@@ -1,18 +1,13 @@
 ﻿using PixelGlueCore.ECS;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace PixelGlueCore.Entities
 {
     public class Camera : PixelEntity
     {
         public Matrix Transform { get; set; }
+        public Matrix InverseTransform => Matrix.Invert(Transform);
         public Rectangle ScreenRect { get; set; }
-
-        public Vector2 ScreenToWorld(in Vector2 point)
-        {
-            Matrix invertedMatrix = Matrix.Invert(Transform);
-            return Vector2.Transform(point, invertedMatrix);
-        }
+        public Vector2 ScreenToWorld(in Vector2 point) => Vector2.Transform(point, InverseTransform);
     }
 }
