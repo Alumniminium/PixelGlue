@@ -7,29 +7,54 @@ using System.Collections.Generic;
 using TiledSharp;
 using PixelGlueCore.ECS.Components;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System;
 
 namespace PixelGlueCore.ECS
 {
+    public class ComponentCollection
+    {
+        public int DrawablesCount, PositionsCount, MovesCount,DbgBoundingBoxCount,InputComponentsCount,NetworkedsCount,CameraFollowTagsCount;
+        public DrawableComponent[] DrawableComponents;
+        public PositionComponent[] PositionComponents;
+        public InputComponent[] InputComponents;
+        public Networked[] Networkeds;
+        public CameraFollowTagComponent[] CameraFollowTags;
+        public MoveComponent[] MoveComponents;
+        public DbgBoundingBoxComponent[] DbgBoundingBoxComponents;
+        public List<IEntityComponent> Components;
+
+        public ComponentCollection()
+        {
+            DrawableComponents = new DrawableComponent[0];
+            PositionComponents = new PositionComponent[0];
+            DbgBoundingBoxComponents = new DbgBoundingBoxComponent[0];
+            MoveComponents = new MoveComponent[0];
+            Components = new List<IEntityComponent>();
+            Networkeds = new Networked[0];
+            InputComponents = new InputComponent[0];
+            CameraFollowTags = new CameraFollowTagComponent[0];
+        }
+
+    }
     public class Scene
     {
         public int Id;
         public bool IsActive;
         public bool IsReady;
         public ConcurrentDictionary<int, PixelEntity> Entities;
-        public ConcurrentDictionary<int, List<IEntityComponent>> Components;
         public List<IEntitySystem> Systems;
         public List<IEntitySystem> UISystems;
-        public List<DrawableComponent> Drawables;
+        public Dictionary<int, ComponentCollection> Components;
         public Camera Camera;
         public TmxMap Map;
 
         public Scene()
         {
-            Components = new ConcurrentDictionary<int, List<IEntityComponent>>();
             Entities = new ConcurrentDictionary<int, PixelEntity>();
             Systems = new List<IEntitySystem>();
             UISystems = new List<IEntitySystem>();
-            Drawables = new List<DrawableComponent>();
+            Components = new Dictionary<int, ComponentCollection>();
         }
 
         public virtual void Initialize()
@@ -46,6 +71,7 @@ namespace PixelGlueCore.ECS
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont", cm);
             AssetManager.LoadFont("../Build/Content/RuntimeContent/emoji.fnt", "emoji", cm);
         }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Update(GameTime deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
@@ -59,6 +85,7 @@ namespace PixelGlueCore.ECS
                     UISystems[i].Update(deltaTime.ElapsedGameTime.TotalSeconds);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void FixedUpdate(double deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
@@ -72,6 +99,7 @@ namespace PixelGlueCore.ECS
                     UISystems[i].FixedUpdate(deltaTime);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Draw(Scene scene, SpriteBatch sb)
         {
             if (Camera == null)
@@ -92,36 +120,115 @@ namespace PixelGlueCore.ECS
             sb.End();
         }
 
-        internal T CreateEntity<T>(int uniqueId, params IEntityComponent[] components) where T : PixelEntity, new()
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        internal T CreateEntity<T>(int uniqueId) where T : PixelEntity, new()
         {
             var entity = new T();
             entity.UniqueId = uniqueId;
+            entity.Scene=this;
             Entities.TryAdd(entity.UniqueId, entity);
-            foreach (var component in components)
-            {
-                component.PixelOwnerId=uniqueId;
-                AddComponent(component);
-            }
-            AddComponent(new DbgBoundingBoxComponent(uniqueId));
+            Components.TryAdd(entity.UniqueId,new ComponentCollection());
+            AddDbgBoundingBox(new DbgBoundingBoxComponent(uniqueId));
             return entity;
         }
 
         internal void Destroy(PixelEntity entity)
         {
             Entities.TryRemove(entity.UniqueId, out _);
-            Components.TryRemove(entity.UniqueId, out _);
         }
 
-        public void AddComponent(IEntityComponent component)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public void AddDrawable(DrawableComponent component)
         {
-            if (!Components.TryGetValue(component.PixelOwnerId, out var owned))
+            if (!Components.TryGetValue(component.UniqueId, out var components))
             {
-                owned = new List<IEntityComponent>();
-                Components.TryAdd(component.PixelOwnerId, owned);
+                components = new ComponentCollection();
+                Components.TryAdd(component.UniqueId, components);
             }
-            owned.Add(component);
+            if(components.DrawableComponents.Length==0)
+                components.DrawableComponents = new DrawableComponent[1];
+            components.DrawableComponents[components.DrawablesCount] = component;
+            components.DrawablesCount++;
         }
-        public void AddDrawable(DrawableComponent component) => Drawables.Add(component);
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public void AddMovable(MoveComponent component)
+        {
+            if (!Components.TryGetValue(component.UniqueId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.UniqueId, list);
+            }
+            if(list.MoveComponents.Length==0)
+                list.MoveComponents = new MoveComponent[1];
+            list.MoveComponents[list.MovesCount] = component;
+            list.MovesCount++;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public void AddPosition(PositionComponent component)
+        {
+            if (!Components.TryGetValue(component.UniqueId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.UniqueId, list);
+            }
+            if(list.PositionComponents.Length==0)
+                list.PositionComponents = new PositionComponent[1];
+            list.PositionComponents[list.PositionsCount] = component;
+            list.PositionsCount++;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public void AddDbgBoundingBox(DbgBoundingBoxComponent component)
+        {
+            if (!Components.TryGetValue(component.PixelOwnerId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.PixelOwnerId, list);
+            }
+            if(list.DbgBoundingBoxComponents.Length==0)
+                list.DbgBoundingBoxComponents = new DbgBoundingBoxComponent[1];
+            list.DbgBoundingBoxComponents[list.PositionsCount] = component;
+            list.DbgBoundingBoxCount++;
+        }
+        internal void AddInput(InputComponent component)
+        {
+            if (!Components.TryGetValue(component.PixelOwnerId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.PixelOwnerId, list);
+            }
+            if(list.InputComponents.Length==0)
+                list.InputComponents = new InputComponent[1];
+            list.InputComponents[list.InputComponentsCount] = component;
+            list.InputComponentsCount++;
+        }
+
+        internal void AddCameraFollowTag(CameraFollowTagComponent component)
+        {
+            if (!Components.TryGetValue(component.PixelOwnerId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.PixelOwnerId, list);
+            }
+            if(list.CameraFollowTags.Length==0)
+                list.CameraFollowTags = new CameraFollowTagComponent[1];
+            list.CameraFollowTags[list.CameraFollowTagsCount] = component;
+            list.CameraFollowTagsCount++;
+        }
+
+        internal void AddNetworked(Networked component)
+        {
+            if (!Components.TryGetValue(component.PixelOwnerId, out var list))
+            {
+                list = new ComponentCollection();
+                Components.TryAdd(component.PixelOwnerId, list);
+            }
+            if(list.Networkeds.Length==0)
+                list.Networkeds = new Networked[1];
+            list.Networkeds[list.NetworkedsCount] = component;
+            list.NetworkedsCount++;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public bool TryGetComponent<T>(int ownerId, out T component) where T : IEntityComponent
         {
             component = default;
@@ -129,7 +236,7 @@ namespace PixelGlueCore.ECS
             if (!Components.TryGetValue(ownerId, out var owned))
                 return false;
 
-            foreach (var comp in owned)
+            foreach (var comp in owned.Components)
             {
                 if (comp is T t)
                 {
@@ -139,37 +246,45 @@ namespace PixelGlueCore.ECS
             }
             return false;
         }
-        public bool TryGetDrawableComponent(int ownerId, out DrawableComponent component)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public ref DrawableComponent GetDrawableComponentRef(int ownerId)
         {
-            component = default;
-            for (int i = 0; i < Drawables.Count; i++)
-            {
-                if (Drawables[i].PixelOwnerId == ownerId)
-                {
-                    component = Drawables[i];
-                    return true;
-                }
-            }
-            return false;
+            if (!Components.ContainsKey(ownerId))
+                Components.Add(ownerId, new ComponentCollection());
+            return ref Components[ownerId].DrawableComponents[0];
         }
-        public bool TryGetComponent<T>(out T component) where T : IEntityComponent
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public ref InputComponent GetInputComponentRef(int ownerId)
         {
-            component = default;
+            if (!Components.ContainsKey(ownerId))
+                Components.Add(ownerId, new ComponentCollection());
+            return ref Components[ownerId].InputComponents[0];
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public ref PositionComponent GetPositionComponentRef(int ownerId)
+        {
+            if (!Components.ContainsKey(ownerId))
+                Components.Add(ownerId, new ComponentCollection());
+            return ref Components[ownerId].PositionComponents[0];
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public ref MoveComponent GetMoveComponentRef(int ownerId)
+        {
+            if (!Components.ContainsKey(ownerId))
+                Components.Add(ownerId, new ComponentCollection());
 
-            foreach (var entityComponentPair in Components)
-            {
-                foreach (var comp in entityComponentPair.Value)
-                {
-                    if (comp is T)
-                    {
-                        component = (T)comp;
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return ref Components[ownerId].MoveComponents[0];
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        internal ref CameraFollowTagComponent GetCamreaFollowRef(int ownerId)
+        {
+            if (!Components.ContainsKey(ownerId))
+                Components.Add(ownerId, new ComponentCollection());
+
+            return ref Components[ownerId].CameraFollowTags[0];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         internal T GetSystem<T>()
         {
             foreach (var sys in Systems)
@@ -184,7 +299,8 @@ namespace PixelGlueCore.ECS
                     return (T)sys;
             return default(T);
         }
-        public T Find<T>() where T : PixelEntity, new()
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public T Find<T>() where T : PixelEntity
         {
             foreach (var kvp in Entities)
             {
@@ -192,20 +308,7 @@ namespace PixelGlueCore.ECS
                     return (T)kvp.Value;
             }
             return null;
-        }
-        public T GetEntity<T>(int uniqueId) where T : PixelEntity, new()
-        {
-            if (Entities.TryGetValue(uniqueId, out var entity))
-                return (T)entity;
-            return null;
-        }
-        public PixelEntity GetEntity(int uniqueId)
-        {
-            if (Entities.TryGetValue(uniqueId, out var entity))
-                return entity;
-            return null;
-        }
-
+        }       
         public override int GetHashCode() => Id;
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }

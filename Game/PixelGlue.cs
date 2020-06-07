@@ -10,8 +10,8 @@ namespace PixelGlueCore
         public static float FixedUpdateHz { get; set; } = 15;
         public static int ScreenWidth { get; set; } = 1600;
         public static int ScreenHeight { get; set; } = 900;
-        public const int VirtualScreenWidth = 854;//320;
-        public const int VirtualScreenHeight = 480;//180;
+        public const int VirtualScreenWidth = 320;//320;
+        public const int VirtualScreenHeight = 180;//180;
         public const int HalfVirtualScreenWidth =VirtualScreenWidth/2;
         public const int HalfVirtualScreenHeight = VirtualScreenHeight/2;
         public static bool Profiling { get; set; }

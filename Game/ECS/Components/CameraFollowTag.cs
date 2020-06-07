@@ -2,7 +2,7 @@ using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
-    public class CameraFollowTagComponent : IEntityComponent
+    public struct CameraFollowTagComponent
     {
         public float Zoom { get; set; }
         public int PixelOwnerId { get; set; }

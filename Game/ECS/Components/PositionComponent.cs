@@ -1,18 +1,15 @@
 using Microsoft.Xna.Framework;
-using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
-    public class PositionComponent : IEntityComponent
+    public struct PositionComponent
     {
-        public Vector2 Position { get; set; }
-        public Vector2 IntegerPosition => Vector2.Round(Position);
-        public float Rotation { get; set; }
-        public int PixelOwnerId { get; set; }
-
+        public Vector2 Position;
+        public float Rotation;
+        public int UniqueId;
         public PositionComponent(int ownerId,int x, int y, int rotation)
         {
-            PixelOwnerId = ownerId;
+            UniqueId = ownerId;
             Position = new Vector2(x, y);
             Rotation = rotation;
         }

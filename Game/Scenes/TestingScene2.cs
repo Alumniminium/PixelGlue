@@ -42,9 +42,9 @@ namespace PixelGlueCore.Scenes
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 1, Camera);
             foreach (var kvp in Entities)
             {
-                if (!TryGetDrawableComponent(kvp.Key,out var drawable))
-                    continue;
-                if (!TryGetComponent<PositionComponent>(kvp.Key,out var pos))
+                ref var drawable = ref scene.GetDrawableComponentRef(kvp.Key);
+                ref var pos = ref scene.GetPositionComponentRef(kvp.Key);
+                if (drawable.UniqueId != kvp.Key || pos.UniqueId != kvp.Key)
                     continue;
 
                 if (pos.Position.X < Camera.ScreenRect.Left - overdraw || pos.Position.X > Camera.ScreenRect.Right + overdraw)

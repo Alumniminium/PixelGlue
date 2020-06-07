@@ -41,7 +41,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec);
+                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
                 }
             }
             map.ImageLayers=null;
@@ -63,12 +63,10 @@ namespace PixelGlueCore.Loaders.TiledSharp
                         continue;
 
                     var tile = map.TileArray[l][index];
-                    if (tile == null)
-                        continue;
                     if (string.IsNullOrEmpty(tile.TextureName))
                         continue;
                     counter++;
-                    sb.Draw(AssetManager.Textures[map.Tilesets[0].Name], new Vector2(x, y), tile.SrcRect, Color.White, 0f, origin, new Vector2(1.01f,1.01f), SpriteEffects.None, 0);
+                    sb.Draw(AssetManager.Textures[map.Tilesets[0].Name], tile.DestRect, tile.SrcRect, Color.White, 0f,origin, SpriteEffects.None, 0);
                 }
             }
             return counter;

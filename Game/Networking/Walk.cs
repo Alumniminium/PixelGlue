@@ -19,16 +19,21 @@ namespace PixelGlueCore.Networking.Handlers
             if (!scene.Entities.TryGetValue(uniqueId, out var entity))
             {
                 var srcEntity = Database.Entities[PixelGlue.Random.Next(0, Database.Entities.Count)];
-                var drawable =new DrawableComponent(uniqueId,srcEntity.TextureName, srcEntity.SrcRect);
-                var position =new PositionComponent(uniqueId,packet.X,packet.Y,0);
-                var movable = new MoveComponent(uniqueId,50, packet.X, packet.Y);
+                var drawable = new DrawableComponent(uniqueId, srcEntity.TextureName, srcEntity.SrcRect);
+                var position = new PositionComponent(uniqueId, packet.X, packet.Y, 0);
+                var movable = new MoveComponent(uniqueId, 50, packet.X, packet.Y);
 
-                scene.CreateEntity<PixelEntity>(uniqueId,position,movable);
+                scene.CreateEntity<PixelEntity>(uniqueId);
                 scene.AddDrawable(drawable);
+                scene.AddMovable(movable);
+                scene.AddPosition(position);
             }
             else
             {
-                if (scene.TryGetComponent<MoveComponent>(uniqueId,out var movable))
+                if (!entity.HasMoveComponent())
+                    return;
+                ref var movable = ref scene.GetMoveComponentRef(uniqueId);
+                if (movable.UniqueId == packet.UniqueId)
                     movable.Destination = location;
             }
         }

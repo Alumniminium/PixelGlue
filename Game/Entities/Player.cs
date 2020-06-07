@@ -8,6 +8,5 @@ namespace PixelGlueCore.Entities
 {
     public class Player : PixelEntity
     {
-
     }
 }

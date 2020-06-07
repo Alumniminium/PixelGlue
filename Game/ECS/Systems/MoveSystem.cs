@@ -18,11 +18,15 @@ namespace PixelGlueCore.ECS.Systems
                 var scene = SceneManager.ActiveScenes[i];
                 foreach (var kvp in scene.Entities)
                 {
-                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key, out var movable))
+                    if( !kvp.Value.HasMoveComponent() || 
+                        !kvp.Value.HasPositionComponent())
                         continue;
+                    ref var movable = ref scene.GetMoveComponentRef(kvp.Key);
+                    ref var position = ref scene.GetPositionComponentRef(kvp.Key);
+                    if (movable.UniqueId != kvp.Key || position.UniqueId != kvp.Key)
+                        continue;
+                        
                     if (movable.Destination == Vector2.Zero)
-                        continue;
-                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key, out var position))
                         continue;
                     if (movable.Destination != position.Position)
                     {

@@ -3,29 +3,21 @@ using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
-    public class MoveComponent: IEntityComponent
+    public struct MoveComponent
     {
-        public float Speed { get; set; }
-        public float SpeedMulti { get; set; }
-        public bool Moving { get; set; }
-        public Vector2 Destination { get; set; }
-        public int PixelOwnerId { get; set; }
+        public float Speed;
+        public float SpeedMulti;
+        public bool Moving;
+        public Vector2 Destination;
+        public int UniqueId ;
 
         public MoveComponent(int ownerId, float speed, int destX, int destY)
         {
-            PixelOwnerId = ownerId;
+            UniqueId = ownerId;
             Speed = speed;
             SpeedMulti=1;
             Moving = false;
             Destination = new Vector2(destX, destY);
-        }
-        public MoveComponent(int ownerId, float speed)
-        {
-            PixelOwnerId=ownerId;
-            Speed = speed;
-            SpeedMulti=1;
-            Moving = false;
-            Destination = Vector2.Zero;
         }
     }
 }

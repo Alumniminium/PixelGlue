@@ -18,7 +18,7 @@ namespace PixelGlueCore.ECS.Systems
         private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Owner => SceneManager.ActiveScenes[^1];
+        
         public NetworkSystem()
         {
             ReceiveQueue.Start(Receive);
@@ -36,12 +36,18 @@ namespace PixelGlueCore.ECS.Systems
                     ConnectionState = ConnectionState.Authenticating;
                     Socket.Send(MsgLogin.Create("Test", "pw" + PixelGlue.Random.Next(0, 1000)));
                     break;
+                case ConnectionState.Authenticating:
                 case ConnectionState.Authenticated:
                     SyncObjects();
                     break;
             }
         }
         public void Update(double deltaTime)
+        {
+
+        }
+
+        private void SyncObjects()
         {
             while (PendingPackets.TryDequeue(out var packet))
                 PacketHandler.Handle(packet);
@@ -50,36 +56,25 @@ namespace PixelGlueCore.ECS.Systems
                 Socket.Send(packet);
         }
 
-        private void SyncObjects()
-        {
-            //foreach (var scene in SceneManager.ActiveScenes)
-            //    foreach (var kvp in scene.Entities)
-            //    {
-            //        if (!scene.TryGetComponent<Networked>(kvp.Key,out var networked))
-            //            continue;
-        //
-            //    }
-        }
-
         private void Connect(string ip, ushort port)
         {
             if (ConnectionState != ConnectionState.NotConnected)
                 return;
             ConnectionState = ConnectionState.Connecting;
-            FConsole.WriteLine("Connecting to Server...");
+            FConsole.WriteLine("[NetworkSystem] Connecting to Server...");
             Socket.ConnectAsync(ip, port);
         }
 
         private void Connected()
         {
             ConnectionState = ConnectionState.Connected;
-            FConsole.WriteLine("[Player][Net] CONNECTED! :D");
+            FConsole.WriteLine("[NetworkSystem] CONNECTED! :D");
         }
 
         private void Disconnected()
         {
             ConnectionState = ConnectionState.NotConnected;
-            FConsole.WriteLine("[Player][Net] DISCONNECTED! Reconnecting...");
+            FConsole.WriteLine("[NetworkSystem] DISCONNECTED! Reconnecting...");
         }
         public static void Send(byte[] packet) => PendingSends.Enqueue(packet);
         private void Receive(ClientSocket client, byte[] packet) => PendingPackets.Enqueue(packet);

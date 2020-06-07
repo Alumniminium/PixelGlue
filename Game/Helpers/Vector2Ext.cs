@@ -30,7 +30,7 @@ namespace PixelGlueCore.Helpers
             else
                 delta.Y = 0;
 
-            FConsole.WriteLine($"Pos: {floor+delta}");
+            //FConsole.WriteLine($"Pos: {floor+delta}");
             return floor+delta;
         }
     }

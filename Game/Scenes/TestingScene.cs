@@ -38,17 +38,17 @@ namespace PixelGlueCore.Scenes
         public override void Draw(Scene scene, SpriteBatch sb)
         {
             base.Draw(this, sb);
-            sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
+            //sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
 
-            if(TryGetComponent<InputComponent>(out var input))
-            {
-                var pos = Camera.ScreenToWorld(input.Mouse.Position.ToVector2());
-                RedSquare.RenderRect.X = (int)pos.X;
-                RedSquare.RenderRect.Y=(int)pos.Y;
-                sb.Draw(RedSquare.Texture,RedSquare.RenderRect,RedSquare.SourceRect,Color.White,0,Vector2.Zero,SpriteEffects.None, 0f);
-            }
+            //if(input.PixelOwnerId != 0)
+            //{
+            //    var pos = Camera.ScreenToWorld(input.Mouse.Position.ToVector2());
+            //    RedSquare.RenderRect.X = (int)pos.X;
+            //    RedSquare.RenderRect.Y=(int)pos.Y;
+            //    sb.Draw(RedSquare.Texture,RedSquare.RenderRect,RedSquare.SourceRect,Color.White,0,Vector2.Zero,SpriteEffects.None, 0f);
+            //}
 
-            sb.End();
+            //sb.End();
         }
     }
 }

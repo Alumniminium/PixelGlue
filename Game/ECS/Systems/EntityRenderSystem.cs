@@ -12,7 +12,7 @@ namespace PixelGlueCore.ECS.Systems
         public string Name { get; set; } = "Entity Rendering System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-
+        
         public void Update(double timeSinceLastFrame)
         {
         }
@@ -28,17 +28,18 @@ namespace PixelGlueCore.ECS.Systems
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 1, scene.Camera);
             foreach (var kvp in scene.Entities)
             {
-                if (!scene.TryGetDrawableComponent(kvp.Key, out var drawable))
+                if(!kvp.Value.HasDrawableComponent() || !kvp.Value.HasPositionComponent())
                     continue;
-                if (!scene.TryGetComponent<PositionComponent>(kvp.Key, out var pos))
-                    continue;
+
+                ref var pos = ref scene.GetPositionComponentRef(kvp.Key);
+                ref var drawable = ref scene.GetDrawableComponentRef(kvp.Key);
 
                 if (pos.Position.X < scene.Camera.ScreenRect.Left - overdraw || pos.Position.X > scene.Camera.ScreenRect.Right + overdraw)
                     continue;
                 if (pos.Position.Y < scene.Camera.ScreenRect.Top - overdraw || pos.Position.Y > scene.Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position.DrawablePosition(), drawable.SrcRect, Color.White, 0f, Vector2.Zero,Vector2.One, SpriteEffects.None, 0f);
+                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f, Vector2.Zero,Vector2.One, SpriteEffects.None, 0f);
                 renderedObjectsCounter++;
             }
             if(scene.Map?.Layers?.Count >= 2)

@@ -3,17 +3,26 @@ using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
-    public class DrawableComponent
+    public struct DrawableComponent
     {
-        public string TextureName { get; set; }
-        public Rectangle SrcRect { get; set; }
-        public int PixelOwnerId { get; set; }
+        public string TextureName ;
+        public Rectangle SrcRect;
+        public Rectangle DestRect;
+        public int UniqueId;
 
         public DrawableComponent(int ownerId, string textureName, Rectangle srcRect)
         {
-            PixelOwnerId = ownerId;
+            UniqueId = ownerId;
             TextureName = textureName;
             SrcRect = srcRect;
+            DestRect = Rectangle.Empty;
+        }
+        public DrawableComponent(int ownerId, string textureName, Rectangle srcRect, Rectangle destRect)
+        {
+            UniqueId = ownerId;
+            TextureName = textureName;
+            SrcRect = srcRect;
+            DestRect =destRect;
         }
     }
 }
