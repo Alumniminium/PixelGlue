@@ -19,6 +19,7 @@ namespace PixelGlueCore.ECS
         public ConcurrentDictionary<int, List<IEntityComponent>> Components;
         public List<IEntitySystem> Systems;
         public List<IEntitySystem> UISystems;
+        public List<DrawableComponent> Drawables;
         public Camera Camera;
         public TmxMap Map;
 
@@ -28,6 +29,7 @@ namespace PixelGlueCore.ECS
             Entities = new ConcurrentDictionary<int, PixelEntity>();
             Systems = new List<IEntitySystem>();
             UISystems = new List<IEntitySystem>();
+            Drawables = new List<DrawableComponent>();
         }
 
         public virtual void Initialize()
@@ -96,26 +98,30 @@ namespace PixelGlueCore.ECS
             entity.UniqueId = uniqueId;
             Entities.TryAdd(entity.UniqueId, entity);
             foreach (var component in components)
-                AddComponent(uniqueId, component);
-            AddComponent(uniqueId,new DbgBoundingBoxComponent(uniqueId));
+            {
+                component.PixelOwnerId=uniqueId;
+                AddComponent(component);
+            }
+            AddComponent(new DbgBoundingBoxComponent(uniqueId));
             return entity;
         }
 
         internal void Destroy(PixelEntity entity)
         {
             Entities.TryRemove(entity.UniqueId, out _);
-            Components.TryRemove(entity.UniqueId,out _);
+            Components.TryRemove(entity.UniqueId, out _);
         }
 
-        public void AddComponent(int ownerId, IEntityComponent component)
+        public void AddComponent(IEntityComponent component)
         {
-            if (!Components.TryGetValue(ownerId, out var owned))
+            if (!Components.TryGetValue(component.PixelOwnerId, out var owned))
             {
                 owned = new List<IEntityComponent>();
-                Components.TryAdd(ownerId, owned);
+                Components.TryAdd(component.PixelOwnerId, owned);
             }
             owned.Add(component);
         }
+        public void AddDrawable(DrawableComponent component) => Drawables.Add(component);
         public bool TryGetComponent<T>(int ownerId, out T component) where T : IEntityComponent
         {
             component = default;
@@ -125,9 +131,22 @@ namespace PixelGlueCore.ECS
 
             foreach (var comp in owned)
             {
-                if (comp is T)
+                if (comp is T t)
                 {
-                    component = (T)comp;
+                    component = t;
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool TryGetDrawableComponent(int ownerId, out DrawableComponent component)
+        {
+            component = default;
+            for (int i = 0; i < Drawables.Count; i++)
+            {
+                if (Drawables[i].PixelOwnerId == ownerId)
+                {
+                    component = Drawables[i];
                     return true;
                 }
             }
@@ -153,15 +172,15 @@ namespace PixelGlueCore.ECS
 
         internal T GetSystem<T>()
         {
-            foreach(var sys in Systems)
-                if(sys is T)
+            foreach (var sys in Systems)
+                if (sys is T)
                     return (T)sys;
             return default(T);
         }
         internal T GetUISystem<T>()
         {
-            foreach(var sys in UISystems)
-                if(sys is T)
+            foreach (var sys in UISystems)
+                if (sys is T)
                     return (T)sys;
             return default(T);
         }
@@ -187,7 +206,7 @@ namespace PixelGlueCore.ECS
             return null;
         }
 
-        public override int GetHashCode() =>Id;
+        public override int GetHashCode() => Id;
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }
 }

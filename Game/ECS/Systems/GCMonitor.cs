@@ -24,7 +24,7 @@ namespace PixelGlueCore.ECS.Systems
 
                 if (newVal != oldVal)
                 {
-                    FConsole.WriteLine($"GC: Gen0: {GenCollections[0].ToString("000")}, Gen1: {GenCollections[1].ToString("000")}, Gen2: {GenCollections[2].ToString("000")}");
+                    FConsole.WriteLine($"GC: Gen0: {GenCollections[0]:000}, Gen1: {GenCollections[1]:000}, Gen2: {GenCollections[2]:000}");
                     GenCollections[i] = newVal;
                 }
             }

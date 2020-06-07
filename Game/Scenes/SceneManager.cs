@@ -31,7 +31,7 @@ namespace PixelGlueCore.Scenes
                 ActiveScenes.Add(scene);
                 scene.IsActive = true;
             });
-        }        
+        }
         public static void DeactivateScene<T>() where T:Scene
         {
             QueuedTasks.Enqueue(() =>

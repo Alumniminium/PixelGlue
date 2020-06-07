@@ -72,7 +72,7 @@ namespace Server
                         var ms = delta / 10000;
                         msgPing.Ping = (short)ms;
                         socket.Send(msgPing);
-                        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Received Ping from {socket.Socket.RemoteEndPoint.ToString()} - {ms}ms.");
+                        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Received Ping from {socket.Socket.RemoteEndPoint} - {ms}ms.");
                         break;
                     }
             }

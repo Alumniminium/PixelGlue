@@ -18,20 +18,18 @@ namespace PixelGlueCore.Scenes
             Camera = new Camera();
             Entities.TryAdd(0, (Camera)Camera);
 
-            CreateEntity<Player>(1,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16)),new CameraFollowTagComponent(1,1),new Networked(1));
+            //var entity = CreateEntity<Player>(1,new PositionComponent(1,256,256,0), new InputComponent(),new MoveComponent(1,64, 256, 256),new CameraFollowTagComponent(1,1),new Networked(1));
+            //var drawabel = new DrawableComponent(1,"character.png", new Rectangle(0, 2, 16, 16));
+
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)
-        {            
+        {
             Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/indoorstest.tmx",cm);
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt",cm);
             base.LoadContent(cm);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
         public override void Draw(Scene scene, SpriteBatch sb)
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
@@ -44,7 +42,7 @@ namespace PixelGlueCore.Scenes
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 1, Camera);
             foreach (var kvp in Entities)
             {
-                if (!TryGetComponent<DrawableComponent>(kvp.Key,out var drawable))
+                if (!TryGetDrawableComponent(kvp.Key,out var drawable))
                     continue;
                 if (!TryGetComponent<PositionComponent>(kvp.Key,out var pos))
                     continue;
@@ -60,7 +58,7 @@ namespace PixelGlueCore.Scenes
             //renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);
 
             sb.End();
-            
+
             base.Draw(this,sb);
         }
     }

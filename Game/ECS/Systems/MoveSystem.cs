@@ -13,16 +13,16 @@ namespace PixelGlueCore.ECS.Systems
 
         public void Update(double deltaTime)
         {
-            //ThreadPool.UnsafeQueueUserWorkItem((o) =>
-            //{
-            foreach (var scene in SceneManager.ActiveScenes)
+            for (int i = 0; i < SceneManager.ActiveScenes.Count; i++)
+            {
+                var scene = SceneManager.ActiveScenes[i];
                 foreach (var kvp in scene.Entities)
                 {
-                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key,out var movable))
+                    if (!scene.TryGetComponent<MoveComponent>(kvp.Key, out var movable))
                         continue;
                     if (movable.Destination == Vector2.Zero)
                         continue;
-                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key,out var position))
+                    if (!scene.TryGetComponent<PositionComponent>(kvp.Key, out var position))
                         continue;
                     if (movable.Destination != position.Position)
                     {
@@ -42,7 +42,7 @@ namespace PixelGlueCore.ECS.Systems
                                 velocity.Y -= (float)(movable.Speed * deltaTime);
                             if (velocity.X != 0 && velocity.Y != 0) // we're moving diagnonally
                                 velocity = velocity * 0.707f; // divide by sqrt of 0.5 to fix velocity
-                            position.Position = position.Position + velocity;
+                            position.Position = position.Position + (velocity * movable.SpeedMulti);
                         }
                         else
                         {
@@ -53,7 +53,7 @@ namespace PixelGlueCore.ECS.Systems
                     else
                         movable.Moving = false;
                 }
-            //},null);
+            }
         }
     }
 }

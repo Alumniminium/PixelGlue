@@ -60,6 +60,5 @@ namespace TerribleSockets.Monitoring
                     BytesSent += (ulong)size; break;
             }
         }
-
     }
 }

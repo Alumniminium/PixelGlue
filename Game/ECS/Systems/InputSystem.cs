@@ -18,6 +18,7 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
+            {
                 foreach (var kvp in scene.Entities)
                 {
                     if (!scene.TryGetComponent<InputComponent>(kvp.Key, out var inputComponent))
@@ -32,97 +33,96 @@ namespace PixelGlueCore.ECS.Systems
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
                     inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
-
-                    if (inputComponent.Mouse.ScrollWheelValue > inputComponent.ScrollWheelValue)
-                        camera.Zoom = camera.Zoom * 2;
-                    else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.ScrollWheelValue)
-                        camera.Zoom = camera.Zoom / 2;
-
-                    inputComponent.ScrollWheelValue = inputComponent.Mouse.ScrollWheelValue;
-
-
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.Left))
-                        positionComponent.Rotation -= 0.1f;
-                    if (inputComponent.Keyboard.IsKeyDown(Keys.Right))
-                        positionComponent.Rotation += 0.1f;
-
-
-                    var currentKeys = inputComponent.Keyboard.GetPressedKeys();
-                    var lastKeys = inputComponent.OldKeys;
-                    var destination = positionComponent.Position;
                     
-                    for (int i = 0; i < currentKeys.Length; i++)
-                    {
-                        var key = currentKeys[i];
-                        if (UserKeybinds.KeybindsToGeneric.TryGetValue(key, out var pixelButton))
-                        {
-                            switch (pixelButton)
-                            {
-                                case PixelGlueButtons.Up:
-                                    if (!moveComponent.Moving)
-                                        destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
-                                    break;
-                                case PixelGlueButtons.Down:
-                                    if (!moveComponent.Moving)
-                                        destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
-                                    break;
-                                case PixelGlueButtons.Left:
-                                    if (!moveComponent.Moving)
-                                        destination.X =positionComponent.Position.X - scene.Map.TileWidth;
-                                    break;
-                                case PixelGlueButtons.Right:
-                                    if (!moveComponent.Moving)
-                                        destination.X = positionComponent.Position.X + scene.Map.TileWidth;
-                                    break;
+                    Scrolling(inputComponent, camera);
+                    Rotating(inputComponent, positionComponent);
 
-                            }
-                        }
+                    var destination = positionComponent.Position;
+
+                    if (KeyDown(inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
+                        destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
+                    if (KeyDown(inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
+                        destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
+                    if (KeyDown(inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
+                        destination.X = positionComponent.Position.X - scene.Map.TileWidth;
+                    if (KeyDown(inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
+                        destination.X = positionComponent.Position.X + scene.Map.TileWidth;
+                    if (KeyDown(inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
+                        moveComponent.SpeedMulti = 2.5f;
+                    if (KeyUp(inputComponent, PixelGlueButtons.Sprint))
+                        moveComponent.SpeedMulti = 1;
+                    if (Pressed(inputComponent, PixelGlueButtons.EscapeMenu))
+                        Environment.Exit(0);
+                    if (Pressed(inputComponent, PixelGlueButtons.DbgProfiling))
+                        PixelGlue.Profiling = !PixelGlue.Profiling;
+                    if (Pressed(inputComponent, PixelGlueButtons.DbgSwitchScene))
+                        SwitchScene();
+                    if (Pressed(inputComponent, PixelGlueButtons.DbgProfiling))
+                        OpenDialog(scene);
+                    if (Pressed(inputComponent, PixelGlueButtons.DbgBoundingBoxes))
+                    {
+                        var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
+                        system.IsActive = !system.IsActive;
                     }
 
                     if (destination != positionComponent.Position)
                         moveComponent.Destination = destination;
 
-                    for (int i = 0; i < currentKeys.Length; i++)
-                    {
-                        var key = currentKeys[i];
-                        for (int j = 0; j < lastKeys?.Length; j++)
-                        {
-                            if (lastKeys[j] == key)
-                                return;
-                        }
-
-                        if (UserKeybinds.KeybindsToGeneric.TryGetValue(key, out var pixelButton))
-                        {
-                            switch (pixelButton)
-                            {
-                                case PixelGlueButtons.EscapeMenu:
-                                    Environment.Exit(0);
-                                    break;
-                                case PixelGlueButtons.DbgProfiling:
-                                    PixelGlue.Profiling = !PixelGlue.Profiling;
-                                    break;
-                                case PixelGlueButtons.DbgSwitchScene:
-                                    SwitchScene();
-                                    break;
-                                case PixelGlueButtons.DbgOpenDialog:
-                                    OpenDialog(scene);
-                                    break;
-                                case PixelGlueButtons.DbgBoundingBoxes:
-                                    var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
-                                    system.IsActive = !system.IsActive;
-                                break;
-
-                            }
-                        }
-                    }
                     inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
                 }
+            }
+        }
+
+        private static void Rotating(InputComponent inputComponent, PositionComponent positionComponent)
+        {
+            if (inputComponent.Keyboard.IsKeyDown(Keys.Left))
+                positionComponent.Rotation -= 0.1f;
+            if (inputComponent.Keyboard.IsKeyDown(Keys.Right))
+                positionComponent.Rotation += 0.1f;
+        }
+
+        private static void Scrolling(InputComponent inputComponent, CameraFollowTagComponent camera)
+        {
+            if (inputComponent.Mouse.ScrollWheelValue > inputComponent.ScrollWheelValue)
+                camera.Zoom *= 2;
+            else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.ScrollWheelValue)
+                camera.Zoom /= 2;
+
+            inputComponent.ScrollWheelValue = inputComponent.Mouse.ScrollWheelValue;
+        }
+
+        public bool KeyDown(InputComponent component, PixelGlueButtons key)
+        {
+            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
+                return component.Keyboard.IsKeyDown(realKey.defaultBind) || component.Keyboard.IsKeyDown(realKey.userBind);
+            return false;
+        }
+        public bool KeyUp(InputComponent component, PixelGlueButtons key)
+        {
+            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
+                return component.Keyboard.IsKeyUp(realKey.defaultBind) || component.Keyboard.IsKeyUp(realKey.userBind);
+            return false;
+        }
+        public bool Pressed(InputComponent component, PixelGlueButtons key)
+        {
+            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
+            {
+                for (int i = 0; i < component.OldKeys?.Length; i++)
+                {
+                    if (component.OldKeys[i] == realKey.defaultBind || component.OldKeys[i] == realKey.userBind)
+                        return false;
+                }
+                return component.Keyboard.IsKeyDown(realKey.userBind) ||component.Keyboard.IsKeyDown(realKey.defaultBind);
+            }
+            return false;
         }
 
         private static void SwitchScene()
         {
-            var testScene2 = new TestingScene2();
-            testScene2.Id = 2;
+            var testScene2 = new TestingScene2
+            {
+                Id = 2
+            };
             testScene2.Systems.Add(new MoveSystem());
             testScene2.Systems.Add(new CameraSystem());
             SceneManager.ActivateScene(testScene2);
@@ -132,7 +132,7 @@ namespace PixelGlueCore.ECS.Systems
         private static void OpenDialog(Scene scene)
         {
             var player = scene.Find<Player>();
-            scene.AddComponent(player.UniqueId, new DialogComponent(player.UniqueId, 1));
+            scene.AddComponent(new DialogComponent(player.UniqueId, 1));
         }
     }
 }

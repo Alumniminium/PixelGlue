@@ -4,7 +4,7 @@ namespace PixelGlueCore.ECS.Components
 {
     public class DbgBoundingBoxComponent: IEntityComponent
     {
-        public const string TextureName = "selectionrect4x4";
+        public const string TextureName = "selectionrect3";
         public static readonly Rectangle SrcRect = new Rectangle(0,0,32,32);
         public int PixelOwnerId { get; set; }
 

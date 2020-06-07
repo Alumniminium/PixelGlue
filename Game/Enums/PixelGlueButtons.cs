@@ -15,5 +15,6 @@ namespace PixelGlueCore.Enums
         ConsoleToggle,
         DbgProfiling,
         DbgBoundingBoxes,
+        Sprint,
     }
 }

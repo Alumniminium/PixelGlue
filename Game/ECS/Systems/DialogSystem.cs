@@ -14,13 +14,14 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
+            {
                 foreach (var kvp in scene.Entities)
                 {
                     if (!scene.TryGetComponent<DialogComponent>(kvp.Key,out var dialog))
                         continue;
                     if(!dialog.UpdateRequired)
                         return;
-                    
+
                     var player = scene.Find<Player>();
                     dialog.UpdateRequired=false;
 
@@ -34,8 +35,8 @@ namespace PixelGlueCore.ECS.Systems
                         case 1:
                         {
                             switch(dialog.Stage)
-                            {                                
-                                case 0:
+                                {
+                                    case 0:
                                 {
                                     FConsole.WriteLine("*dialog opens*");
                                     dialog.Stage++;
@@ -51,6 +52,7 @@ namespace PixelGlueCore.ECS.Systems
                         }
                     }
                 }
+            }
         }
     }
 }
