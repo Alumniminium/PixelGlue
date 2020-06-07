@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.ECS.Systems;
 using System.Collections.Generic;
 using TiledSharp;
-using System;
 using PixelGlueCore.ECS.Components;
 using System.Collections.Concurrent;
 
