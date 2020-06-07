@@ -9,11 +9,6 @@ namespace TerribleSockets
         public int BytesInBuffer, BytesRequired, BytesProcessed;
         public byte[] MergeBuffer { get; set; }
 
-        public Span<byte> GetSpan(int index)
-        {
-            return Span<byte>.Empty;
-        }
-
         public NeutralBuffer(int receiveBufferSize = 300, int sendBufferSize = 300)
         {
             ReceiveBuffer = new byte[receiveBufferSize];

@@ -21,7 +21,7 @@ namespace PixelGlueCore.World
             var tileSize = 0;
             foreach (var header in contents)
             {
-                var name = header.Key.Substring(1, header.Key.Length - 2);
+                var name = header.Key[1..^1];
                 if (name == "Atlas")
                 {
                     textureName = header.Value["Name"];
@@ -37,9 +37,8 @@ namespace PixelGlueCore.World
                         int x = int.Parse(xy[0]);
                         int y = int.Parse(xy[1]);
 
-                        var srcRect = new Rectangle(x, y, tileSize, tileSize);
                         var id = int.Parse(header.Value["Id"]);
-                        var entity = new BaseEntity(id, name, x, y, tileSize, tileSize, textureName); ;
+                        var entity = new BaseEntity(id, name, x, y, tileSize, tileSize, textureName);
                         Entities.TryAdd(entity.Id, entity);
                     }
                 }

@@ -6,7 +6,6 @@ namespace PixelGlueCore.Entities
     {
         public int UniqueId = 0;
         //public PixelEntity() => UniqueId = Helpers.UniqueIdGen.GetNextUID();
-        
         public override string ToString()
         {
             var ret = string.Empty;

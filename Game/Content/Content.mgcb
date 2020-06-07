@@ -61,6 +61,30 @@
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/emoji_1.png;emoji_1.png
 
+#begin ../../Build/Content/full_tileset_dirt_rd.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/full_tileset_dirt_rd.png;full_dirt_rd.png
+
+#begin ../../Build/Content/grassy2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/grassy2.png;grass.png
+
 #begin ../../Build/Content/profont_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -84,6 +108,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/profontwindows_0.png;profontwindows_0.png
+
+#begin ../../Build/Content/selectionrect3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/selectionrect3.png;selectionrect3.png
+
+#begin ../../Build/Content/selectionrect4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/selectionrect4.png;selectionrect4.png
 
 #begin ../../Build/Content/selectionrect4x4.png
 /importer:TextureImporter

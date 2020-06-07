@@ -18,6 +18,7 @@ namespace PixelGlueCore.Configuration
             [PixelGlueButtons.EscapeMenu] = (Keys.Escape, Keys.Escape),
             [PixelGlueButtons.ConsoleToggle] = (Keys.OemTilde, Keys.OemTilde),
             [PixelGlueButtons.DbgBoundingBoxes] = (Keys.B, Keys.Back),
+            [PixelGlueButtons.Sprint] = (Keys.LeftShift, Keys.LeftShift),
         };
         public static Dictionary<Keys, PixelGlueButtons> KeybindsToGeneric = new Dictionary<Keys, PixelGlueButtons>
         {

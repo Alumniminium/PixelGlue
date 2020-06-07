@@ -15,7 +15,6 @@ namespace PixelGlueCore.ECS.Systems
 
         public void Update(double timeSinceLastFrame)
         {
-
         }
         public void Draw(Scene scene, SpriteBatch sb)
         {
@@ -29,7 +28,7 @@ namespace PixelGlueCore.ECS.Systems
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 1, scene.Camera);
             foreach (var kvp in scene.Entities)
             {
-                if (!scene.TryGetComponent<DrawableComponent>(kvp.Key, out var drawable))
+                if (!scene.TryGetDrawableComponent(kvp.Key, out var drawable))
                     continue;
                 if (!scene.TryGetComponent<PositionComponent>(kvp.Key, out var pos))
                     continue;
@@ -42,8 +41,8 @@ namespace PixelGlueCore.ECS.Systems
                 sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position.DrawablePosition(), drawable.SrcRect, Color.White, 0f, Vector2.Zero,Vector2.One, SpriteEffects.None, 0f);
                 renderedObjectsCounter++;
             }
+            if(scene.Map?.Layers?.Count >= 2)
             renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 2, scene.Camera);
-
         }
     }
 }

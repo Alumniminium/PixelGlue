@@ -19,28 +19,25 @@ namespace PixelGlueCore.Scenes
         public override void Initialize()
         {
             Camera = new Camera();
-            Entities.TryAdd(0, (Camera)Camera);
+            Entities.TryAdd(0, Camera);
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
-            UISystems.Add(new SmartFramerate(4));
             Systems.Add(new EntityRenderSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem());
+            UISystems.Add(new SmartFramerate(4));
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)
-        {            
+        {
             Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/island.tmx",cm);
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt",cm);
-            AssetManager.LoadTexture("selectionrect4x4",cm);
+            AssetManager.LoadTexture("selectionrect3",cm);
             base.LoadContent(cm);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
         public override void Draw(Scene scene, SpriteBatch sb)
         {
+            base.Draw(this, sb);
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
 
             if(TryGetComponent<InputComponent>(out var input))
@@ -50,9 +47,8 @@ namespace PixelGlueCore.Scenes
                 RedSquare.RenderRect.Y=(int)pos.Y;
                 sb.Draw(RedSquare.Texture,RedSquare.RenderRect,RedSquare.SourceRect,Color.White,0,Vector2.Zero,SpriteEffects.None, 0f);
             }
-            
+
             sb.End();
-            base.Draw(this, sb);
         }
     }
 }

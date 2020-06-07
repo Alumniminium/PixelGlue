@@ -15,16 +15,13 @@ namespace PixelGlueCore.ECS.Systems
         }
         public void Update(double deltaTime)
         {
-
         }
         public void FixedUpdate(double deltaTime)
         {
-
         }
 
         public void Draw(Scene scene,SpriteBatch spriteBatch)
         {
-            
         }
     }
 }

@@ -12,13 +12,13 @@ namespace PixelGlueCore.ECS.Systems
     public class NetworkSystem : IEntitySystem
     {
         public string Name { get; set; } = "Network System";
-        private static ClientSocket Socket { get; set; } = new ClientSocket(null);
+        private static ClientSocket Socket { get; } = new ClientSocket(null);
         public static ConnectionState ConnectionState { get; set; } = ConnectionState.NotConnected;
-        private static ConcurrentQueue<byte[]> PendingPackets { get; set; } = new ConcurrentQueue<byte[]>();
-        private static ConcurrentQueue<byte[]> PendingSends { get; set; } = new ConcurrentQueue<byte[]>();
+        private static ConcurrentQueue<byte[]> PendingPackets { get; } = new ConcurrentQueue<byte[]>();
+        private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Owner => SceneManager.ActiveScenes[SceneManager.ActiveScenes.Count-1];
+        public Scene Owner => SceneManager.ActiveScenes[^1];
         public NetworkSystem()
         {
             ReceiveQueue.Start(Receive);
@@ -30,7 +30,7 @@ namespace PixelGlueCore.ECS.Systems
             switch (ConnectionState)
             {
                 case ConnectionState.NotConnected:
-                    ConnectAsync("127.0.0.1", 13338);
+                    Connect("127.0.0.1", 13338);
                     return;
                 case ConnectionState.Connected:
                     ConnectionState = ConnectionState.Authenticating;
@@ -52,16 +52,16 @@ namespace PixelGlueCore.ECS.Systems
 
         private void SyncObjects()
         {
-            foreach (var scene in SceneManager.ActiveScenes)
-                foreach (var kvp in scene.Entities)
-                {
-                    if (!scene.TryGetComponent<Networked>(kvp.Key,out var networked))
-                        continue;
-        
-                }
+            //foreach (var scene in SceneManager.ActiveScenes)
+            //    foreach (var kvp in scene.Entities)
+            //    {
+            //        if (!scene.TryGetComponent<Networked>(kvp.Key,out var networked))
+            //            continue;
+        //
+            //    }
         }
 
-        private void ConnectAsync(string ip, ushort port)
+        private void Connect(string ip, ushort port)
         {
             if (ConnectionState != ConnectionState.NotConnected)
                 return;

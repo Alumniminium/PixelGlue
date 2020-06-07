@@ -37,14 +37,13 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int column = tileFrame % tilesetTilesWide;
                     int row = (int)Math.Floor(tileFrame / (double)tilesetTilesWide);
 
-                    int x = (i % map.Width);
+                    int x = i % map.Width;
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                    map.TileArray[c][y * map.Width + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec);
+                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec);
                 }
             }
-            map.Layers = null;
             map.ImageLayers=null;
             map.TileLayers=null;
             return map;
@@ -59,7 +58,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
             {
                 for (int y = cam.ScreenRect.Top - overdraw; y < cam.ScreenRect.Bottom + overdraw; y += map.TileHeight)
                 {
-                    var index = y / map.TileWidth * map.Width + x / map.TileHeight;
+                    var index = (y / map.TileWidth * map.Width) + (x / map.TileHeight);
                     if (index >= map.TileArray[l].Length || index < 0)
                         continue;
 

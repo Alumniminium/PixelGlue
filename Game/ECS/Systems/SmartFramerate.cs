@@ -7,15 +7,14 @@ namespace PixelGlueCore.ECS.Systems
     public class SmartFramerate : IEntitySystem
     {
         public string Name { get; set; } = "Update Rate Monitoring System";
-        public bool IsActive  { get; set; } 
-        public bool IsReady { get; set; } 
+        public bool IsActive  { get; set; }
+        public bool IsReady { get; set; }
 
-        double currentFrametimes;
-        double weight;
-        int numerator;
-        int counter;
-
+        private double currentFrametimes;
+        private int counter;
         public double updateRate;
+        private readonly double weight;
+        private readonly int numerator;
 
         public SmartFramerate(int oldFrameWeight)
         {
@@ -26,16 +25,16 @@ namespace PixelGlueCore.ECS.Systems
         public void Update(double timeSinceLastFrame)
         {
             counter++;
-            currentFrametimes = currentFrametimes / weight;
+            currentFrametimes /= weight;
             currentFrametimes += timeSinceLastFrame;
             if (counter == 200)
             {
-                updateRate = (numerator / currentFrametimes);
+                updateRate = numerator / currentFrametimes;
                 counter = 0;
             }
         }
         public void Draw(Scene scene, SpriteBatch sb)
-        { 
+        {
             AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Objects: {(scene.Map.TileArray[0].Length * scene.Map.TileArray.Length) + scene.Entities.Count + scene.Components.Values.Sum(p=>p.Count)})", new Vector2(16, 16), sb);
             AssetManager.Fonts["profont"].Draw($"Position: {scene.Camera.ScreenRect.X},{scene.Camera.ScreenRect.Y}", new Vector2(16, 164), sb);
             AssetManager.Fonts["profont"].Draw("FPS: " + updateRate.ToString("##0.00"), new Vector2(16, 64), sb);

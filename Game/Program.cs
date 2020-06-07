@@ -27,11 +27,9 @@ namespace PixelGlueCore
             var globalScene = new Scene();
             globalScene.Id=0;
             globalScene.Systems.Add(new InputSystem());
-            globalScene.UISystems.Add(new GCMonitor());
-            globalScene.UISystems.Add(new SmartFramerate(4));
             globalScene.Systems.Add(new NetworkSystem());
             globalScene.Systems.Add(new DialogSystem());
-
+            globalScene.UISystems.Add(new GCMonitor());
 
             SceneManager.Initialize(engine.Content);
             SceneManager.ActivateScene(globalScene);

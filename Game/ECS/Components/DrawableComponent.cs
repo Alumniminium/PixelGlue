@@ -3,7 +3,7 @@ using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
-    public class DrawableComponent: IEntityComponent
+    public class DrawableComponent
     {
         public string TextureName { get; set; }
         public Rectangle SrcRect { get; set; }
@@ -15,5 +15,5 @@ namespace PixelGlueCore.ECS.Components
             TextureName = textureName;
             SrcRect = srcRect;
         }
-    }    
+    }
 }

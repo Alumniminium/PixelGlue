@@ -6,6 +6,7 @@ namespace PixelGlueCore.ECS.Components
     public class MoveComponent: IEntityComponent
     {
         public float Speed { get; set; }
+        public float SpeedMulti { get; set; }
         public bool Moving { get; set; }
         public Vector2 Destination { get; set; }
         public int PixelOwnerId { get; set; }
@@ -14,6 +15,7 @@ namespace PixelGlueCore.ECS.Components
         {
             PixelOwnerId = ownerId;
             Speed = speed;
+            SpeedMulti=1;
             Moving = false;
             Destination = new Vector2(destX, destY);
         }
@@ -21,6 +23,7 @@ namespace PixelGlueCore.ECS.Components
         {
             PixelOwnerId=ownerId;
             Speed = speed;
+            SpeedMulti=1;
             Moving = false;
             Destination = Vector2.Zero;
         }
