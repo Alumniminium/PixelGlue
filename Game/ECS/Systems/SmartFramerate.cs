@@ -21,8 +21,8 @@ namespace PixelGlueCore.ECS.Systems
             numerator = oldFrameWeight;
             weight = (double)oldFrameWeight / ((double)oldFrameWeight - 1d);
         }
-
-        public void Update(double timeSinceLastFrame)
+        public void FixedUpdate(float _){}
+        public void Update(float timeSinceLastFrame)
         {
             counter++;
             currentFrametimes /= weight;

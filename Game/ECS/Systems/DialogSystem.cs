@@ -11,7 +11,11 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
-        public void Update(double deltaTime)
+        public void FixedUpdate(float deltaTime)
+        {
+        }
+
+        public void Update(float deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
             {

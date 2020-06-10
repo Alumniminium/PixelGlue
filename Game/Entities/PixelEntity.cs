@@ -1,37 +1,73 @@
 using System;
-using System.Collections;
 using System.Runtime.CompilerServices;
 using PixelGlueCore.ECS;
 using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.Entities
 {
+    public class ComponentCollection
+    {
+        public ComponentList<DrawableComponent> DrawableComponents;
+        public ComponentList<PositionComponent> PositionComponents;
+        public ComponentList<InputComponent> InputComponents;
+        public ComponentList<Networked> Networkeds;
+        public ComponentList<CameraFollowTagComponent> CameraFollowTags;
+        public ComponentList<MoveComponent> MoveComponents;
+        public ComponentList<DbgBoundingBoxComponent> DbgBoundingBoxComponents;
+
+        public ComponentCollection()
+        {
+            DrawableComponents = new ComponentList<DrawableComponent>(0);
+            PositionComponents = new ComponentList<PositionComponent>(0);
+            DbgBoundingBoxComponents = new ComponentList<DbgBoundingBoxComponent>(0);
+            MoveComponents = new ComponentList<MoveComponent>(0);
+            Networkeds = new ComponentList<Networked>(0);
+            InputComponents = new ComponentList<InputComponent>(0);
+            CameraFollowTags = new ComponentList<CameraFollowTagComponent>(0);
+        }
+    }
     public class ComponentList<T>
     {
-        public T[] items;
-        public int Count => items.Length;
-        public int current=-1;
+        private T[] _items;
+        public int Count => _items.Length;
+        private int _curIndex;
+
+        public ComponentList(int size)
+        {
+            _items = new T[size];
+        }
 
         public ref T this[int index]
         {
             get
             {
-                if (items.Length >= index)
-                    return ref items[index];
-                throw new IndexOutOfRangeException($"Only have {items.Length} but you wanted {index}");
+                if (_items.Length >= index)
+                    return ref _items[index];
+                throw new IndexOutOfRangeException($"Only have {_items.Length} but you wanted {index}");
             }
         }
 
         public void Add(T val)
         {
-            if(items.Length > current)
-            {
-                items[current] = val;
-            }
-            else
-            throw new IndexOutOfRangeException("Fuck");
+            if(_items.Length == _curIndex)
+                Grow();
+            
+            _items[_curIndex] = val;
+            _curIndex++;
         }
-        public void Clear() => items = new T[0];
+        public void Clear()
+        {
+            _items = new T[1];
+            _curIndex=0;
+        }
+        private void Grow()
+        {
+            var newCount = Count+1;
+            var newItems = new T[newCount];
+            for (int i = 0; i < Count;i++)
+                newItems[i] = _items[i];
+            _items=newItems;
+        }
     }
     public class PixelEntity
     {
@@ -45,71 +81,22 @@ namespace PixelGlueCore.Entities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public bool HasInputComponent() => Components.InputComponentsCount > 0;
+        public bool HasInputComponent() => Components.InputComponents.Count > 0;
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public bool HasDrawableComponent() => Components.DrawablesCount > 0;
+        public bool HasDrawableComponent() => Components.DrawableComponents.Count > 0;
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public bool HasMoveComponent() => Components.MovesCount > 0;
+        public bool HasMoveComponent() => Components.MoveComponents.Count > 0;
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public bool HasPositionComponent() => Components.PositionsCount > 0;
+        public bool HasPositionComponent() => Components.PositionComponents.Count > 0;
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public bool HasCameraFollowTagComponent() => Components.CameraFollowTagsCount > 0;
-
-
-        public void AddDrawable(DrawableComponent component)
-        {
-            if (Components.DrawableComponents.Length == 0)
-                Components.DrawableComponents = new DrawableComponent[1];
-            Components.DrawableComponents[Components.DrawablesCount] = component;
-            Components.DrawablesCount++;
-        }
-
-        public void AddMovable(MoveComponent component)
-        {
-            if (Components.MoveComponents.Length == 0)
-                Components.MoveComponents = new MoveComponent[1];
-            Components.MoveComponents[Components.MovesCount] = component;
-            Components.MovesCount++;
-        }
-
-        public void AddPosition(PositionComponent component)
-        {
-            if (Components.PositionComponents.Length == 0)
-                Components.PositionComponents = new PositionComponent[1];
-            Components.PositionComponents[Components.PositionsCount] = component;
-            Components.PositionsCount++;
-        }
-
-        public void AddDbgBoundingBox(DbgBoundingBoxComponent component)
-        {
-            if (Components.DbgBoundingBoxComponents.Length == 0)
-                Components.DbgBoundingBoxComponents = new DbgBoundingBoxComponent[1];
-            Components.DbgBoundingBoxComponents[Components.DbgBoundingBoxCount] = component;
-            Components.DbgBoundingBoxCount++;
-        }
-        public void AddInput(InputComponent component)
-        {
-            if (Components.InputComponents.Length == 0)
-                Components.InputComponents = new InputComponent[1];
-            Components.InputComponents[Components.InputComponentsCount] = component;
-            Components.InputComponentsCount++;
-        }
-
-        public void AddCameraFollowTag(CameraFollowTagComponent component)
-        {
-            if (Components.CameraFollowTags.Length == 0)
-                Components.CameraFollowTags = new CameraFollowTagComponent[1];
-            Components.CameraFollowTags[Components.CameraFollowTagsCount] = component;
-            Components.CameraFollowTagsCount++;
-        }
-
-        public void AddNetworked(Networked component)
-        {
-            if (Components.Networkeds.Length == 0)
-                Components.Networkeds = new Networked[1];
-            Components.Networkeds[Components.NetworkedsCount] = component;
-            Components.NetworkedsCount++;
-        }
+        public bool HasCameraFollowTagComponent() => Components.CameraFollowTags.Count > 0;
+        public void AddDrawable(DrawableComponent component) => Components.DrawableComponents.Add(component);
+        public void AddMovable(MoveComponent component) => Components.MoveComponents.Add(component);
+        public void AddPosition(PositionComponent component) => Components.PositionComponents.Add(component);
+        public void AddDbgBoundingBox(DbgBoundingBoxComponent component) => Components.DbgBoundingBoxComponents.Add(component);
+        public void AddInput(InputComponent component) => Components.InputComponents.Add(component);
+        public void AddCameraFollowTag(CameraFollowTagComponent component) => Components.CameraFollowTags.Add(component);
+        public void AddNetworked(Networked component) => Components.Networkeds.Add(component);
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public ref DrawableComponent GetDrawableComponentRef() => ref Components.DrawableComponents[0];
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]

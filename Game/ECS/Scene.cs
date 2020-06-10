@@ -49,16 +49,16 @@ namespace PixelGlueCore.ECS
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].Update(deltaTime.ElapsedGameTime.TotalSeconds);
+                    Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
             }
             for (int i = 0; i < UISystems.Count; i++)
             {
                 if (UISystems[i].IsActive && UISystems[i].IsReady)
-                    UISystems[i].Update(deltaTime.ElapsedGameTime.TotalSeconds);
+                    UISystems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual void FixedUpdate(double deltaTime)
+        public virtual void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
             {

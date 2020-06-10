@@ -65,7 +65,7 @@ namespace PixelGlueCore
                 {
                     if (!scene.IsReady || !scene.IsActive)
                         continue;
-                    scene.FixedUpdate(gameTime.TotalGameTime.TotalSeconds);
+                    scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
                 }
             }
 

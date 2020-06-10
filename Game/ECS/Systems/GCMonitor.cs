@@ -15,7 +15,7 @@ namespace PixelGlueCore.ECS.Systems
             GenCollections = new int[3];
             IsReady=true;
         }
-        public void Update(double gameTime)
+        public void FixedUpdate(float gameTime)
         {
             for (int i = 0; i < GenCollections.Length; i++)
             {
@@ -29,5 +29,7 @@ namespace PixelGlueCore.ECS.Systems
                 }
             }
         }
+
+        public void Update(float deltaTime){}
     }
 }

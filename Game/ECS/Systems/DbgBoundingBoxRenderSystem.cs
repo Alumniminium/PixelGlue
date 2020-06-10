@@ -28,5 +28,13 @@ namespace PixelGlueCore.ECS.Systems
                 sb.Draw(AssetManager.Textures[DbgBoundingBoxComponent.TextureName], destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);
             }
         }
+
+        public void FixedUpdate(float deltaTime)
+        {
+        }
+
+        public void Update(float deltaTime)
+        {
+        }
     }
 }

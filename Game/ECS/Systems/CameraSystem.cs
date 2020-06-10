@@ -12,7 +12,8 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
-        public void Update(double deltaTime)
+        public void FixedUpdate(float _){}
+        public void Update(float deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
             {
@@ -36,10 +37,9 @@ namespace PixelGlueCore.ECS.Systems
                     var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
                     var limitWorldMin = new Vector2(Limits.Left, Limits.Top);
                     var limitWorldMax = new Vector2(Limits.Right, Limits.Bottom);
+                    var cameraPos = Vector2.Round(Vector2.Clamp(loc.Position, limitWorldMin, limitWorldMax - cameraSize));
 
-                    var cameraPos = Vector2.Clamp(loc.Position, limitWorldMin, limitWorldMax - cameraSize);
-
-                    camera.Transform = Matrix.CreateTranslation(-cameraPos.X - (scene.Map.TileWidth / 2), -cameraPos.Y, 0)
+                    camera.Transform = Matrix.CreateTranslation(-cameraPos.X - (scene.Map.TileWidth / 2), -cameraPos.Y- (scene.Map.TileWidth / 2), 0)
                                                          * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight, 2f)
                                                          * Matrix.CreateScale(follow.Zoom)
                                                          * Matrix.CreateTranslation(PixelGlue.ScreenWidth / 2, PixelGlue.ScreenHeight / 2, 0);

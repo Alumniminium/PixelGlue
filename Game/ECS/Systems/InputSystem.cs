@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using PixelGlueCore.Scenes;
 using Microsoft.Xna.Framework;
-using PixelGlueCore.Entities;
 using PixelGlueCore.Configuration;
 using PixelGlueCore.Enums;
 using System.Runtime.CompilerServices;
@@ -16,7 +15,8 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
-        public void Update(double deltaTime)
+        public void FixedUpdate(float _){}
+        public void Update(float deltaTime)
         {
             foreach (var scene in SceneManager.ActiveScenes)
             {

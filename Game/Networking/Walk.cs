@@ -21,7 +21,7 @@ namespace PixelGlueCore.Networking.Handlers
                 var srcEntity = Database.Entities[PixelGlue.Random.Next(0, Database.Entities.Count)];
                 var drawable = new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect);
                 var position = new PositionComponent(packet.X, packet.Y, 0);
-                var movable = new MoveComponent(50, packet.X, packet.Y);
+                var movable = new MoveComponent(8, packet.X, packet.Y);
 
                 entity = scene.CreateEntity<PixelEntity>(uniqueId);
                 entity.AddDrawable(drawable);

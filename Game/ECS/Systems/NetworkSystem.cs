@@ -25,7 +25,8 @@ namespace PixelGlueCore.ECS.Systems
             Socket.OnDisconnect += Disconnected;
             Socket.OnConnected += Connected;
         }
-        public void FixedUpdate(double deltaTime)
+        public void FixedUpdate(float _){}
+        public void Update(float deltaTime)
         {
             switch (ConnectionState)
             {
@@ -41,9 +42,6 @@ namespace PixelGlueCore.ECS.Systems
                     SyncObjects();
                     break;
             }
-        }
-        public void Update(double deltaTime)
-        {
         }
 
         private void SyncObjects()

@@ -13,12 +13,8 @@ namespace PixelGlueCore.ECS.Systems
             IsReady=true;
             IsActive=true;
         }
-        public void Update(double deltaTime)
-        {
-        }
-        public void FixedUpdate(double deltaTime)
-        {
-        }
+        void Update(float deltaTime);
+        void FixedUpdate(float deltaTime);
 
         public void Draw(Scene scene,SpriteBatch spriteBatch)
         {
