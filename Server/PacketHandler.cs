@@ -28,11 +28,12 @@ namespace Server
                         };
                         socket.StateObject = player;
 
-                        foreach (var kvp in Collections.Players)
+                        foreach (var (uniqueId,entity) in Collections.Players)
                         {
-                            if (kvp.Value.Username == user && kvp.Value.Password == pass)
+                            if ( entity.Username == user && entity.Password == pass)
                             {
-                                player.UniqueId = kvp.Key;
+                                player.UniqueId = uniqueId;
+                                break;
                             }
                         }
 
@@ -58,9 +59,9 @@ namespace Server
                         msgWalk.TickCount = Environment.TickCount;
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
 
-                        foreach (var kvp in Collections.Players)
+                        foreach (var (_,entity) in Collections.Players)
                         {
-                            kvp.Value.Socket.Send(msgWalk);
+                             entity.Socket.Send(msgWalk);
                         }
 
                         break;

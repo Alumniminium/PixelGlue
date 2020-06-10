@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.ECS.Components;
@@ -10,21 +11,21 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void Draw(Scene scene, SpriteBatch sb)
         {
             if (scene.Camera == null)
                 return;
-            foreach (var kvp in scene.Entities)
+            foreach (var (_, entity) in scene.Entities)
             {
-                if(!kvp.Value.HasPositionComponent() || !kvp.Value.HasDrawableComponent())
+                if (!entity.HasPositionComponent() || !entity.HasDrawableComponent())
                     continue;
 
-                ref var pos = ref scene.GetPositionComponentRef(kvp.Key);
-                ref var drawable = ref scene.GetDrawableComponentRef(kvp.Key);
-                
+                ref var pos = ref entity.GetPositionComponentRef();
+                ref var drawable = ref entity.GetDrawableComponentRef();
+
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drawable.SrcRect.Width, drawable.SrcRect.Height);
                 sb.Draw(AssetManager.Textures[DbgBoundingBoxComponent.TextureName], destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);
-
             }
         }
     }

@@ -10,17 +10,17 @@ namespace TiledSharp
 {
     public class TmxLayer : ITmxLayer
     {
-        public string Name { get; private set; }
+        public string Name { get;   }
 
         // TODO: Legacy (Tiled Java) attributes (x, y, width, height)
 
-        public double Opacity { get; private set; }
-        public bool Visible { get; private set; }
-        public double? OffsetX { get; private set; }
-        public double? OffsetY { get; private set; }
+        public double Opacity { get;   }
+        public bool Visible { get;   }
+        public double? OffsetX { get;   }
+        public double? OffsetY { get;   }
 
-        public Collection<TmxLayerTile> Tiles { get; private set; }
-        public PropertyDict Properties { get; private set; }
+        public Collection<TmxLayerTile> Tiles { get;   }
+        public PropertyDict Properties { get;   }
 
         public TmxLayer(XElement xLayer, int width, int height)
         {
@@ -39,10 +39,10 @@ namespace TiledSharp
                 var decodedStream = new TmxBase64Data(xData);
                 var stream = decodedStream.Data;
 
-                using (var br = new BinaryReader(stream))
-                    for (int j = 0; j < height; j++)
-                        for (int i = 0; i < width; i++)
-                            Tiles.Add(new TmxLayerTile(br.ReadUInt32(), i, j));
+                using var br = new BinaryReader(stream);
+                for (int j = 0; j < height; j++)
+                    for (int i = 0; i < width; i++)
+                        Tiles.Add(new TmxLayerTile(br.ReadUInt32(), i, j));
             }
             else if (encoding == "csv")
             {
@@ -80,16 +80,16 @@ namespace TiledSharp
     public class TmxLayerTile
     {
         // Tile flip bit flags
-        const uint FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-        const uint FLIPPED_VERTICALLY_FLAG = 0x40000000;
-        const uint FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+        private const uint FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+        private const uint FLIPPED_VERTICALLY_FLAG = 0x40000000;
+        private const uint FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 
-        public int Gid { get; private set; }
-        public int X { get; private set; }
-        public int Y { get; private set; }
-        public bool HorizontalFlip { get; private set; }
-        public bool VerticalFlip { get; private set; }
-        public bool DiagonalFlip { get; private set; }
+        public int Gid { get;   }
+        public int X { get;   }
+        public int Y { get;   }
+        public bool HorizontalFlip { get;   }
+        public bool VerticalFlip { get;   }
+        public bool DiagonalFlip { get;   }
         public object Rectangle { get; set; }
         public TmxLayerTile(uint id, int x, int y)
         {
@@ -98,16 +98,14 @@ namespace TiledSharp
             Y = y;
 
             // Scan for tile flip bit flags
-            bool flip;
-
-            flip = (rawGid & FLIPPED_HORIZONTALLY_FLAG) != 0;
-            HorizontalFlip = flip ? true : false;
+            bool flip = (rawGid & FLIPPED_HORIZONTALLY_FLAG) != 0;
+            HorizontalFlip = flip;
 
             flip = (rawGid & FLIPPED_VERTICALLY_FLAG) != 0;
-            VerticalFlip = flip ? true : false;
+            VerticalFlip = flip;
 
             flip = (rawGid & FLIPPED_DIAGONALLY_FLAG) != 0;
-            DiagonalFlip = flip ? true : false;
+            DiagonalFlip = flip;
 
             // Zero the bit flags
             rawGid &= ~(FLIPPED_HORIZONTALLY_FLAG |

@@ -4,7 +4,7 @@ using TerribleSockets.Packets;
 
 namespace PixelGlueCore.Networking.Handlers
 {
-    public class Ping
+    public static class Ping
     {
         public static void Handle(byte[] buffer)
         {

@@ -21,16 +21,18 @@ namespace PixelGlueCore.Helpers
             }
         }
         private static StreamWriter _writer;
-        private static AutoResetEvent _sync = new AutoResetEvent(false);
-        private static ConcurrentQueue<string> _pendingLines = new ConcurrentQueue<string>();
-        private static Thread _workerThread;
+        private static readonly AutoResetEvent _sync = new AutoResetEvent(false);
+        private static readonly ConcurrentQueue<string> _pendingLines = new ConcurrentQueue<string>();
+        private static readonly Thread _workerThread;
 
         static FConsole()
         {
-            _workerThread = new Thread(WorkLoop);
-            _workerThread.Name = "FConsole Thread";
-            _workerThread.IsBackground = true;
-            _workerThread.Priority = ThreadPriority.Lowest;
+            _workerThread = new Thread(WorkLoop)
+            {
+                Name = "FConsole Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Lowest
+            };
             _workerThread.Start();
         }
         public static void WriteLine(string line)

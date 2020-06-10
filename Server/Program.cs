@@ -6,7 +6,7 @@ using TerribleSockets.Server;
 
 namespace Server
 {
-    public class Program
+    public static class Program
     {
         public static Random Random = new Random(1337);
         public static int BotCount = 250;

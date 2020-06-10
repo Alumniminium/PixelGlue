@@ -4,7 +4,7 @@ using System;
 
 namespace PixelGlueCore
 {
-    public class PixelGlue
+    public static class PixelGlue
     {
         public static Random Random { get; set; } = new Random(Environment.TickCount);
         public static float FixedUpdateHz { get; set; } = 15;
@@ -18,5 +18,6 @@ namespace PixelGlueCore
         public static GraphicsDevice Device { get; set; }
         public static Profiler UpdateProfiler { get; set; } = new Profiler();
         public static Profiler DrawProfiler { get; set; } = new Profiler();
+        public static int RenderedObjects { get; internal set; }
     }
 }

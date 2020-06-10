@@ -23,7 +23,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                 map.TileArray[i] = new DrawableComponent[map.Width * map.Height];
 
             var tilesetTilesWide = AssetManager.Textures[map.Tilesets[0].Name].Width / tileSize;
-            var tilesetTilesHigh = AssetManager.Textures[map.Tilesets[0].Name].Height / tileSize;
+            //var tilesetTilesHigh = AssetManager.Textures[map.Tilesets[0].Name].Height / tileSize;
 
             for (int c = 0; c < map.TileLayers.Count; c++)
             {
@@ -41,7 +41,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
+                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
                 }
             }
             map.ImageLayers=null;

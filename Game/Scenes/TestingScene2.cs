@@ -33,27 +33,24 @@ namespace PixelGlueCore.Scenes
         public override void Draw(Scene scene, SpriteBatch sb)
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
-
-            int renderedObjectsCounter = 0;
+            PixelGlue.RenderedObjects=0;
             var origin = new Vector2(-23, 8);
             var overdraw = Map.TileWidth * 2;
 
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 0, Camera);
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 1, Camera);
-            foreach (var kvp in Entities)
+            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, Map, 0, Camera);
+            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, Map, 1, Camera);
+            foreach (var (_,entity) in Entities)
             {
-                ref var drawable = ref scene.GetDrawableComponentRef(kvp.Key);
-                ref var pos = ref scene.GetPositionComponentRef(kvp.Key);
-                if (drawable.UniqueId != kvp.Key || pos.UniqueId != kvp.Key)
-                    continue;
-
+                ref var drawable = ref entity.GetDrawableComponentRef();
+                ref var pos = ref entity.GetPositionComponentRef();
+               
                 if (pos.Position.X < Camera.ScreenRect.Left - overdraw || pos.Position.X > Camera.ScreenRect.Right + overdraw)
                     continue;
                 if (pos.Position.Y < Camera.ScreenRect.Top - overdraw || pos.Position.Y > Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
                 sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f,origin, Vector2.One, SpriteEffects.None, 0f);
-                renderedObjectsCounter++;
+                PixelGlue.RenderedObjects++;
             }
             //renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);
 

@@ -7,25 +7,33 @@ using System.Threading;
 
 namespace PixelGlueCore
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main()
         {
             FConsole.WriteLine("Current Root: " + Environment.CurrentDirectory);
             FConsole.LogToFile = false;
             FConsole.WriteLine("Setting Thread Priority to highest...");
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             FConsole.WriteLine("Initializing the engine...");
-            var engine = new Engine(true);
-            engine.IsFixedTimeStep = false;
+            
+            var engine = new Engine(false)
+            {
+                IsFixedTimeStep = false
+            };
+
             PixelGlue.Profiling = true;
             FConsole.WriteLine("Initializing the scene...");
 
-            var testScene = new TestingScene();
-            testScene.Id = 1;
+            var testScene = new TestingScene
+            {
+                Id = 1
+            };
 
-            var globalScene = new Scene();
-            globalScene.Id=0;
+            var globalScene = new Scene
+            {
+                Id = 0
+            };
             globalScene.Systems.Add(new InputSystem());
             globalScene.Systems.Add(new NetworkSystem());
             globalScene.Systems.Add(new DialogSystem());

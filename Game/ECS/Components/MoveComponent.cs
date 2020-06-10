@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using PixelGlueCore.ECS.Components;
 
 namespace PixelGlueCore.ECS.Components
 {
@@ -9,11 +8,9 @@ namespace PixelGlueCore.ECS.Components
         public float SpeedMulti;
         public bool Moving;
         public Vector2 Destination;
-        public int UniqueId ;
 
-        public MoveComponent(int ownerId, float speed, int destX, int destY)
+        public MoveComponent(float speed, int destX, int destY)
         {
-            UniqueId = ownerId;
             Speed = speed;
             SpeedMulti=1;
             Moving = false;

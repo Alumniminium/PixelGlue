@@ -18,7 +18,7 @@ namespace PixelGlueCore.ECS.Systems
         private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        
+
         public NetworkSystem()
         {
             ReceiveQueue.Start(Receive);
@@ -44,7 +44,6 @@ namespace PixelGlueCore.ECS.Systems
         }
         public void Update(double deltaTime)
         {
-
         }
 
         private void SyncObjects()

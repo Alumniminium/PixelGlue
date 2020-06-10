@@ -8,7 +8,7 @@ namespace PixelGlueCore
     public class Engine : Microsoft.Xna.Framework.Game
     {
         private double _elapsedTime = 0;
-        private double _updateTime = 1f / PixelGlue.FixedUpdateHz;
+        private readonly double _updateTime = 1f / PixelGlue.FixedUpdateHz;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -28,12 +28,14 @@ namespace PixelGlueCore
 
         private void SetInitialGraphicsOptions(bool vsync)
         {
-            _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = PixelGlue.ScreenWidth;
-            _graphics.PreferredBackBufferHeight = PixelGlue.ScreenHeight;
-            _graphics.GraphicsProfile = GraphicsProfile.Reach;
-            _graphics.SynchronizeWithVerticalRetrace = vsync;
-            _graphics.PreferHalfPixelOffset = false;
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = PixelGlue.ScreenWidth,
+                PreferredBackBufferHeight = PixelGlue.ScreenHeight,
+                GraphicsProfile = GraphicsProfile.Reach,
+                SynchronizeWithVerticalRetrace = vsync,
+                PreferHalfPixelOffset = false
+            };
             _graphics.ApplyChanges();
             PixelGlue.Device=_graphics.GraphicsDevice;
         }

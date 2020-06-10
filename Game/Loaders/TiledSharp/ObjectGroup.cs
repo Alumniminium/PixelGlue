@@ -1,6 +1,6 @@
+// http://www.apache.org/licenses/LICENSE-2.0
 // Distributed as part of TiledSharp, Copyright 2012 Marshall Ward
 // Licensed under the Apache License, Version 2.0
-// http://www.apache.org/licenses/LICENSE-2.0
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,20 +11,20 @@ namespace TiledSharp
 {
     public class TmxObjectGroup : ITmxLayer
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
         // TODO: Legacy (Tiled Java) attributes (x, y, width, height)
 
-        public TmxColor Color { get; private set; }
-        public DrawOrderType DrawOrder { get; private set; }
+        public TmxColor Color { get; }
+        public DrawOrderType DrawOrder { get; }
 
-        public double Opacity { get; private set; }
-        public bool Visible { get; private set; }
-        public double OffsetX { get; private set; }
-        public double OffsetY { get; private set; }
+        public double Opacity { get; }
+        public bool Visible { get; }
+        public double OffsetX { get; }
+        public double OffsetY { get; }
 
-        public TmxList<TmxObject> Objects { get; private set; }
-        public PropertyDict Properties { get; private set; }
+        public TmxList<TmxObject> Objects { get; }
+        public PropertyDict Properties { get; }
 
         double? ITmxLayer.OffsetX => OffsetX;
         double? ITmxLayer.OffsetY => OffsetY;
@@ -60,21 +60,21 @@ namespace TiledSharp
     {
         // Many TmxObjectTypes are distinguished by null values in fields
         // It might be smart to subclass TmxObject
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public TmxObjectType ObjectType { get; private set; }
-        public string Type { get; private set; }
-        public double X { get; private set; }
-        public double Y { get; private set; }
-        public double Width { get; private set; }
-        public double Height { get; private set; }
-        public double Rotation { get; private set; }
-        public TmxLayerTile Tile { get; private set; }
-        public bool Visible { get; private set; }
-        public TmxText Text { get; private set; }
+        public int Id { get; }
+        public string Name { get; }
+        public TmxObjectType ObjectType { get; }
+        public string Type { get; }
+        public double X { get; }
+        public double Y { get;   }
+        public double Width { get;   }
+        public double Height { get;   }
+        public double Rotation { get;   }
+        public TmxLayerTile Tile { get;   }
+        public bool Visible { get;   }
+        public TmxText Text { get;   }
 
-        public Collection<TmxObjectPoint> Points { get; private set; }
-        public PropertyDict Properties { get; private set; }
+        public Collection<TmxObjectPoint> Points { get;   }
+        public PropertyDict Properties { get;   }
 
         public TmxObject(XElement xObject)
         {
@@ -143,8 +143,8 @@ namespace TiledSharp
 
     public class TmxObjectPoint
     {
-        public double X { get; private set; }
-        public double Y { get; private set; }
+        public double X { get;   }
+        public double Y { get;   }
 
         public TmxObjectPoint(double x, double y)
         {
@@ -164,17 +164,17 @@ namespace TiledSharp
 
     public class TmxText
     {
-        public string FontFamily { get; private set; }
-        public int PixelSize { get; private set; }
-        public bool Wrap { get; private set; }
-        public TmxColor Color { get; private set; }
-        public bool Bold { get; private set; }
-        public bool Italic { get; private set; }
-        public bool Underline { get; private set; }
-        public bool Strikeout { get; private set; }
-        public bool Kerning { get; private set; }
-        public TmxAlignment Alignment { get; private set; }
-        public string Value { get; private set; }
+        public string FontFamily { get;   }
+        public int PixelSize { get;   }
+        public bool Wrap { get;   }
+        public TmxColor Color { get;   }
+        public bool Bold { get;   }
+        public bool Italic { get;   }
+        public bool Underline { get;   }
+        public bool Strikeout { get;   }
+        public bool Kerning { get;   }
+        public TmxAlignment Alignment { get;   }
+        public string Value { get;   }
 
         public TmxText(XElement xText)
         {
@@ -194,8 +194,8 @@ namespace TiledSharp
 
     public class TmxAlignment
     {
-        public TmxHorizontalAlignment Horizontal { get; private set; }
-        public TmxVerticalAlignment Vertical { get; private set; }
+        public TmxHorizontalAlignment Horizontal { get;   }
+        public TmxVerticalAlignment Vertical { get;   }
 
         public TmxAlignment(XAttribute halign, XAttribute valign)
         {

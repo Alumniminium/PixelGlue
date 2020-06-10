@@ -16,7 +16,7 @@ namespace TiledSharp
 {
     public class TmxDocument
     {
-        public string TmxDirectory { get; private set; }
+        public string TmxDirectory { get; set; }
 
         protected XDocument ReadXml(string filepath)
         {
@@ -36,13 +36,9 @@ namespace TiledSharp
             if (fileRes != null)
             {
                 using (Stream xmlStream = asm.GetManifestResourceStream(fileRes))
-                {
-                    using (XmlReader reader = XmlReader.Create(xmlStream))
-                    {
-                        xDoc = XDocument.Load(reader);
-                    }
-                }
-                TmxDirectory = String.Empty;
+                using (XmlReader reader = XmlReader.Create(xmlStream))
+                    xDoc = XDocument.Load(reader);
+                TmxDirectory = string.Empty;
             }
             else
             {
@@ -63,8 +59,7 @@ namespace TiledSharp
 
     public class TmxList<T> : KeyedCollection<string, T> where T : ITmxElement
     {
-        private Dictionary<string, int> nameCount
-            = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> nameCount = new Dictionary<string, int>();
 
         public new void Add(T t)
         {
@@ -72,7 +67,7 @@ namespace TiledSharp
 
             // Rename duplicate entries by appending a number
             if (this.Contains(tName))
-                nameCount[tName] += 1;
+                nameCount[tName]++;
             else
                 nameCount.Add(tName, 0);
             base.Add(t);
@@ -127,12 +122,12 @@ namespace TiledSharp
 
     public class TmxImage
     {
-        public string Source { get; private set; }
-        public string Format { get; private set; }
-        public Stream Data { get; private set; }
-        public TmxColor Trans { get; private set; }
-        public int? Width { get; private set; }
-        public int? Height { get; private set; }
+        public string Source { get;   }
+        public string Format { get;   }
+        public Stream Data { get;   }
+        public TmxColor Trans { get;   }
+        public int? Width { get;   }
+        public int? Height { get;   }
 
         public TmxImage(XElement xImage, string tmxDir = "")
         {
@@ -141,7 +136,6 @@ namespace TiledSharp
             var xSource = xImage.Attribute("source");
 
             if (xSource != null)
-                // Append directory if present
                 Source = Path.Combine(tmxDir, (string)xSource);
             else
             {
@@ -159,9 +153,9 @@ namespace TiledSharp
 
     public class TmxColor
     {
-        public int R { get; private set; }
-        public int G { get; private set; }
-        public int B { get; private set; }
+        public int R { get;   }
+        public int G { get;   }
+        public int B { get;   }
 
         public TmxColor(XAttribute xColor)
         {
@@ -177,22 +171,19 @@ namespace TiledSharp
 
     public class TmxBase64Data
     {
-        public Stream Data { get; private set; }
+        public Stream Data { get;   }
 
         public TmxBase64Data(XElement xData)
         {
             if ((string)xData.Attribute("encoding") != "base64")
-                throw new Exception(
-                    "TmxBase64Data: Only Base64-encoded data is supported.");
+                throw new Exception("TmxBase64Data: Only Base64-encoded data is supported.");
 
             var rawData = Convert.FromBase64String((string)xData.Value);
             Data = new MemoryStream(rawData, false);
 
             var compression = (string)xData.Attribute("compression");
             if (compression == "gzip")
-            {
                 Data = new GZipStream(Data, CompressionMode.Decompress);
-            }
             else if (compression == "zlib")
             {
                 // Strip 2-byte header and 4-byte checksum

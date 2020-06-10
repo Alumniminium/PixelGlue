@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Configuration;
 using PixelGlueCore.Enums;
+using System.Runtime.CompilerServices;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -19,49 +20,49 @@ namespace PixelGlueCore.ECS.Systems
         {
             foreach (var scene in SceneManager.ActiveScenes)
             {
-                foreach (var kvp in scene.Entities)
+                foreach (var (_, entity) in scene.Entities)
                 {
-                    if( !kvp.Value.HasInputComponent() || 
-                        !kvp.Value.HasMoveComponent() || 
-                        !kvp.Value.HasPositionComponent() || 
-                        !kvp.Value.HasCameraFollowTagComponent())
+                    if (!entity.HasInputComponent() ||
+                        !entity.HasMoveComponent() ||
+                        !entity.HasPositionComponent() ||
+                        !entity.HasCameraFollowTagComponent())
                         continue;
 
-                    ref var inputComponent = ref scene.GetInputComponentRef(kvp.Key);
-                    ref var moveComponent = ref scene.GetMoveComponentRef(kvp.Key);
-                    ref var positionComponent = ref scene.GetPositionComponentRef(kvp.Key);
-                    ref var camera = ref scene.GetCamreaFollowRef(kvp.Key);
+                    ref var inputComponent = ref entity.GetInputComponentRef();
+                    ref var moveComponent = ref entity.GetMoveComponentRef();
+                    ref var positionComponent = ref entity.GetPositionComponentRef();
+                    ref var camera = ref entity.GetCamreaFollowRef();
 
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
                     inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
 
-                    Scrolling(ref inputComponent,ref camera);
-                    Rotating(ref inputComponent,ref positionComponent);
+                    Scrolling(ref inputComponent, ref camera);
+                    Rotating(ref inputComponent, ref positionComponent);
 
                     var destination = positionComponent.Position;
 
-                    if (KeyDown(ref inputComponent,PixelGlueButtons.Up) && !moveComponent.Moving)
+                    if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
                         destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
-                    if (KeyDown(ref inputComponent,PixelGlueButtons.Down) && !moveComponent.Moving)
+                    if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
                         destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
-                    if (KeyDown(ref inputComponent,PixelGlueButtons.Left) && !moveComponent.Moving)
+                    if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
                         destination.X = positionComponent.Position.X - scene.Map.TileWidth;
-                    if (KeyDown(ref inputComponent,PixelGlueButtons.Right) && !moveComponent.Moving)
+                    if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
                         destination.X = positionComponent.Position.X + scene.Map.TileWidth;
-                    if (KeyDown(ref inputComponent,PixelGlueButtons.Sprint) && !moveComponent.Moving)
+                    if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
                         moveComponent.SpeedMulti = 2.5f;
-                    if (KeyUp(ref inputComponent,PixelGlueButtons.Sprint))
+                    if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
                         moveComponent.SpeedMulti = 1;
-                    if (Pressed(ref inputComponent,PixelGlueButtons.EscapeMenu))
+                    if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))
                         Environment.Exit(0);
-                    if (Pressed(ref inputComponent,PixelGlueButtons.DbgProfiling))
+                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
                         PixelGlue.Profiling = !PixelGlue.Profiling;
-                    if (Pressed(ref inputComponent,PixelGlueButtons.DbgSwitchScene))
+                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgSwitchScene))
                         SwitchScene();
-                    if (Pressed(ref inputComponent,PixelGlueButtons.DbgProfiling))
+                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
                         OpenDialog(scene);
-                    if (Pressed(ref inputComponent,PixelGlueButtons.DbgBoundingBoxes))
+                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                     {
                         var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                         system.IsActive = !system.IsActive;
@@ -75,6 +76,7 @@ namespace PixelGlueCore.ECS.Systems
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Rotating(ref InputComponent inputComponent, ref PositionComponent positionComponent)
         {
             if (inputComponent.Keyboard.IsKeyDown(Keys.Left))
@@ -83,28 +85,32 @@ namespace PixelGlueCore.ECS.Systems
                 positionComponent.Rotation += 0.1f;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Scrolling(ref InputComponent inputComponent, ref CameraFollowTagComponent camera)
         {
-            if (inputComponent.Mouse.ScrollWheelValue > inputComponent.ScrollWheelValue)
+            if (inputComponent.Mouse.ScrollWheelValue > inputComponent.Scroll)
                 camera.Zoom *= 2;
-            else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.ScrollWheelValue)
+            else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.Scroll)
                 camera.Zoom /= 2;
 
-            inputComponent.ScrollWheelValue = inputComponent.Mouse.ScrollWheelValue;
+            inputComponent.Scroll = inputComponent.Mouse.ScrollWheelValue;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public bool KeyDown(ref InputComponent component, PixelGlueButtons key)
         {
             if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
                 return component.Keyboard.IsKeyDown(realKey.defaultBind) || component.Keyboard.IsKeyDown(realKey.userBind);
             return false;
         }
-        public bool KeyUp(ref InputComponent component,PixelGlueButtons key)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public bool KeyUp(ref InputComponent component, PixelGlueButtons key)
         {
             if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
                 return component.Keyboard.IsKeyUp(realKey.defaultBind) || component.Keyboard.IsKeyUp(realKey.userBind);
             return false;
         }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public bool Pressed(ref InputComponent component, PixelGlueButtons key)
         {
             if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
@@ -119,6 +125,7 @@ namespace PixelGlueCore.ECS.Systems
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void SwitchScene()
         {
             var testScene2 = new TestingScene2
@@ -131,9 +138,10 @@ namespace PixelGlueCore.ECS.Systems
             SceneManager.DeactivateScene<TestingScene>();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void OpenDialog(Scene scene)
         {
-            var player = scene.Find<Player>();
+            //var player = scene.Find<Player>();
             //scene.AddComponent(new DialogComponent(player.UniqueId, 1));
         }
     }

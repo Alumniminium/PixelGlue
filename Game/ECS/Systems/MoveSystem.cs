@@ -16,22 +16,21 @@ namespace PixelGlueCore.ECS.Systems
             for (int i = 0; i < SceneManager.ActiveScenes.Count; i++)
             {
                 var scene = SceneManager.ActiveScenes[i];
-                foreach (var kvp in scene.Entities)
+                foreach (var (_, entity) in scene.Entities)
                 {
-                    if( !kvp.Value.HasMoveComponent() || 
-                        !kvp.Value.HasPositionComponent())
+                    if (!entity.HasMoveComponent() || !entity.HasPositionComponent())
                         continue;
-                    ref var movable = ref scene.GetMoveComponentRef(kvp.Key);
-                    ref var position = ref scene.GetPositionComponentRef(kvp.Key);
-                    if (movable.UniqueId != kvp.Key || position.UniqueId != kvp.Key)
-                        continue;
-                        
+
+                    ref var movable = ref entity.GetMoveComponentRef();
+                    ref var position = ref entity.GetPositionComponentRef();
+
                     if (movable.Destination == Vector2.Zero)
                         continue;
+
                     if (movable.Destination != position.Position)
                     {
                         movable.Moving = true;
-                        var distanceToDest = TwoMath.GetDistance(position.Position, movable.Destination);
+                        var distanceToDest = position.Position.GetDistance(movable.Destination);
                         var moveDistance = movable.Speed * deltaTime;
                         if (distanceToDest > moveDistance)
                         {
@@ -45,8 +44,8 @@ namespace PixelGlueCore.ECS.Systems
                             if (position.Position.Y > movable.Destination.Y)
                                 velocity.Y -= (float)(movable.Speed * deltaTime);
                             if (velocity.X != 0 && velocity.Y != 0) // we're moving diagnonally
-                                velocity = velocity * 0.707f; // divide by sqrt of 0.5 to fix velocity
-                            position.Position = position.Position + (velocity * movable.SpeedMulti);
+                                velocity *= 0.707f; // divide by sqrt of 0.5 to fix velocity
+                            position.Position += velocity * movable.SpeedMulti;
                         }
                         else
                         {

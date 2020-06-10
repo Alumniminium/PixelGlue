@@ -11,17 +11,17 @@ namespace PixelGlueCore.Loaders
 {
     public class BmpFont
     {
-        Texture2D fontTexture;
-        private Dictionary<char, BmpFontChar> _characterMap;
+        private readonly Texture2D fontTexture;
+        private readonly Dictionary<char, BmpFontChar> _characterMap;
 
         public BmpFont(string fontName, ContentManager contentManager)
         {
             _characterMap = new Dictionary<char, BmpFontChar>();
             var fontFilePath = Path.Combine(contentManager.RootDirectory, fontName);
-            this.fontTexture = contentManager.Load<Texture2D>(Path.GetFileName(fontName).Replace(".fnt","_0"));
+            fontTexture = contentManager.Load<Texture2D>(Path.GetFileName(fontName).Replace(".fnt","_0"));
             Load(fontFilePath);
         }
-        void Load(String filename)
+        private void Load(string filename)
         {
             XmlSerializer deserializer = new XmlSerializer(typeof(FontFile));
             TextReader textReader = new StreamReader(filename);
@@ -33,7 +33,7 @@ namespace PixelGlueCore.Loaders
                 _characterMap.Add(c, new BmpFontChar(fontCharacter));
             }
         }
-        public void Draw(String message, Vector2 pos, SpriteBatch _spriteBatch)
+        public void Draw(string message, Vector2 pos, SpriteBatch _spriteBatch)
         {
             DrawText(_spriteBatch, (int)pos.X, (int)pos.Y, message);
         }

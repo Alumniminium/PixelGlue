@@ -19,12 +19,12 @@ namespace PixelGlueCore.Networking.Handlers
             var (user, pass) = packet.GetUserPass();
             var scene = SceneManager.ActiveScenes[^1];
             var player = scene.CreateEntity<Player>(packet.UniqueId);
-            scene.AddDrawable(new DrawableComponent(packet.UniqueId,"character.png", new Rectangle(0, 2, 16, 16)));
-            scene.AddMovable(new MoveComponent(packet.UniqueId,64, 256, 256));
-            scene.AddPosition(new PositionComponent(packet.UniqueId,256,256,0));
-            scene.AddInput(new InputComponent(packet.UniqueId));
-            scene.AddCameraFollowTag(new CameraFollowTagComponent(packet.UniqueId,2));
-            scene.AddNetworked(new Networked(packet.UniqueId));
+            player.AddDrawable(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
+            player.AddMovable(new MoveComponent(64, 256, 256));
+            player.AddPosition(new PositionComponent(256,256,0));
+            player.AddInput(new InputComponent());
+            player.AddCameraFollowTag(new CameraFollowTagComponent(1));
+            player.AddNetworked(new Networked());
 
             FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
 

@@ -1,9 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelGlueCore.ECS.Components;
-using PixelGlueCore.Helpers;
 using PixelGlueCore.Loaders.TiledSharp;
-using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -12,7 +9,7 @@ namespace PixelGlueCore.ECS.Systems
         public string Name { get; set; } = "Entity Rendering System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        
+
         public void Update(double timeSinceLastFrame)
         {
         }
@@ -21,29 +18,28 @@ namespace PixelGlueCore.ECS.Systems
             if (scene.Camera == null)
                 return;
 
-            int renderedObjectsCounter = 0;
             var overdraw = scene.Map.TileWidth * 2;
-
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 0, scene.Camera);
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 1, scene.Camera);
-            foreach (var kvp in scene.Entities)
+            PixelGlue.RenderedObjects = 0;
+            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, scene.Map, 0, scene.Camera);
+            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, scene.Map, 1, scene.Camera);
+            foreach (var (_, entity) in scene.Entities)
             {
-                if(!kvp.Value.HasDrawableComponent() || !kvp.Value.HasPositionComponent())
+                if (!entity.HasDrawableComponent() || !entity.HasPositionComponent())
                     continue;
 
-                ref var pos = ref scene.GetPositionComponentRef(kvp.Key);
-                ref var drawable = ref scene.GetDrawableComponentRef(kvp.Key);
+                ref var pos = ref entity.GetPositionComponentRef();
+                ref var drawable = ref entity.GetDrawableComponentRef();
 
                 if (pos.Position.X < scene.Camera.ScreenRect.Left - overdraw || pos.Position.X > scene.Camera.ScreenRect.Right + overdraw)
                     continue;
                 if (pos.Position.Y < scene.Camera.ScreenRect.Top - overdraw || pos.Position.Y > scene.Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f, Vector2.Zero,Vector2.One, SpriteEffects.None, 0f);
-                renderedObjectsCounter++;
+                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+                PixelGlue.RenderedObjects++;
             }
-            if(scene.Map?.Layers?.Count >= 2)
-            renderedObjectsCounter += TmxMapRenderer.Draw(sb, scene.Map, 2, scene.Camera);
+            if (scene.Map?.Layers?.Count >= 2)
+                PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, scene.Map, 2, scene.Camera);
         }
     }
 }

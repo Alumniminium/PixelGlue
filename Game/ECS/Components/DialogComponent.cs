@@ -1,6 +1,6 @@
 namespace PixelGlueCore.ECS.Components
 {
-    public class DialogComponent : IEntityComponent
+    public class DialogComponent
     {
         private int stage;
 

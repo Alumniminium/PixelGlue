@@ -9,17 +9,6 @@ namespace PixelGlueCore.ECS.Components
         public MouseState Mouse { get; set; }
         public KeyboardState Keyboard { get; set; }
         public Keys[] OldKeys {get;set;}
-        public float ScrollWheelValue { get; set; }
-        public int PixelOwnerId { get; set; }
-
-        public InputComponent(int ownerId)
-        {
-            PixelOwnerId=ownerId;
-            GamePad = new GamePadState();
-            Mouse = new MouseState();
-            Keyboard = new KeyboardState();
-            OldKeys = new Keys[0];
-            ScrollWheelValue=0;
-        }
+        public float Scroll { get; set; }
     }
 }

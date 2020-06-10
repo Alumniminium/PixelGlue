@@ -9,20 +9,20 @@ namespace TiledSharp
 {
     public class TmxGroup : ITmxLayer
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public double Opacity { get; private set; }
-        public bool Visible { get; private set; }
+        public double Opacity { get; }
+        public bool Visible { get; }
         public double? OffsetX { get; private set; }
         public double? OffsetY { get; private set; }
 
-        public TmxList<ITmxLayer> Layers { get; private set; }
+        public TmxList<ITmxLayer> Layers { get;}
 
-        public TmxList<TmxLayer> TileLayers { get; private set; }
-        public TmxList<TmxObjectGroup> ObjectGroups { get; private set; }
-        public TmxList<TmxImageLayer> ImageLayers { get; private set; }
-        public TmxList<TmxGroup> Groups { get; private set; }
-        public PropertyDict Properties { get; private set; }
+        public TmxList<TmxLayer> TileLayers { get;  }
+        public TmxList<TmxObjectGroup> ObjectGroups { get; }
+        public TmxList<TmxImageLayer> ImageLayers { get; }
+        public TmxList<TmxGroup> Groups { get; }
+        public PropertyDict Properties { get; }
 
         public TmxGroup(XElement xGroup, int width, int height, string tmxDirectory)
         {
