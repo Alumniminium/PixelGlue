@@ -8,5 +8,12 @@ namespace PixelGlueCore.Entities
 {
     public class Player : PixelEntity
     {
+    }    
+    public class NameTag : PixelEntity
+    {
+        public NameTag(string name)
+        {
+            AddNameTag(new TextComponent(name));    
+        }
     }
 }
