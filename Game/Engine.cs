@@ -5,7 +5,7 @@ using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore
 {
-    public class Engine : Microsoft.Xna.Framework.Game
+    public class Engine : Game
     {
         private double _elapsedTime = 0;
         private readonly double _updateTime = 1f / PixelGlue.FixedUpdateHz;
@@ -34,7 +34,8 @@ namespace PixelGlueCore
                 PreferredBackBufferHeight = PixelGlue.ScreenHeight,
                 GraphicsProfile = GraphicsProfile.Reach,
                 SynchronizeWithVerticalRetrace = vsync,
-                PreferHalfPixelOffset = false
+                PreferHalfPixelOffset = false,
+                HardwareModeSwitch = false
             };
             _graphics.ApplyChanges();
             PixelGlue.Device=_graphics.GraphicsDevice;

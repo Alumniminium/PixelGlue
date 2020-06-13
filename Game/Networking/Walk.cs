@@ -22,18 +22,23 @@ namespace PixelGlueCore.Networking.Handlers
                 var drawable = new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect);
                 var position = new PositionComponent(packet.X, packet.Y, 0);
                 var movable = new MoveComponent(8, packet.X, packet.Y);
+                var text = new TextComponent($"{position.Position.X},{position.Position.Y}");
 
                 entity = scene.CreateEntity<PixelEntity>(uniqueId);
                 entity.AddDrawable(drawable);
                 entity.AddMovable(movable);
                 entity.AddPosition(position);
+                entity.AddTextComponent(text);
             }
             else
             {
                 if (!entity.HasMoveComponent())
                     return;
                 ref var movable = ref entity.GetMoveComponentRef();
-                    movable.Destination = location;
+                ref var position = ref entity.GetPositionComponentRef();
+                ref var text = ref entity.GetTextComponentRef();
+                text.Text = uniqueId.ToString();
+                movable.Destination = location;
             }
         }
     }

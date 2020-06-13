@@ -1,10 +1,7 @@
 using PixelGlueCore.ECS.Systems;
-using PixelGlueCore;
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Enums;
 using PixelGlueCore.Helpers;
-using PixelGlueCore.Networking;
-using System.Linq;
 using TerribleSockets.Packets;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Scenes;
@@ -20,8 +17,8 @@ namespace PixelGlueCore.Networking.Handlers
             var scene = SceneManager.ActiveScenes[^1];
             var player = scene.CreateEntity<Player>(packet.UniqueId);
             player.AddDrawable(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-            player.AddMovable(new MoveComponent(8, 256, 256));
-            player.AddPosition(new PositionComponent(256,256,0));
+            player.AddMovable(new MoveComponent(24, 256, 264));
+            player.AddPosition(new PositionComponent(256,264,0));
             player.AddInput(new InputComponent());
             player.AddCameraFollowTag(new CameraFollowTagComponent(1));
             player.AddNetworked(new Networked());

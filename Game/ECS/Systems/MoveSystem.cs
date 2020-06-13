@@ -11,7 +11,7 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
-        public void FixedUpdate(float _){}
+        public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
             for (int i = 0; i < SceneManager.ActiveScenes.Count; i++)
@@ -28,17 +28,14 @@ namespace PixelGlueCore.ECS.Systems
                     if (movable.Destination == Vector2.Zero)
                         continue;
 
-                    //MoveOneTile(deltaTime,ref movable,ref position);
+                    MoveOneTile(deltaTime, ref movable, ref position);
 
-
-                    //ref var input = ref entity.GetInputComponentRef();
-
-                    position.Position = Vector2.Lerp(position.Position, movable.Destination, movable.Speed*movable.SpeedMulti * deltaTime);
+                    //position.Position = Vector2.Lerp(position.Position, movable.Destination, movable.Speed*movable.SpeedMulti * deltaTime);
                 }
             }
         }
 
-        private static void MoveOneTile(float deltaTime,ref MoveComponent movable,ref PositionComponent position)
+        private static void MoveOneTile(float deltaTime, ref MoveComponent movable, ref PositionComponent position)
         {
             if (movable.Destination != position.Position)
             {
@@ -67,7 +64,9 @@ namespace PixelGlueCore.ECS.Systems
                 }
             }
             else
+            {
                 movable.Moving = false;
+            }
         }
     }
 }
