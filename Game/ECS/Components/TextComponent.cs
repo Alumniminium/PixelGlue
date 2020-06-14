@@ -1,14 +1,19 @@
-﻿namespace PixelGlueCore.ECS.Components
+﻿using PixelGlueCore.ECS.Systems;
+
+namespace PixelGlueCore.ECS.Components
 {
-    public struct TextComponent
+    public struct TextComponent : IEntityComponent
     {
+        public int UniqueId {get;set;}
         public string Text;
         public string FontName;
 
-        public TextComponent(string text,string font="profont")
+        public TextComponent(int ownerId, string text,string font="profont")
         {
+            UniqueId=ownerId;
             Text=text;
             FontName=font;
         }
+
     }
 }

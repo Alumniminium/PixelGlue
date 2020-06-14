@@ -16,16 +16,16 @@ namespace PixelGlueCore.Networking.Handlers
             var (user, pass) = packet.GetUserPass();
             var scene = SceneManager.ActiveScenes[^1];
             var player = scene.CreateEntity<Player>(packet.UniqueId);
-            player.AddDrawable(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-            player.AddMovable(new MoveComponent(24, 256, 264));
-            player.AddPosition(new PositionComponent(256,264,0));
-            player.AddInput(new InputComponent());
-            player.AddCameraFollowTag(new CameraFollowTagComponent(1));
-            player.AddNetworked(new Networked());
+            player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
+            player.Add(new MoveComponent(player.EntityId,24, 256, 264));
+            player.Add(new PositionComponent(player.EntityId,256,264,0));
+            player.Add(new InputComponent(player.EntityId));
+            player.Add(new CameraFollowTagComponent(player.EntityId,1));
+            player.Add(new Networked(packet.UniqueId));
 
             FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
 
-            if (player.UniqueId == 0)
+            if (player.EntityId == 0)
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " failed to authenticate! (not implemented)");
                 scene.Destroy(player);
@@ -33,7 +33,7 @@ namespace PixelGlueCore.Networking.Handlers
             else
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " authenticated! (not implemented)");
-                player.UniqueId = packet.UniqueId;
+                //player.EntityId = packet.UniqueId;
                 NetworkSystem.ConnectionState = ConnectionState.Authenticated;
             }
         }

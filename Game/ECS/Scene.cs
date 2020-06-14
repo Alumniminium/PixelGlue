@@ -97,17 +97,17 @@ namespace PixelGlueCore.ECS
         {
             var entity = new T
             {
-                UniqueId = uniqueId,
+                EntityId = Entities.Count,
                 Scene = this
             };
-            Entities.TryAdd(entity.UniqueId, entity);
-            entity.AddDbgBoundingBox(new DbgBoundingBoxComponent(uniqueId));
+            Entities.TryAdd(entity.EntityId, entity);
+            entity.Add<DbgBoundingBoxComponent>();
             return entity;
         }
 
         internal void Destroy(PixelEntity entity)
         {
-            Entities.TryRemove(entity.UniqueId, out _);
+            Entities.TryRemove(entity.EntityId, out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]

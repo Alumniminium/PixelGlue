@@ -19,24 +19,24 @@ namespace PixelGlueCore.Networking.Handlers
             if (!scene.Entities.TryGetValue(uniqueId, out var entity))
             {
                 var srcEntity = Database.Entities[PixelGlue.Random.Next(0, Database.Entities.Count)];
-                var drawable = new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect);
-                var position = new PositionComponent(packet.X, packet.Y, 0);
-                var movable = new MoveComponent(8, packet.X, packet.Y);
-                var text = new TextComponent($"{position.Position.X},{position.Position.Y}");
-
                 entity = scene.CreateEntity<PixelEntity>(uniqueId);
-                entity.AddDrawable(drawable);
-                entity.AddMovable(movable);
-                entity.AddPosition(position);
-                entity.AddTextComponent(text);
+                var drawable = new DrawableComponent(entity.EntityId,srcEntity.TextureName, srcEntity.SrcRect);
+                var position = new PositionComponent(entity.EntityId,packet.X, packet.Y, 0);
+                var movable = new MoveComponent(entity.EntityId,8, packet.X, packet.Y);
+                var text = new TextComponent(entity.EntityId,$"{position.Position.X},{position.Position.Y}");
+
+                entity.Add(drawable);
+                entity.Add(movable);
+                entity.Add(position);
+                entity.Add(text);
             }
             else
             {
-                if (!entity.HasMoveComponent())
+                if (!entity.Has<MoveComponent>())
                     return;
-                ref var movable = ref entity.GetMoveComponentRef();
-                ref var position = ref entity.GetPositionComponentRef();
-                ref var text = ref entity.GetTextComponentRef();
+                ref var movable = ref entity.Get<MoveComponent>();
+                ref var position = ref entity.Get<PositionComponent>();
+                ref var text = ref entity.Get<TextComponent>();
                 text.Text = uniqueId.ToString();
                 movable.Destination = location;
             }

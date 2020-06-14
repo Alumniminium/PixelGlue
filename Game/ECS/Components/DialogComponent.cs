@@ -1,7 +1,10 @@
+using PixelGlueCore.ECS.Systems;
+
 namespace PixelGlueCore.ECS.Components
 {
-    public class DialogComponent
+    public class DialogComponent: IEntityComponent
     {
+        public int UniqueId {get;set;}
         private int stage;
 
 
@@ -16,13 +19,11 @@ namespace PixelGlueCore.ECS.Components
             }
         }
 
-        public int PixelOwnerId { get; set; }
-
         public bool UpdateRequired=true;
 
         public DialogComponent(int ownerId,int id, int stage = 0)
         {
-            PixelOwnerId=ownerId;
+            UniqueId=ownerId;
             Id = id;
             Stage = stage;
         }

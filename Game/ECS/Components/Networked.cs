@@ -1,6 +1,13 @@
+using PixelGlueCore.ECS.Systems;
+
 namespace PixelGlueCore.ECS.Components
 {
-    public struct Networked
+    public struct Networked: IEntityComponent
     {
+        public int UniqueId {get;set;}
+        public Networked(int uniqueId)
+        {
+            UniqueId = uniqueId;
+        }
     }
 }

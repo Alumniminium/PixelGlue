@@ -19,10 +19,10 @@ namespace PixelGlueCore.ECS.Systems
             {
                 foreach (var (_, entity) in scene.Entities)
                 {
-                    if (!entity.HasCameraFollowTagComponent() || !entity.HasPositionComponent())
+                    if (!entity.Has<CameraFollowTagComponent>() || !entity.Has<PositionComponent>())
                         continue;
-                    ref var follow = ref entity.GetCamreaFollowRef();
-                    ref var loc = ref entity.GetPositionComponentRef();
+                    ref var follow = ref entity.Get<CameraFollowTagComponent>();
+                    ref var loc = ref entity.Get<PositionComponent>();
                     var camera = scene.Camera;
 
                     var camX = (int)loc.Position.X / scene.Map.TileWidth * scene.Map.TileWidth;

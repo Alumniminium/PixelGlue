@@ -18,11 +18,11 @@ namespace PixelGlueCore.ECS.Systems
                 return;
             foreach (var (_, entity) in scene.Entities)
             {
-                if (!entity.HasPositionComponent() || !entity.HasDrawableComponent())
+                if (!entity.Has<PositionComponent>() || !entity.Has<DrawableComponent>())
                     continue;
 
-                ref var pos = ref entity.GetPositionComponentRef();
-                ref var drawable = ref entity.GetDrawableComponentRef();
+                ref var pos = ref entity.Get<PositionComponent>();
+                ref var drawable = ref entity.Get<DrawableComponent>();
 
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drawable.SrcRect.Width, drawable.SrcRect.Height);
                 sb.Draw(AssetManager.Textures[DbgBoundingBoxComponent.TextureName], destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);

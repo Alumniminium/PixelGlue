@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Loaders.TiledSharp;
 
@@ -28,11 +29,11 @@ namespace PixelGlueCore.ECS.Systems
             PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, scene.Map, 1, scene.Camera);
             foreach (var (_, entity) in scene.Entities)
             {
-                if (!entity.HasDrawableComponent() || !entity.HasPositionComponent())
+                if (!entity.Has<DrawableComponent>() || !entity.Has<PositionComponent>())
                     continue;
 
-                ref var pos = ref entity.GetPositionComponentRef();
-                ref var drawable = ref entity.GetDrawableComponentRef();
+                ref var pos = ref entity.Get<PositionComponent>();
+                ref var drawable = ref entity.Get<DrawableComponent>();
 
                 if (pos.Position.X < scene.Camera.ScreenRect.Left - overdraw || pos.Position.X > scene.Camera.ScreenRect.Right + overdraw)
                     continue;
@@ -42,7 +43,7 @@ namespace PixelGlueCore.ECS.Systems
                 sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position+origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 PixelGlue.RenderedObjects++;
 
-                ref var text = ref entity.GetTextComponentRef();
+                ref var text = ref entity.Get<TextComponent>();
                 if(!string.IsNullOrEmpty(text.Text))
                 {
                     AssetManager.Fonts[text.FontName].DrawText(sb,(int)pos.Position.X,(int)pos.Position.Y, text.Text);

@@ -1,6 +1,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.ECS.Systems
@@ -42,7 +43,7 @@ namespace PixelGlueCore.ECS.Systems
             player = scene.Find<Player>();
             if (player != null)
             {
-                ref var pos = ref player.GetPositionComponentRef();
+                ref var pos = ref player.Get<PositionComponent>();
                 AssetManager.Fonts["profont"].Draw($"Position: {pos.Position.X},{pos.Position.Y}", new Vector2(16, 164), sb);
             }
             AssetManager.Fonts["profont"].Draw("FPS: " + updateRate.ToString("##0.00"), new Vector2(16, 64), sb);

@@ -41,7 +41,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     int y = (int)Math.Floor(i / (double)map.Width);
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
-                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
+                    map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
                 }
             }
             map.ImageLayers=null;

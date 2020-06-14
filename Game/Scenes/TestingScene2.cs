@@ -41,8 +41,8 @@ namespace PixelGlueCore.Scenes
             PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, Map, 1, Camera);
             foreach (var (_,entity) in Entities)
             {
-                ref var drawable = ref entity.GetDrawableComponentRef();
-                ref var pos = ref entity.GetPositionComponentRef();
+                ref var drawable = ref entity.Get<DrawableComponent>();
+                ref var pos = ref entity.Get<PositionComponent>();
                
                 if (pos.Position.X < Camera.ScreenRect.Left - overdraw || pos.Position.X > Camera.ScreenRect.Right + overdraw)
                     continue;

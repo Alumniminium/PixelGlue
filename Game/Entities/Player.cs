@@ -13,7 +13,7 @@ namespace PixelGlueCore.Entities
     {
         public NameTag(string name)
         {
-            AddTextComponent(new TextComponent(name));    
+            Add<TextComponent>();    
         }
     }
 }

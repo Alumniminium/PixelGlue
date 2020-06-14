@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.Configuration;
 using PixelGlueCore.Enums;
 using System.Runtime.CompilerServices;
+using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -22,16 +23,17 @@ namespace PixelGlueCore.ECS.Systems
             {
                 foreach (var (_, entity) in scene.Entities)
                 {
-                    if (!entity.HasInputComponent() ||
-                        !entity.HasMoveComponent() ||
-                        !entity.HasPositionComponent() ||
-                        !entity.HasCameraFollowTagComponent())
+                    if (!entity.Has<InputComponent>() ||
+                        !entity.Has<MoveComponent>() ||
+                        !entity.Has<PositionComponent>() ||
+                        !entity.Has<CameraFollowTagComponent>())
                         continue;
 
-                    ref var inputComponent = ref entity.GetInputComponentRef();
-                    ref var moveComponent = ref entity.GetMoveComponentRef();
-                    ref var positionComponent = ref entity.GetPositionComponentRef();
-                    ref var camera = ref entity.GetCamreaFollowRef();
+                    
+                    ref var inputComponent = ref entity.Get<InputComponent>();
+                    ref var moveComponent = ref entity.Get<MoveComponent>();
+                    ref var positionComponent = ref entity.Get<PositionComponent>();
+                    ref var camera = ref entity.Get<CameraFollowTagComponent>();
 
                     inputComponent.Mouse = Mouse.GetState();
                     inputComponent.Keyboard = Keyboard.GetState();
@@ -141,7 +143,8 @@ namespace PixelGlueCore.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void OpenDialog(Scene scene)
         {
-            //var player = scene.Find<Player>();
+            var player = scene.Find<Player>();
+            player.Add<TextComponent>();
             //scene.AddComponent(new DialogComponent(player.UniqueId, 1));
         }
     }

@@ -3,6 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PixelGlueCore.ECS.Systems
 {
+    public interface IEntityComponent
+    {
+        int UniqueId {get;set;}
+    }
     public interface IEntitySystem
     {
         string Name { get; set; }
