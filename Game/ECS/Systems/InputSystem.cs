@@ -144,7 +144,7 @@ namespace PixelGlueCore.ECS.Systems
         private static void OpenDialog(Scene scene)
         {
             var player = scene.Find<Player>();
-            player.Add<TextComponent>();
+            player.Add(new DialogComponent(player.EntityId,1,0));
             //scene.AddComponent(new DialogComponent(player.UniqueId, 1));
         }
     }

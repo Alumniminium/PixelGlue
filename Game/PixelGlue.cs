@@ -19,5 +19,6 @@ namespace PixelGlueCore
         public static Profiler UpdateProfiler { get; set; } = new Profiler();
         public static Profiler DrawProfiler { get; set; } = new Profiler();
         public static int RenderedObjects { get; internal set; }
+        public static string[] Names { get; internal set; }
     }
 }

@@ -23,6 +23,7 @@ namespace PixelGlueCore.Scenes
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             Systems.Add(new EntityRenderSystem());
+            Systems.Add(new NameTagRenderSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem());
             UISystems.Add(new SmartFramerate(4));
             base.Initialize();

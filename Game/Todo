@@ -1,3 +1,13 @@
+EntityId and UniqueId are seperate. Need to have a lookup table to lookup which EntityId corresponds to which UniqueId on the server.
+
+
+
+
+
+
+
+
+
 UI System
 - Draw Rectangles
 - Draw Rectangles within Rectangles (Children)

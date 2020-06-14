@@ -8,6 +8,8 @@ using TiledSharp;
 using PixelGlueCore.ECS.Components;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using System.IO;
+using System;
 
 namespace PixelGlueCore.ECS
 {
@@ -17,6 +19,7 @@ namespace PixelGlueCore.ECS
         public bool IsActive;
         public bool IsReady;
         public ConcurrentDictionary<int, PixelEntity> Entities;
+        public ConcurrentDictionary<int, int> UniqueIdToEntityId;
         public List<IEntitySystem> Systems;
         public List<IEntitySystem> UISystems;
         public Camera Camera;
@@ -25,6 +28,7 @@ namespace PixelGlueCore.ECS
         public Scene()
         {
             Entities = new ConcurrentDictionary<int, PixelEntity>();
+            UniqueIdToEntityId = new ConcurrentDictionary<int, int>();
             Systems = new List<IEntitySystem>();
             UISystems = new List<IEntitySystem>();
         }
@@ -40,7 +44,9 @@ namespace PixelGlueCore.ECS
 
         public virtual void LoadContent(ContentManager cm)
         {
+            PixelGlue.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',',StringSplitOptions.RemoveEmptyEntries);
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont", cm);
+            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont_12.fnt", "profont_12", cm);
             AssetManager.LoadFont("../Build/Content/RuntimeContent/emoji.fnt", "emoji", cm);
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -93,32 +99,35 @@ namespace PixelGlueCore.ECS
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        internal T CreateEntity<T>(int uniqueId) where T : PixelEntity, new()
+        public T CreateEntity<T>(int uniqueId) where T : PixelEntity, new()
         {
             var entity = new T
             {
                 EntityId = Entities.Count,
+                UniqueId = uniqueId,
                 Scene = this
             };
             Entities.TryAdd(entity.EntityId, entity);
-            entity.Add<DbgBoundingBoxComponent>();
+            UniqueIdToEntityId.TryAdd(uniqueId,entity.EntityId);
+            entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
             return entity;
         }
 
-        internal void Destroy(PixelEntity entity)
+        public void Destroy(PixelEntity entity)
         {
             Entities.TryRemove(entity.EntityId, out _);
+            UniqueIdToEntityId.TryRemove(entity.UniqueId,out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        internal T GetSystem<T>()
+        public T GetSystem<T>()
         {
             foreach (var sys in Systems)
                 if (sys is T t)
                     return t;
             return default;
         }
-        internal T GetUISystem<T>()
+        public T GetUISystem<T>()
         {
             foreach (var sys in UISystems)
                 if (sys is T t)
