@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using TerribleSockets.Packets;
 using PixelGlueCore.Scenes;
 using PixelGlueCore.Entities;
+using PixelGlueCore.ECS;
 
 namespace PixelGlueCore.Networking.Handlers
 {
@@ -14,7 +15,7 @@ namespace PixelGlueCore.Networking.Handlers
             var uniqueId = packet.UniqueId;
             var location = new Vector2(packet.X, packet.Y);
             var tickCount = packet.TickCount;
-            var scene = SceneManager.ActiveScenes[^1];
+            var scene = SceneManager.ActiveGameScenes[^1];
             if(!scene.UniqueIdToEntityId.TryGetValue(uniqueId,out var entityId))
             {
                 var srcEntity = Database.Entities[PixelGlue.Random.Next(0, Database.Entities.Count)];

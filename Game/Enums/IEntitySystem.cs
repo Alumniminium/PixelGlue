@@ -1,12 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace PixelGlueCore.ECS.Systems
+namespace PixelGlueCore.Enums
 {
-    public interface IEntityComponent
-    {
-        int UniqueId {get;set;}
-    }
     public interface IEntitySystem
     {
         string Name { get; set; }
@@ -20,7 +16,7 @@ namespace PixelGlueCore.ECS.Systems
         void Update(float deltaTime);
         void FixedUpdate(float deltaTime);
 
-        public void Draw(Scene scene,SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
         }
     }

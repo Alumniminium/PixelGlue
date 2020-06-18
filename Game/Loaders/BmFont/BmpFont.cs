@@ -49,6 +49,7 @@ namespace PixelGlueCore.Loaders
 
                     spriteBatch.Draw(fontTexture, position, fc.SrcRect, Color.White);
                     dx += fc.FontChar.XAdvance;
+                    PixelGlue.DrawCalls++;
                 }
             }
         }

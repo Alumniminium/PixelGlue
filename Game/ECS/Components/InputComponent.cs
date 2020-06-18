@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using PixelGlueCore.ECS.Components;
+using PixelGlueCore.Enums;
 using PixelGlueCore.ECS.Systems;
 
 namespace PixelGlueCore.ECS.Components

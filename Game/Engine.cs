@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelGlueCore.ECS;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Scenes;
 
@@ -16,6 +17,7 @@ namespace PixelGlueCore
         {
             SetInitialGraphicsOptions(vsync);
             Content.RootDirectory = "../Content";
+            PixelGlue.ContentManager = Content;
 
             IsMouseVisible = true;
 
@@ -53,7 +55,7 @@ namespace PixelGlueCore
             while (SceneManager.QueuedTasks.TryDequeue(out var action))
                 action.Invoke();
 
-            foreach (var scene in SceneManager.ActiveScenes)
+            foreach (var scene in SceneManager.ActiveGameScenes)
             {
                 if (!scene.IsReady || !scene.IsActive)
                     continue;
@@ -62,7 +64,7 @@ namespace PixelGlueCore
             while (_elapsedTime >= _updateTime)
             {
                 _elapsedTime -= _updateTime;
-                foreach (var scene in SceneManager.ActiveScenes)
+                foreach (var scene in SceneManager.ActiveGameScenes)
                 {
                     if (!scene.IsReady || !scene.IsActive)
                         continue;
@@ -79,12 +81,16 @@ namespace PixelGlueCore
 
         protected override void Draw(GameTime gameTime)
         {
+            PixelGlue.DrawCalls=0;
             PixelGlue.DrawProfiler.StartMeasuring();
             _graphics.GraphicsDevice.Clear(Color.Black);
-
-            foreach (var scene in SceneManager.ActiveScenes)
+            
+            foreach (var scene in SceneManager.ActiveGameScenes)
                 if (scene.IsReady)
-                    scene.Draw(scene,_spriteBatch);
+                    scene.Draw(_spriteBatch);
+            foreach (var scene in SceneManager.ActiveUIScenes)
+                if (scene.IsReady)
+                    scene.Draw(_spriteBatch);
 
             base.Draw(gameTime);
             PixelGlue.DrawProfiler.StopMeasuring();

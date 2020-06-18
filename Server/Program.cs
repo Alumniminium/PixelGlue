@@ -17,11 +17,11 @@ namespace Server
 
             ReceiveQueue.Start(PacketHandler.Handle);
             ServerSocket.Start(13338);
-            Console.WriteLine($"Server running!");
+            Console.WriteLine("Server running!");
 
             var t = new Thread(() =>
             {
-                Console.WriteLine($"Heartbeat Thread started.");
+                Console.WriteLine("Heartbeat Thread started.");
                 for (int i = 10; i < BotCount; i++)
                     Collections.Npcs.TryAdd(1 + i, new Npc(i));
                 while (true)

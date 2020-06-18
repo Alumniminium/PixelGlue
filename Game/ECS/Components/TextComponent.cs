@@ -1,4 +1,5 @@
 ﻿using PixelGlueCore.ECS.Systems;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.ECS.Components
 {

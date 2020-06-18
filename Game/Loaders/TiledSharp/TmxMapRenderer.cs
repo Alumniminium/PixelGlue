@@ -11,12 +11,12 @@ namespace PixelGlueCore.Loaders.TiledSharp
 {
     public static class TmxMapRenderer
     {
-        public static TmxMap Load(string path,ContentManager _contentManager)
+        public static TmxMap Load(string path)
         {
             var map = new TmxMap(path);
             var tileSize = map.Tilesets[0].TileWidth;
             for (int i = 0; i < map.Tilesets.Count; i++)
-                AssetManager.LoadTexture(map.Tilesets[i].Name, _contentManager);
+                AssetManager.LoadTexture(map.Tilesets[i].Name);
 
             map.TileArray = new DrawableComponent[map.TileLayers.Count][];
             for (int i = 0; i < map.TileArray.Length; i++)
@@ -35,10 +35,10 @@ namespace PixelGlueCore.Loaders.TiledSharp
 
                     int tileFrame = gid - 1;
                     int column = tileFrame % tilesetTilesWide;
-                    int row = (int)Math.Floor(tileFrame / (double)tilesetTilesWide);
+                    int row = tileFrame/ tilesetTilesWide;
 
                     int x = i % map.Width;
-                    int y = (int)Math.Floor(i / (double)map.Width);
+                    int y = i / map.Width;
 
                     Rectangle tilesetRec = new Rectangle(tileSize * column, tileSize * row, tileSize, tileSize);
                     map.TileArray[c][(y * map.Width) + x] = new DrawableComponent(0,map.Tilesets[0].Name, tilesetRec, new Rectangle(x*tileSize,y*tileSize,tileSize,tileSize));
@@ -66,7 +66,7 @@ namespace PixelGlueCore.Loaders.TiledSharp
                     if (string.IsNullOrEmpty(tile.TextureName))
                         continue;
                     counter++;
-                    sb.Draw(AssetManager.Textures[map.Tilesets[0].Name], tile.DestRect, tile.SrcRect, Color.White, 0f,origin, SpriteEffects.None, 0);
+                    sb.Draw(AssetManager.GetTexture(map.Tilesets[0].Name), tile.DestRect, tile.SrcRect, Color.White, 0f,origin, SpriteEffects.None, 0);
                 }
             }
             return counter;

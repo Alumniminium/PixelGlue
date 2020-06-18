@@ -1,5 +1,6 @@
 using PixelGlueCore.Helpers;
 using System;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.ECS.Systems
 {

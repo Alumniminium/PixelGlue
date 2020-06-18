@@ -4,145 +4,32 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.ECS.Systems;
 using System.Collections.Generic;
-using TiledSharp;
-using PixelGlueCore.ECS.Components;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
-using System.IO;
-using System;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.ECS
 {
-    public class Scene
+    public abstract class Scene
     {
         public int Id;
         public bool IsActive;
         public bool IsReady;
+        public int LastEntityId = 1;
         public ConcurrentDictionary<int, PixelEntity> Entities;
-        public ConcurrentDictionary<int, int> UniqueIdToEntityId;
         public List<IEntitySystem> Systems;
-        public List<IEntitySystem> UISystems;
-        public Camera Camera;
-        public TmxMap Map;
-
-        public Scene()
+        protected Scene()
         {
             Entities = new ConcurrentDictionary<int, PixelEntity>();
-            UniqueIdToEntityId = new ConcurrentDictionary<int, int>();
             Systems = new List<IEntitySystem>();
-            UISystems = new List<IEntitySystem>();
-        }
-
-        public virtual void Initialize()
-        {
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].Initialize();
-            for (int i = 0; i < UISystems.Count; i++)
-                UISystems[i].Initialize();
-            IsReady = true;
-        }
-
-        public virtual void LoadContent(ContentManager cm)
-        {
-            PixelGlue.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',',StringSplitOptions.RemoveEmptyEntries);
-            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont", cm);
-            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont_12.fnt", "profont_12", cm);
-            AssetManager.LoadFont("../Build/Content/RuntimeContent/emoji.fnt", "emoji", cm);
-        }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual void Update(GameTime deltaTime)
-        {
-            for (int i = 0; i < Systems.Count; i++)
-            {
-                if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
-            }
-            for (int i = 0; i < UISystems.Count; i++)
-            {
-                if (UISystems[i].IsActive && UISystems[i].IsReady)
-                    UISystems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
-            }
-        }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual void FixedUpdate(float deltaTime)
-        {
-            for (int i = 0; i < Systems.Count; i++)
-            {
-                if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].FixedUpdate(deltaTime);
-            }
-            for (int i = 0; i < UISystems.Count; i++)
-            {
-                if (UISystems[i].IsActive && UISystems[i].IsReady)
-                    UISystems[i].FixedUpdate(deltaTime);
-            }
-        }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual void Draw(Scene scene, SpriteBatch sb)
-        {
-            if (Camera == null)
-                return;
-            sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
-            for (int i = 0; i < Systems.Count; i++)
-            {
-                if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].Draw(scene, sb);
-            }
-            sb.End();
-            sb.Begin(samplerState: SamplerState.PointClamp);
-            for (int i = 0; i < UISystems.Count; i++)
-            {
-                if (UISystems[i].IsActive && UISystems[i].IsReady)
-                    UISystems[i].Draw(scene, sb);
-            }
-            sb.End();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public T CreateEntity<T>(int uniqueId) where T : PixelEntity, new()
-        {
-            var entity = new T
-            {
-                EntityId = Entities.Count,
-                UniqueId = uniqueId,
-                Scene = this
-            };
-            Entities.TryAdd(entity.EntityId, entity);
-            UniqueIdToEntityId.TryAdd(uniqueId,entity.EntityId);
-            entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
-            return entity;
-        }
-
-        public void Destroy(PixelEntity entity)
-        {
-            Entities.TryRemove(entity.EntityId, out _);
-            UniqueIdToEntityId.TryRemove(entity.UniqueId,out _);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public T GetSystem<T>()
-        {
-            foreach (var sys in Systems)
-                if (sys is T t)
-                    return t;
-            return default;
-        }
-        public T GetUISystem<T>()
-        {
-            foreach (var sys in UISystems)
-                if (sys is T t)
-                    return t;
-            return default;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public T Find<T>() where T : PixelEntity
-        {
-            foreach (var (_,entity) in Entities)
-                if (entity is T t)
-                    return t;
-            return null;
-        }
-        public override int GetHashCode() => Id;
-        public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
+        }   
+        public abstract void Initialize();
+        public abstract void LoadContent(ContentManager cm);
+        public abstract void Update(GameTime deltaTime);
+        public abstract void FixedUpdate(float deltaTime);
+        public abstract void Draw(SpriteBatch sb);
+        public abstract T CreateEntity<T>(int uniqueId) where T : PixelEntity, new();
+        public abstract T CreateUIEntity<T>() where T : PixelEntity, new();
+        public abstract T GetSystem<T>();
+        public abstract void Destroy(PixelEntity entity);
     }
 }

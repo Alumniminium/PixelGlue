@@ -30,15 +30,16 @@ namespace PixelGlueCore
                 Id = 1
             };
 
-            var globalScene = new Scene
+            var globalScene = new GameScene
             {
                 Id = 0
             };
             globalScene.Systems.Add(new InputSystem());
             globalScene.Systems.Add(new NetworkSystem());
             globalScene.Systems.Add(new DialogSystem());
-            globalScene.UISystems.Add(new GCMonitor());
+            globalScene.Systems.Add(new GCMonitor());
 
+            SceneManager.ActivateScene(new TestingUIScene());
             SceneManager.Initialize(engine.Content);
             SceneManager.ActivateScene(globalScene);
             SceneManager.ActivateScene(testScene);

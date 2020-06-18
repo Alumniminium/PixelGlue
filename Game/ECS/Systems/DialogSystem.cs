@@ -1,6 +1,6 @@
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Entities;
-using PixelGlueCore.Helpers;
+using PixelGlueCore.Enums;
 using PixelGlueCore.Scenes;
 
 namespace PixelGlueCore.ECS.Systems
@@ -17,7 +17,7 @@ namespace PixelGlueCore.ECS.Systems
 
         public void Update(float deltaTime)
         {
-            foreach (var scene in SceneManager.ActiveScenes)
+            foreach (var scene in SceneManager.ActiveGameScenes)
             {
                 foreach (var (_,_) in scene.Entities)
                 {

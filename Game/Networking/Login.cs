@@ -14,7 +14,7 @@ namespace PixelGlueCore.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var (user, pass) = packet.GetUserPass();
-            var scene = SceneManager.ActiveScenes[^1];
+            var scene = SceneManager.ActiveGameScenes[^1];
             var player = scene.CreateEntity<Player>(packet.UniqueId);
             player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
             player.Add(new MoveComponent(player.EntityId,24, 256, 264));

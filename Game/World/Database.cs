@@ -11,7 +11,7 @@ namespace PixelGlueCore.World
     public static class Database
     {
         public static Dictionary<int, BaseEntity> Entities = new Dictionary<int, BaseEntity>();
-        public static void Load(string path, ContentManager _contentManager)
+        public static void Load(string path)
         {
             FConsole.WriteLine("Loading " + Environment.CurrentDirectory + path);
             var iniFile = new IniFile(path);
@@ -25,7 +25,7 @@ namespace PixelGlueCore.World
                 if (name == "Atlas")
                 {
                     textureName = header.Value["Name"];
-                    AssetManager.LoadTexture(textureName,_contentManager);
+                    AssetManager.LoadTexture(textureName);
                     tileSize = int.Parse(header.Value["TileSize"]);
                 }
                 else

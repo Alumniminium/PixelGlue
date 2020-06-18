@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelGlueCore.ECS.Components;
+using PixelGlueCore.Enums;
 using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.ECS.Systems
@@ -17,10 +17,10 @@ namespace PixelGlueCore.ECS.Systems
         public double updateRate;
         private readonly double weight;
         private readonly int numerator;
-        public Player player;
-
-        public SmartFramerate(int oldFrameWeight)
+        public Scene Scene;
+        public SmartFramerate(Scene scene,int oldFrameWeight)
         {
+            Scene=scene;
             numerator = oldFrameWeight;
             weight = (double)oldFrameWeight / ((double)oldFrameWeight - 1d);
         }
@@ -36,9 +36,9 @@ namespace PixelGlueCore.ECS.Systems
                 counter = 0;
             }
         }
-        public void Draw(Scene scene, SpriteBatch sb)
+        public void Draw(SpriteBatch sb)
         {
-            AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Entities: {scene.Entities.Count}, Rendered: {PixelGlue.RenderedObjects})", new Vector2(16, 16), sb);
+            AssetManager.Fonts["profont"].Draw($"PixelGlue Engine (Entities: {Scene.Entities.Count}, Draw calls: {PixelGlue.DrawCalls})", new Vector2(16, 16), sb);
             AssetManager.Fonts["profont"].Draw("FPS: " + updateRate.ToString("##0.00"), new Vector2(16, 64), sb);
             AssetManager.Fonts["profont"].Draw($"Draw: {PixelGlue.DrawProfiler.Time:##0.00}ms, Update: {PixelGlue.UpdateProfiler.Time:##0.00}ms", new Vector2(16, 96), sb);
         }

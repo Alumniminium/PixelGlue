@@ -11,7 +11,7 @@ using PixelGlueCore.Networking;
 
 namespace PixelGlueCore.Scenes
 {
-    public class TestingScene2 : Scene
+    public class TestingScene2 : GameScene
     {
         public override void Initialize()
         {
@@ -25,20 +25,19 @@ namespace PixelGlueCore.Scenes
         }
         public override void LoadContent(ContentManager cm)
         {
-            Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/indoorstest.tmx",cm);
-            Database.Load("../Build/Content/RuntimeContent/Equipment.txt",cm);
+            Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/indoorstest.tmx");
+            Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
             base.LoadContent(cm);
         }
 
-        public override void Draw(Scene scene, SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
-            PixelGlue.RenderedObjects=0;
             var origin = new Vector2(-23, 8);
             var overdraw = Map.TileWidth * 2;
 
-            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, Map, 0, Camera);
-            PixelGlue.RenderedObjects += TmxMapRenderer.Draw(sb, Map, 1, Camera);
+            PixelGlue.DrawCalls += TmxMapRenderer.Draw(sb, Map, 0, Camera);
+            PixelGlue.DrawCalls += TmxMapRenderer.Draw(sb, Map, 1, Camera);
             foreach (var (_,entity) in Entities)
             {
                 ref var drawable = ref entity.Get<DrawableComponent>();
@@ -49,14 +48,14 @@ namespace PixelGlueCore.Scenes
                 if (pos.Position.Y < Camera.ScreenRect.Top - overdraw || pos.Position.Y > Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.Textures[drawable.TextureName], pos.Position, drawable.SrcRect, Color.White, 0f,origin, Vector2.One, SpriteEffects.None, 0f);
-                PixelGlue.RenderedObjects++;
+                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position, drawable.SrcRect, Color.White, 0f,origin, Vector2.One, SpriteEffects.None, 0f);
+                PixelGlue.DrawCalls++;
             }
             //renderedObjectsCounter += TmxMapRenderer.Draw(sb, Map, 2, Camera);
 
             sb.End();
 
-            base.Draw(this,sb);
+            base.Draw(sb);
         }
     }
 }

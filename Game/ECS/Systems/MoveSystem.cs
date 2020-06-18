@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Scenes;
+using PixelGlueCore.Enums;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -14,9 +15,9 @@ namespace PixelGlueCore.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            for (int i = 0; i < SceneManager.ActiveScenes.Count; i++)
+            for (int i = 0; i < SceneManager.ActiveGameScenes.Count; i++)
             {
-                var scene = SceneManager.ActiveScenes[i];
+                var scene = SceneManager.ActiveGameScenes[i];
                 foreach (var (_, entity) in scene.Entities)
                 {
                     if (!entity.Has<MoveComponent>() || !entity.Has<PositionComponent>())

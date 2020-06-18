@@ -16,64 +16,67 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
-        public void FixedUpdate(float _){}
+        public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            foreach (var scene in SceneManager.ActiveScenes)
+            foreach (var s in SceneManager.ActiveGameScenes)
             {
-                foreach (var (_, entity) in scene.Entities)
+                if (s is GameScene scene)
                 {
-                    if (!entity.Has<InputComponent>() ||
-                        !entity.Has<MoveComponent>() ||
-                        !entity.Has<PositionComponent>() ||
-                        !entity.Has<CameraFollowTagComponent>())
-                        continue;
-
-                    
-                    ref var inputComponent = ref entity.Get<InputComponent>();
-                    ref var moveComponent = ref entity.Get<MoveComponent>();
-                    ref var positionComponent = ref entity.Get<PositionComponent>();
-                    ref var camera = ref entity.Get<CameraFollowTagComponent>();
-
-                    inputComponent.Mouse = Mouse.GetState();
-                    inputComponent.Keyboard = Keyboard.GetState();
-                    inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
-
-                    Scrolling(ref inputComponent, ref camera);
-                    Rotating(ref inputComponent, ref positionComponent);
-
-                    var destination = positionComponent.Position;
-
-                    if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
-                        destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
-                    if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
-                        destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
-                    if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
-                        destination.X = positionComponent.Position.X - scene.Map.TileWidth;
-                    if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
-                        destination.X = positionComponent.Position.X + scene.Map.TileWidth;
-                    if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
-                        moveComponent.SpeedMulti = 2.5f;
-                    if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
-                        moveComponent.SpeedMulti = 1;
-                    if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))
-                        Environment.Exit(0);
-                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
-                        PixelGlue.Profiling = !PixelGlue.Profiling;
-                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgSwitchScene))
-                        SwitchScene();
-                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
-                        OpenDialog(scene);
-                    if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
+                    foreach (var (_, entity) in scene.Entities)
                     {
-                        var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
-                        system.IsActive = !system.IsActive;
+                        if (!entity.Has<InputComponent>() ||
+                            !entity.Has<MoveComponent>() ||
+                            !entity.Has<PositionComponent>() ||
+                            !entity.Has<CameraFollowTagComponent>())
+                            continue;
+
+
+                        ref var inputComponent = ref entity.Get<InputComponent>();
+                        ref var moveComponent = ref entity.Get<MoveComponent>();
+                        ref var positionComponent = ref entity.Get<PositionComponent>();
+                        ref var camera = ref entity.Get<CameraFollowTagComponent>();
+
+                        inputComponent.Mouse = Mouse.GetState();
+                        inputComponent.Keyboard = Keyboard.GetState();
+                        inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
+
+                        Scrolling(ref inputComponent, ref camera);
+                        Rotating(ref inputComponent, ref positionComponent);
+
+                        var destination = positionComponent.Position;
+
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
+                            destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
+                            destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
+                            destination.X = positionComponent.Position.X - scene.Map.TileWidth;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
+                            destination.X = positionComponent.Position.X + scene.Map.TileWidth;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
+                            moveComponent.SpeedMulti = 2.5f;
+                        if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
+                            moveComponent.SpeedMulti = 1;
+                        if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))
+                            Environment.Exit(0);
+                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
+                            PixelGlue.Profiling = !PixelGlue.Profiling;
+                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgSwitchScene))
+                            SwitchScene();
+                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
+                            OpenDialog(scene);
+                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
+                        {
+                            var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
+                            system.IsActive = !system.IsActive;
+                        }
+
+                        if (destination != positionComponent.Position)
+                            moveComponent.Destination = destination;
+
+                        inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
                     }
-
-                    if (destination != positionComponent.Position)
-                        moveComponent.Destination = destination;
-
-                    inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
                 }
             }
         }
@@ -141,10 +144,10 @@ namespace PixelGlueCore.ECS.Systems
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        private static void OpenDialog(Scene scene)
+        private static void OpenDialog(GameScene scene)
         {
             var player = scene.Find<Player>();
-            player.Add(new DialogComponent(player.EntityId,1,0));
+            player.Add(new DialogComponent(player.EntityId, 1, 0));
             //scene.AddComponent(new DialogComponent(player.UniqueId, 1));
         }
     }

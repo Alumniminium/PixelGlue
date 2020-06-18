@@ -9,13 +9,15 @@ namespace PixelGlueCore.Scenes
     {
         public static Queue<Action> QueuedTasks = new Queue<Action>();
         public static ContentManager _content;
-        public static List<Scene> ActiveScenes;
+        public static List<GameScene> ActiveGameScenes;
+        public static List<UIScene> ActiveUIScenes;
         public static List<Scene> LoadedScenes;
         public static void Initialize(ContentManager content)
         {
             _content = content;
             LoadedScenes = new List<Scene>();
-            ActiveScenes = new List<Scene>();
+            ActiveGameScenes = new List<GameScene>();
+            ActiveUIScenes = new List<UIScene>();
         }
 
         public static void ActivateScene(Scene scene)
@@ -28,26 +30,26 @@ namespace PixelGlueCore.Scenes
                     scene.Initialize();
                     LoadedScenes.Add(scene);
                 }
-                ActiveScenes.Add(scene);
+                if (scene is GameScene gameScene)
+                    ActiveGameScenes.Add(gameScene);
+                if (scene is UIScene uiScene)
+                    ActiveUIScenes.Add(uiScene);
                 scene.IsActive = true;
             });
         }
-        public static void DeactivateScene<T>() where T:Scene
+        public static void DeactivateScene<T>() where T : Scene
         {
             QueuedTasks.Enqueue(() =>
             {
-                foreach(var loadedScene in LoadedScenes)
+                foreach (var loadedScene in LoadedScenes)
                 {
-                    if(loadedScene.IsActive)
+                    if (loadedScene.IsActive)
                     {
-                        var t1 = loadedScene.GetType();
-                        var t2 = typeof(T);
-
-                        if(t1 == t2)
-                        {
-                            loadedScene.IsActive=false;
-                            ActiveScenes.Remove(loadedScene);
-                        }
+                        loadedScene.IsActive = false;
+                        if (loadedScene is GameScene gameScene)
+                            ActiveGameScenes.Remove(gameScene);
+                        if (loadedScene is UIScene uiScene)
+                            ActiveUIScenes.Remove(uiScene);
                     }
                 }
             });

@@ -2,7 +2,7 @@ EntityId and UniqueId are seperate. Need to have a lookup table to lookup which 
 
 
 
-
+make UI element follow entity on screen
 
 
 
