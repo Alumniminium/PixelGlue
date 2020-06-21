@@ -17,7 +17,7 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsReady { get; set; }
         public GameScene Scene { get; set; }
         public ConcurrentDictionary<(int x, int y), DrawableComponent> Tiles = new ConcurrentDictionary<(int x, int y), DrawableComponent>();
-        public Dictionary<(int x, int y), DrawableComponent?> Tiles2 = new Dictionary<(int x, int y), DrawableComponent?>();
+        public Dictionary<(int x, int y), bool> Tiles2 = new Dictionary<(int x, int y), bool>();
         public Thread[] Prefetcher = new Thread[32];
         public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[32];
         public ProceduralEntityRenderSystem(GameScene scene)
@@ -114,6 +114,8 @@ namespace PixelGlueCore.ECS.Systems
                 {
                     if (!Tiles.TryGetValue((x, y), out var terrainTile))
                     {
+                        if(Tiles2.TryGetValue((x,y),out _))
+                            continue;
                         Queue[last].Push((x, y));
                         last++;
                         if(last==Queue.Length)
