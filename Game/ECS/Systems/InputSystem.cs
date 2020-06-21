@@ -72,9 +72,17 @@ namespace PixelGlueCore.ECS.Systems
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
                             OpenDialog(scene);
                         if (KeyDown(ref inputComponent, PixelGlueButtons.ScalePlus))
-                            PixelGlue.Z+=16;
+                            {
+                                ProceduralEntityRenderSystem.Tiles.Clear();
+                                ProceduralEntityRenderSystem.Tiles2.Clear();
+                                PixelGlue.Z+=8;
+                            }
                         if (KeyDown(ref inputComponent, PixelGlueButtons.ScaleMinus))
-                            PixelGlue.Z-=16;
+                        {
+                                ProceduralEntityRenderSystem.Tiles.Clear();
+                                ProceduralEntityRenderSystem.Tiles2.Clear();
+                            PixelGlue.Z-=8;
+                        }
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                         {
                             var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();

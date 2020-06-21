@@ -16,10 +16,10 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public GameScene Scene { get; set; }
-        public ConcurrentDictionary<(int x, int y), DrawableComponent> Tiles = new ConcurrentDictionary<(int x, int y), DrawableComponent>();
-        public Dictionary<(int x, int y), bool> Tiles2 = new Dictionary<(int x, int y), bool>();
-        public Thread[] Prefetcher = new Thread[32];
-        public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[32];
+        public static ConcurrentDictionary<(int x, int y), DrawableComponent> Tiles = new ConcurrentDictionary<(int x, int y), DrawableComponent>();
+        public static Dictionary<(int x, int y), bool> Tiles2 = new Dictionary<(int x, int y), bool>();
+        public Thread[] Prefetcher = new Thread[128];
+        public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[128];
         public ProceduralEntityRenderSystem(GameScene scene)
         {
             AssetManager.LoadTexture(TextureGen.Pixel("#124E89"), "deep_water");
@@ -35,6 +35,7 @@ namespace PixelGlueCore.ECS.Systems
             AssetManager.LoadTexture(TextureGen.Pixel("#B86F50"), "rock");
             AssetManager.LoadTexture(TextureGen.Pixel("#C0CBDC"), "snow");
             Scene = scene;
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
             for (int i = 0; i < Prefetcher.Length; i++)
             {
                 Queue[i]=new ConcurrentStack<(int x, int y)>();
@@ -74,8 +75,8 @@ namespace PixelGlueCore.ECS.Systems
             PixelGlue.Noise.SetInterp(Interp.Linear);
 
             var val = PixelGlue.Noise.GetNoise(x / 32, y / 32, PixelGlue.Z / 32);
-            val += 0.5f * PixelGlue.Noise.GetNoise(x / 16, y / 16, PixelGlue.Z / 16);
-            val += 0.15f * PixelGlue.Noise.GetNoise(x / 2, y / 2, PixelGlue.Z / 2);
+            val += 0.5f * PixelGlue.Noise.GetNoise(x / 16, y / 16, PixelGlue.Z / 32);
+            val += 0.15f * PixelGlue.Noise.GetNoise(x / 4, y / 4, PixelGlue.Z / 32);
 
             if (val > 0.94)
                 d = new DrawableComponent(0, "snow", srcRect, dstRect);
