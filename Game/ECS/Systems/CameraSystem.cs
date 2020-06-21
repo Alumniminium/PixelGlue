@@ -34,7 +34,7 @@ namespace PixelGlueCore.ECS.Systems
                         //var x = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenWidth, camX - PixelGlue.HalfVirtualScreenWidth));
                         //var y = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenHeight, camY - PixelGlue.HalfVirtualScreenHeight));
 
-                        camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth/Math.Max(0.06,follow.Zoom))),(int)(camY- (PixelGlue.HalfVirtualScreenHeight/Math.Max(0.06,follow.Zoom))), (int)(PixelGlue.VirtualScreenWidth/Math.Max(0.03,follow.Zoom)), (int)(PixelGlue.VirtualScreenHeight/Math.Max(0.03,follow.Zoom)));
+                        camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth/Math.Max(0.06,follow.Zoom))),(int)(camY- (PixelGlue.HalfVirtualScreenHeight/Math.Max(0.06,follow.Zoom))), (int)(PixelGlue.VirtualScreenWidth/Math.Max(0.06,follow.Zoom)), (int)(PixelGlue.VirtualScreenHeight/Math.Max(0.06,follow.Zoom)));
 
                         //var Limits = new Rectangle(PixelGlue.HalfVirtualScreenWidth, PixelGlue.HalfVirtualScreenHeight, (scene.Map.Width * scene.Map.TileWidth) + PixelGlue.HalfVirtualScreenWidth, (scene.Map.Height * scene.Map.TileHeight) + PixelGlue.HalfVirtualScreenHeight);
                         //var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
