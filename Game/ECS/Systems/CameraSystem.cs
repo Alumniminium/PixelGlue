@@ -34,7 +34,7 @@ namespace PixelGlueCore.ECS.Systems
                         //var x = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenWidth, camX - PixelGlue.HalfVirtualScreenWidth));
                         //var y = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenHeight, camY - PixelGlue.HalfVirtualScreenHeight));
 
-                        camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth/follow.Zoom)),(int)(camY- (PixelGlue.HalfVirtualScreenHeight/follow.Zoom)), (int)(PixelGlue.VirtualScreenWidth/follow.Zoom), (int)(PixelGlue.VirtualScreenHeight/follow.Zoom));
+                        camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth/Math.Max(0.06,follow.Zoom))),(int)(camY- (PixelGlue.HalfVirtualScreenHeight/Math.Max(0.06,follow.Zoom))), (int)(PixelGlue.VirtualScreenWidth/Math.Max(0.03,follow.Zoom)), (int)(PixelGlue.VirtualScreenHeight/Math.Max(0.03,follow.Zoom)));
 
                         //var Limits = new Rectangle(PixelGlue.HalfVirtualScreenWidth, PixelGlue.HalfVirtualScreenHeight, (scene.Map.Width * scene.Map.TileWidth) + PixelGlue.HalfVirtualScreenWidth, (scene.Map.Height * scene.Map.TileHeight) + PixelGlue.HalfVirtualScreenHeight);
                         //var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
@@ -43,7 +43,7 @@ namespace PixelGlueCore.ECS.Systems
                         //var cameraPos = Vector2.Clamp(camLoc, limitWorldMin, limitWorldMax - cameraSize);
 
                         camera.Transform = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)
-                                                             * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth*follow.Zoom, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight*follow.Zoom, 1f)
+                                                             * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth*(float)Math.Max(0.06f,follow.Zoom), PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight*(float)Math.Max(0.06f,follow.Zoom), 1f)
                                                              //* Matrix.CreateScale(follow.Zoom)
                                                              * Matrix.CreateTranslation(PixelGlue.ScreenWidth / 2, PixelGlue.ScreenHeight / 2, 0);
                     }
