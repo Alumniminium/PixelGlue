@@ -83,7 +83,7 @@ namespace PixelGlueCore
         {
             PixelGlue.DrawCalls=0;
             PixelGlue.DrawProfiler.StartMeasuring();
-            _graphics.GraphicsDevice.Clear(Color.Black);
+           // _graphics.GraphicsDevice.Clear(Color.Black);
             
             foreach (var scene in SceneManager.ActiveGameScenes)
                 if (scene.IsReady)

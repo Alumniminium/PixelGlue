@@ -18,8 +18,8 @@ namespace PixelGlueCore.ECS.Systems
         public GameScene Scene { get; set; }
         public static ConcurrentDictionary<(int x, int y), DrawableComponent> Tiles = new ConcurrentDictionary<(int x, int y), DrawableComponent>();
         public static Dictionary<(int x, int y), bool> Tiles2 = new Dictionary<(int x, int y), bool>();
-        public Thread[] Prefetcher = new Thread[128];
-        public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[128];
+        public Thread[] Prefetcher = new Thread[3];
+        public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[3];
         public ProceduralEntityRenderSystem(GameScene scene)
         {
             AssetManager.LoadTexture(TextureGen.Pixel("#124E89"), "deep_water");
@@ -59,7 +59,7 @@ namespace PixelGlueCore.ECS.Systems
                         continue;
                         
                     Tiles.TryAdd((x, y), GenerateTerrain(x, y));
-                    Thread.Sleep(1);
+                    //Thread.Sleep(1);
                 }
                 Thread.Sleep(1);
             }
@@ -67,6 +67,11 @@ namespace PixelGlueCore.ECS.Systems
 
         private static DrawableComponent GenerateTerrain(int x, int y)
         {
+            x /= 16;
+            x *= 16;
+
+            y /= 16;
+            y *= 16;
             DrawableComponent d;
             var srcRect = new Rectangle(0, 0, 1, 1);
             var dstRect = new Rectangle(x, y, 16, 16);
@@ -108,7 +113,7 @@ namespace PixelGlueCore.ECS.Systems
             if (Scene.Camera == null)
                 return;
 
-            var overdraw = Scene.Map.TileWidth * 2;
+            var overdraw = Scene.Map.TileWidth;
             int last=0;
             for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += 16)//Scene.Map.TileWidth)
                 for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += 16)//Scene.Map.TileHeight)

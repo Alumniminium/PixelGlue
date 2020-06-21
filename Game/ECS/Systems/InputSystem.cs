@@ -71,17 +71,17 @@ namespace PixelGlueCore.ECS.Systems
                             SwitchScene();
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
                             OpenDialog(scene);
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.ScalePlus))
+                        if (Pressed(ref inputComponent, PixelGlueButtons.ScalePlus))
                             {
                                 ProceduralEntityRenderSystem.Tiles.Clear();
                                 ProceduralEntityRenderSystem.Tiles2.Clear();
-                                PixelGlue.Z+=8;
+                                PixelGlue.Z+=16;
                             }
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.ScaleMinus))
+                        if (Pressed(ref inputComponent, PixelGlueButtons.ScaleMinus))
                         {
                                 ProceduralEntityRenderSystem.Tiles.Clear();
                                 ProceduralEntityRenderSystem.Tiles2.Clear();
-                            PixelGlue.Z-=8;
+                            PixelGlue.Z-=16;
                         }
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                         {

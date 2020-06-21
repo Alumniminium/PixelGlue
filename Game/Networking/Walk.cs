@@ -25,6 +25,7 @@ namespace PixelGlueCore.Networking.Handlers
                 entity.Add(new DrawableComponent(entity.EntityId,srcEntity.TextureName, srcEntity.SrcRect));
                 entity.Add(new PositionComponent(entity.EntityId,packet.X, packet.Y, 0));
                 entity.Add(new MoveComponent(entity.EntityId,8, packet.X, packet.Y));
+                entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
 
                 var nameTag = scene.CreateEntity<NameTag>(entity.UniqueId);
                 nameTag.Parent=entity;
