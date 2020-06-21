@@ -71,6 +71,10 @@ namespace PixelGlueCore.ECS.Systems
                             SwitchScene();
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
                             OpenDialog(scene);
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.ScalePlus))
+                            PixelGlue.Z+=16;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.ScaleMinus))
+                            PixelGlue.Z-=16;
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                         {
                             var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();

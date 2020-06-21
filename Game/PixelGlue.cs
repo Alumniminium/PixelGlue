@@ -25,5 +25,6 @@ namespace PixelGlueCore
         public static ContentManager ContentManager { get; set; }
         
         public static FastNoise Noise{get;set;} = new FastNoise();
+        public static float Z { get; internal set; }
     }
 }

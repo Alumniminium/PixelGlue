@@ -19,6 +19,8 @@ namespace PixelGlueCore.Configuration
             [PixelGlueButtons.ConsoleToggle] = (Keys.OemTilde, Keys.OemTilde),
             [PixelGlueButtons.DbgBoundingBoxes] = (Keys.B, Keys.Back),
             [PixelGlueButtons.Sprint] = (Keys.LeftShift, Keys.LeftShift),
+            [PixelGlueButtons.ScalePlus] = (Keys.PageUp, Keys.PageUp),
+            [PixelGlueButtons.ScaleMinus] = (Keys.PageDown, Keys.PageDown),
         };
         public static Dictionary<Keys, PixelGlueButtons> KeybindsToGeneric = new Dictionary<Keys, PixelGlueButtons>
         {

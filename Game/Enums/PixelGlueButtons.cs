@@ -16,5 +16,8 @@ namespace PixelGlueCore.Enums
         DbgProfiling,
         DbgBoundingBoxes,
         Sprint,
+
+        ScalePlus,
+        ScaleMinus,
     }
 }
