@@ -26,12 +26,10 @@ namespace PixelGlueCore.ECS.Systems
                     ref var movable = ref entity.Get<MoveComponent>();
                     ref var position = ref entity.Get<PositionComponent>();
 
-                    if (movable.Destination == Vector2.Zero)
-                        continue;
+                    //if (movable.Destination == Vector2.Zero)
+                    //    continue;
 
                     MoveOneTile(deltaTime, ref movable, ref position);
-
-                    //position.Position = Vector2.Lerp(position.Position, movable.Destination, movable.Speed*movable.SpeedMulti * deltaTime);
                 }
             }
         }

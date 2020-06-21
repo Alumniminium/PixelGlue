@@ -37,7 +37,7 @@ namespace PixelGlueCore.Scenes
             Entities.TryAdd(0, Camera);
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
-            Systems.Add(new EntityRenderSystem(this));
+            Systems.Add(new ProceduralEntityRenderSystem(this));
             Systems.Add(new NameTagRenderSystem(this));
             Systems.Add(new DbgBoundingBoxRenderSystem(this));
             

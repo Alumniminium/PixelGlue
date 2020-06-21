@@ -45,17 +45,22 @@ namespace PixelGlueCore.ECS.Systems
                         Rotating(ref inputComponent, ref positionComponent);
 
                         var destination = positionComponent.Position;
-
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y - scene.Map.TileHeight;
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y + scene.Map.TileHeight;
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X - scene.Map.TileWidth;
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X + scene.Map.TileWidth;
+                        
+                        if(inputComponent.Mouse.LeftButton == ButtonState.Pressed)
+                        {
+                            if(entity.Scene !=null)
+                            moveComponent.Destination = entity.Scene.Camera.ScreenToWorld(inputComponent.Mouse.Position.ToVector2());
+                        }
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
-                            moveComponent.SpeedMulti = 2.5f;
+                            moveComponent.SpeedMulti = 100f;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
+                            destination.Y = positionComponent.Position.Y - scene.Map.TileHeight * moveComponent.SpeedMulti;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
+                            destination.Y = positionComponent.Position.Y + scene.Map.TileHeight* moveComponent.SpeedMulti;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
+                            destination.X = positionComponent.Position.X - scene.Map.TileWidth* moveComponent.SpeedMulti;
+                        if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
+                            destination.X = positionComponent.Position.X + scene.Map.TileWidth* moveComponent.SpeedMulti;
                         if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
                             moveComponent.SpeedMulti = 1;
                         if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Helpers;
+using PixelGlueCore.Loaders;
 using System;
 
 namespace PixelGlueCore
@@ -22,5 +23,7 @@ namespace PixelGlueCore
         public static int DrawCalls { get; internal set; }
         public static string[] Names { get; internal set; }
         public static ContentManager ContentManager { get; set; }
+        
+        public static FastNoise Noise{get;set;} = new FastNoise();
     }
 }

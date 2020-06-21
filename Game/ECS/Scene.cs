@@ -2,7 +2,6 @@ using PixelGlueCore.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using PixelGlueCore.ECS.Systems;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using PixelGlueCore.Enums;

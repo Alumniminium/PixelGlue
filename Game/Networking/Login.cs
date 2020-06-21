@@ -16,8 +16,9 @@ namespace PixelGlueCore.Networking.Handlers
             var (user, pass) = packet.GetUserPass();
             var scene = SceneManager.ActiveGameScenes[^1];
             var player = scene.CreateEntity<Player>(packet.UniqueId);
+            player.Scene= scene;
             player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
-            player.Add(new MoveComponent(player.EntityId,24, 256, 264));
+            player.Add(new MoveComponent(player.EntityId,40, 256, 264));
             player.Add(new PositionComponent(player.EntityId,256,264,0));
             player.Add(new InputComponent(player.EntityId));
             player.Add(new CameraFollowTagComponent(player.EntityId,1));

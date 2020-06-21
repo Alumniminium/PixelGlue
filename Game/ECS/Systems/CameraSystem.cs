@@ -31,20 +31,20 @@ namespace PixelGlueCore.ECS.Systems
                         var camX = (int)camLoc.X / scene.Map.TileWidth * scene.Map.TileWidth;
                         var camY = (int)camLoc.Y / scene.Map.TileHeight * scene.Map.TileHeight;
 
-                        var x = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenWidth, camX - PixelGlue.HalfVirtualScreenWidth));
-                        var y = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenHeight, camY - PixelGlue.HalfVirtualScreenHeight));
+                        //var x = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenWidth, camX - PixelGlue.HalfVirtualScreenWidth));
+                        //var y = Math.Max(0, Math.Min((scene.Map.Width * scene.Map.TileWidth) - PixelGlue.VirtualScreenHeight, camY - PixelGlue.HalfVirtualScreenHeight));
 
-                        camera.ScreenRect = new Rectangle(x, y, PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
+                        camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth/follow.Zoom)),(int)(camY- (PixelGlue.HalfVirtualScreenHeight/follow.Zoom)), (int)(PixelGlue.VirtualScreenWidth/follow.Zoom), (int)(PixelGlue.VirtualScreenHeight/follow.Zoom));
 
-                        var Limits = new Rectangle(PixelGlue.HalfVirtualScreenWidth, PixelGlue.HalfVirtualScreenHeight, (scene.Map.Width * scene.Map.TileWidth) + PixelGlue.HalfVirtualScreenWidth, (scene.Map.Height * scene.Map.TileHeight) + PixelGlue.HalfVirtualScreenHeight);
-                        var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
-                        var limitWorldMin = new Vector2(Limits.Left, Limits.Top);
-                        var limitWorldMax = new Vector2(Limits.Right, Limits.Bottom);
-                        var cameraPos = Vector2.Clamp(camLoc, limitWorldMin, limitWorldMax - cameraSize);
+                        //var Limits = new Rectangle(PixelGlue.HalfVirtualScreenWidth, PixelGlue.HalfVirtualScreenHeight, (scene.Map.Width * scene.Map.TileWidth) + PixelGlue.HalfVirtualScreenWidth, (scene.Map.Height * scene.Map.TileHeight) + PixelGlue.HalfVirtualScreenHeight);
+                        //var cameraSize = new Vector2(PixelGlue.VirtualScreenWidth, PixelGlue.VirtualScreenHeight);
+                        //var limitWorldMin = new Vector2(Limits.Left, Limits.Top);
+                        //var limitWorldMax = new Vector2(Limits.Right, Limits.Bottom);
+                        //var cameraPos = Vector2.Clamp(camLoc, limitWorldMin, limitWorldMax - cameraSize);
 
-                        camera.Transform = Matrix.CreateTranslation(-cameraPos.X, -cameraPos.Y, 0)
-                                                             * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight, 1f)
-                                                             * Matrix.CreateScale(follow.Zoom)
+                        camera.Transform = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)
+                                                             * Matrix.CreateScale(PixelGlue.ScreenWidth / PixelGlue.VirtualScreenWidth*follow.Zoom, PixelGlue.ScreenHeight / PixelGlue.VirtualScreenHeight*follow.Zoom, 1f)
+                                                             //* Matrix.CreateScale(follow.Zoom)
                                                              * Matrix.CreateTranslation(PixelGlue.ScreenWidth / 2, PixelGlue.ScreenHeight / 2, 0);
                     }
                 }
