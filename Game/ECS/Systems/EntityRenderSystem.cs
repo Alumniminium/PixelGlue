@@ -16,10 +16,6 @@ namespace PixelGlueCore.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public GameScene Scene { get; set; }
-        public static ConcurrentDictionary<(int x, int y), DrawableComponent> Tiles = new ConcurrentDictionary<(int x, int y), DrawableComponent>();
-        public static Dictionary<(int x, int y), bool> Tiles2 = new Dictionary<(int x, int y), bool>();
-        public Thread[] Prefetcher = new Thread[3];
-        public ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[3];
         public ProceduralEntityRenderSystem(GameScene scene)
         {
             AssetManager.LoadTexture(TextureGen.Pixel("#124E89"), "deep_water");
@@ -36,109 +32,29 @@ namespace PixelGlueCore.ECS.Systems
             AssetManager.LoadTexture(TextureGen.Pixel("#C0CBDC"), "snow");
             Scene = scene;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            for (int i = 0; i < Prefetcher.Length; i++)
-            {
-                Queue[i]=new ConcurrentStack<(int x, int y)>();
-                Prefetcher[i] = new Thread(new ParameterizedThreadStart(Load))
-                {
-                    IsBackground = true,
-                    Priority=ThreadPriority.Lowest,
-                };
-                Prefetcher[i].Start(i);
-            }
         }
-        public void Load(object idobj)
-        {
-            int id = (int)idobj;
-            while (true)
-            {
-                while (Queue[id].TryPop(out var t))
-                {
-                    var (x,y) = t;
-                    if (Tiles.ContainsKey((x, y)))
-                        continue;
-                        
-                    Tiles.TryAdd((x, y), GenerateTerrain(x, y));
-                    //Thread.Sleep(1);
-                }
-                Thread.Sleep(1);
-            }
-        }
-
-        private static DrawableComponent GenerateTerrain(int x, int y)
-        {
-            x /= 16;
-            x *= 16;
-
-            y /= 16;
-            y *= 16;
-            DrawableComponent d;
-            var srcRect = new Rectangle(0, 0, 1, 1);
-            var dstRect = new Rectangle(x, y, 16, 16);
-            PixelGlue.Noise.SetSeed(1337);
-            PixelGlue.Noise.SetNoiseType(NoiseType.Simplex);
-            PixelGlue.Noise.SetInterp(Interp.Linear);
-
-            var val = PixelGlue.Noise.GetNoise(x / 32, y / 32, PixelGlue.Z / 32);
-            val += 0.5f * PixelGlue.Noise.GetNoise(x / 16, y / 16, PixelGlue.Z / 32);
-            val += 0.15f * PixelGlue.Noise.GetNoise(x / 4, y / 4, PixelGlue.Z / 32);
-
-            if (val > 0.94)
-                d = new DrawableComponent(0, "snow", srcRect, dstRect);
-            else if (val > 0.70)
-                d = new DrawableComponent(0, "rock", srcRect, dstRect);
-            else if (val > 0.4)
-                d = new DrawableComponent(0, "trees", srcRect, dstRect);
-            else if (val > 0.30)
-                d = new DrawableComponent(0, "grass", srcRect, dstRect);
-            else if (val > -0.20)
-                d = new DrawableComponent(0, "plains", srcRect, dstRect);
-            else if (val > -0.4f)
-                d = new DrawableComponent(0, "dirt", srcRect, dstRect);
-            else if (val > -0.41 && val < 0.42)
-                d = new DrawableComponent(0, "sand", srcRect, dstRect);
-            else if (val > -0.5f)
-                d = new DrawableComponent(0, "shallow_water", srcRect, dstRect);
-            else if (val > -0.7)
-                d = new DrawableComponent(0, "water", srcRect, dstRect);
-            else
-                d = new DrawableComponent(0, "deep_water", srcRect, dstRect);
-            return d;
-        }
-
         public void Update(float timeSinceLastFrame) { }
         public void FixedUpdate(float timeSinceLastFrame) { }
         public void Draw(SpriteBatch sb)
         {
             if (Scene.Camera == null)
                 return;
-
             var overdraw = Scene.Map.TileWidth;
-            int last=0;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += 16)//Scene.Map.TileWidth)
-                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += 16)//Scene.Map.TileHeight)
+            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += 128)//Scene.Map.TileWidth)
+                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += 128)//Scene.Map.TileHeight)
                 {
-                    if (!Tiles.TryGetValue((x, y), out var terrainTile))
+                    DrawableComponent? terrainTile = WorldGen.GetTileLayerZero(x, y);
+                    DrawableComponent? riverTile = WorldGen.GetTileLayerOne(x, y);
+                    if (terrainTile.HasValue)
                     {
-                        if(Tiles2.TryGetValue((x,y),out _))
-                            continue;
-                        Queue[last].Push((x, y));
-                        last++;
-                        if(last==Queue.Length)
-                        last=0;
-                        continue;
+                        sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                        PixelGlue.DrawCalls++;
                     }
-                    //  var  terrainTile = Terrain(x, y);
-                    sb.Draw(AssetManager.GetTexture(terrainTile.TextureName), terrainTile.DestRect, terrainTile.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-                    PixelGlue.DrawCalls++;
-
-                    //if (!Tiles2.TryGetValue((x, y), out var riverTile))
-                    //    riverTile = River(x, y);
-                    //if (!riverTile.HasValue)
-                    //    continue;
-
-                    //sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-                    //PixelGlue.DrawCalls++;
+                    if (riverTile.HasValue && terrainTile.HasValue && !(terrainTile.Value.TextureName == "water" || terrainTile.Value.TextureName == "shallow_water" || terrainTile.Value.TextureName == "deep_water" || terrainTile.Value.TextureName == riverTile.Value.TextureName))
+                    {
+                        sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                        PixelGlue.DrawCalls++;
+                    }
                 }
             RenderEntities(sb, overdraw);
         }
@@ -163,27 +79,200 @@ namespace PixelGlueCore.ECS.Systems
                 PixelGlue.DrawCalls++;
             }
         }
-        public float Biome(int x, int y)
+    }
+    public static class WorldGen
+    {
+        public static ConcurrentDictionary<(int x, int y), bool> Tiles2 = new ConcurrentDictionary<(int x, int y), bool>();
+        public static Thread[] Prefetcher = new Thread[2];
+        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
+        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+        public static Loaders.FastNoise BiomeNoise;
+        public static Loaders.FastNoise PlainNoise;
+        public static Loaders.FastNoise DesertNoise;
+        public static Loaders.FastNoise RiverNoise;
+        public static Rectangle srcRect = new Rectangle(0, 0, 1, 1);
+        static WorldGen()
         {
-            float x2 = x;
-            float y2 = y;
-            PixelGlue.Noise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
-            PixelGlue.Noise.SetCellularReturnType(CellularReturnType.CellValue);
-            PixelGlue.Noise.SetCellularJitter(0.4f);
-            PixelGlue.Noise.SetSeed(965678457);
-            PixelGlue.Noise.SetGradientPerturbAmp(22);
-            PixelGlue.Noise.SetFrequency(0.02f);
-            PixelGlue.Noise.GradientPerturbFractal(ref x2, ref y2);
-            var val = PixelGlue.Noise.GetCellular(x2 * 0.004f, y2 * 0.004f);
+            BiomeNoise = new Loaders.FastNoise(203414084);
+            BiomeNoise.SetNoiseType(NoiseType.Cellular);
+            BiomeNoise.SetInterp(Interp.Linear);
+            BiomeNoise.SetFrequency(0.00004f);
+            BiomeNoise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
+            BiomeNoise.SetCellularReturnType(CellularReturnType.CellValue);
+            BiomeNoise.SetCellularJitter(0.3f);
+            BiomeNoise.SetGradientPerturbAmp(1000);
+            BiomeNoise.SetGradientFrequency(0.0004f);
 
-            if (val > 0.5)
-                return 1;
-            else if (val > 0)
-                return 2;
-            else if (val > -0.5)
-                return 4;
+            RiverNoise = new Loaders.FastNoise(203414084);
+            RiverNoise.SetNoiseType(NoiseType.Cellular);
+            RiverNoise.SetInterp(Interp.Linear);
+            RiverNoise.SetFrequency(0.00004f);
+            RiverNoise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
+            RiverNoise.SetCellularReturnType(CellularReturnType.Distance2Div);
+            RiverNoise.SetCellularJitter(0.3f);
+            RiverNoise.SetGradientPerturbAmp(1000);
+            RiverNoise.SetGradientFrequency(0.0004f);
+
+            PlainNoise = new Loaders.FastNoise(1337);
+            PlainNoise.SetNoiseType(NoiseType.SimplexFractal);
+            PlainNoise.SetInterp(Interp.Quintic);
+            PlainNoise.SetFrequency(0.001f);
+
+            DesertNoise = new Loaders.FastNoise(30);
+            DesertNoise.SetNoiseType(NoiseType.SimplexFractal);
+            DesertNoise.SetInterp(Interp.Quintic);
+            DesertNoise.SetFrequency(0.0015f);
+
+            for (int i = 0; i < Prefetcher.Length; i++)
+            {
+                Queue[i] = new ConcurrentStack<(int x, int y)>();
+                Prefetcher[i] = new Thread(new ParameterizedThreadStart(Load))
+                {
+                    IsBackground = true,
+                    Priority = ThreadPriority.Lowest,
+                };
+                Prefetcher[i].Start(i);
+            }
+        }
+        public static void Load(object idobj)
+        {
+            int id = (int)idobj;
+            while (true)
+            {
+                while (Queue[id].TryPop(out var t))
+                {
+                    var (x, y) = t;
+                    if (LayerZero.ContainsKey((x, y)))
+                        continue;
+                    var (terrain,river) = WorldGen.Generate(x, y);
+                    LayerZero.TryAdd((x, y), terrain);
+                    LayerOne.TryAdd((x, y), river);
+                    Tiles2.TryRemove((x, y), out _);
+                    //Thread.Sleep(1);
+                }
+                Thread.Sleep(1);
+            }
+        }
+        public static (DrawableComponent? terrain,DrawableComponent? river) Generate(int x, int y)
+        {
+            var dstRect = new Rectangle(x, y, 16, 16);
+            float x2, y2;
+            x2 = x;
+            y2 = y;
+            RiverNoise.GradientPerturbFractal(ref x2, ref y2);
+            var terrain = GenerateBiome(x2, y2, dstRect);
+            var river = GenerateRiver(x2, y2, dstRect);
+            return (terrain,river);
+        }
+        public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
+        {
+            var val = RiverNoise.GetNoise(x, y);
+
+            if (val >= 0.98f)
+                return new DrawableComponent(0, "water", srcRect, dstRect);
+            else if (val > 0.96f)
+                return new DrawableComponent(0, "shallow_water", srcRect, dstRect);
+            else if (val > 0.95f)
+                return new DrawableComponent(0, "dirt", srcRect, dstRect);
             else
-                return 5;
+                return null;
+        }
+        public static DrawableComponent? GenerateBiome(float x, float y, Rectangle dstRect)
+        {
+            var biome = BiomeNoise.GetNoise(x, y);
+
+            if (biome > 0.5)
+                return GeneratePlains(x, y, dstRect);
+            else if (biome > 0)
+                return GenerateDesert(x, y, dstRect);
+            else if (biome < 0)
+                return GenerateMountains(x, y, dstRect);
+            else
+                return GenerateMountains(x, y, dstRect);
+        }
+
+        private static DrawableComponent? GenerateMountains(float x, float y, Rectangle dstRect)
+        {
+            return null;
+        }
+        private static DrawableComponent? GenerateDesert(float x, float y, Rectangle dstRect)
+        {
+            var val = DesertNoise.GetNoise(x / 32, y / 32);
+            val += 0.5f * DesertNoise.GetNoise(x / 16, y / 16);
+            val += 0.15f * DesertNoise.GetNoise(x / 8, y / 8);
+            //val += 0.75f * RiverNoise.GetNoise(x, y);
+
+            if (val > 0.4f)
+                return new DrawableComponent(0, "sand", srcRect, dstRect);
+            else if (val > 0f)
+                return new DrawableComponent(0, "sand2", srcRect, dstRect);
+            else if (val > -0.6)
+                return new DrawableComponent(0, "sand3", srcRect, dstRect);
+            else
+                return new DrawableComponent(0, "dirt", srcRect, dstRect);
+        }
+        private static DrawableComponent? GenerateSwamp(float x, float y)
+        {
+            return null;
+        }
+
+        private static DrawableComponent? GeneratePlains(float x, float y, Rectangle dstRect)
+        {
+            var val = PlainNoise.GetNoise(x / 32, y / 32);
+            val += 0.75f * PlainNoise.GetNoise(x / 16, y / 16);
+            val += 0.25f * PlainNoise.GetNoise(x / 8, y / 8);
+            //val += 0.75f * RiverNoise.GetNoise(x, y);
+
+            if (val > 0.8)
+                return new DrawableComponent(0, "trees", srcRect, dstRect);
+            else if (val > 0.2)
+                return new DrawableComponent(0, "grass", srcRect, dstRect);
+            else if (val > -0.4)
+                return new DrawableComponent(0, "plains", srcRect, dstRect);
+            else if (val > -0.45)
+                return new DrawableComponent(0, "dirt", srcRect, dstRect);
+            else if (val > -0.5)
+                return new DrawableComponent(0, "shallow_water", srcRect, dstRect);
+            else
+                return new DrawableComponent(0, "water", srcRect, dstRect);
+        }
+        public static int last;
+        internal static DrawableComponent? GetTileLayerZero(int x, int y)
+        {
+            x /= 16;
+            x *= 16;
+            y /= 16;
+            y *= 16;
+            if (!LayerZero.TryGetValue((x, y), out var terrainTile))
+            {
+                if (Tiles2.TryGetValue((x, y), out _))
+                    return null;
+                Tiles2.TryAdd((x, y), false);
+                Queue[last].Push((x, y));
+                last++;
+                if (last == Queue.Length)
+                    last = 0;
+            }
+            return terrainTile;
+        }
+        internal static DrawableComponent? GetTileLayerOne(int x, int y)
+        {
+            x /= 16;
+            x *= 16;
+            y /= 16;
+            y *= 16;
+            if (!LayerOne.TryGetValue((x, y), out var terrainTile))
+            {
+                if (Tiles2.TryGetValue((x, y), out _))
+                    return null;
+                Tiles2.TryAdd((x, y), false);
+                Queue[last].Push((x, y));
+                last++;
+                if (last == Queue.Length)
+                    last = 0;
+            }
+            return terrainTile;
         }
     }
 }

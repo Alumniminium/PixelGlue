@@ -6,6 +6,8 @@ using FN_DECIMAL = System.Single;
 
 using System;
 using System.Runtime.CompilerServices;
+using PixelGlueCore.Helpers;
+
 namespace PixelGlueCore.Loaders
 {
     public class FastNoise
@@ -21,6 +23,7 @@ namespace PixelGlueCore.Loaders
 
         private int m_seed = 1337;
         private FN_DECIMAL m_frequency = (FN_DECIMAL)0.01;
+        private FN_DECIMAL g_frequency = (FN_DECIMAL)0.01;
         private Interp m_interp = Interp.Quintic;
         private NoiseType m_noiseType = NoiseType.Simplex;
 
@@ -59,6 +62,7 @@ namespace PixelGlueCore.Loaders
         // Sets frequency for all noise types
         // Default: 0.01
         public void SetFrequency(FN_DECIMAL frequency) { m_frequency = frequency; }
+        public void SetGradientFrequency(FN_DECIMAL frequency) { g_frequency = frequency; }
 
         // Changes the interpolation method used to smooth between noise values
         // Possible interpolation methods (lowest to highest quality) :
@@ -2283,9 +2287,10 @@ namespace PixelGlueCore.Loaders
         {
             int seed = m_seed;
             FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
-
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y);
+            FN_DECIMAL freq = g_frequency;
+            //FConsole.WriteLine($"Pre Pertub: {x},{y}");
+            SingleGradientPerturb(seed, amp, g_frequency, ref x, ref y);
+            //FConsole.WriteLine($"PostPertub: {x},{y}");
 
             for (int i = 1; i < m_octaves; i++)
             {

@@ -73,15 +73,15 @@ namespace PixelGlueCore.ECS.Systems
                             OpenDialog(scene);
                         if (Pressed(ref inputComponent, PixelGlueButtons.ScalePlus))
                             {
-                                ProceduralEntityRenderSystem.Tiles.Clear();
-                                ProceduralEntityRenderSystem.Tiles2.Clear();
-                                PixelGlue.Z+=16;
+                                WorldGen.LayerZero.Clear();
+                                WorldGen.Tiles2.Clear();
+                                PixelGlue.Z+= PixelGlue.Z;
                             }
                         if (Pressed(ref inputComponent, PixelGlueButtons.ScaleMinus))
                         {
-                                ProceduralEntityRenderSystem.Tiles.Clear();
-                                ProceduralEntityRenderSystem.Tiles2.Clear();
-                            PixelGlue.Z-=16;
+                                WorldGen.LayerZero.Clear();
+                                WorldGen.Tiles2.Clear();
+                                PixelGlue.Z-= PixelGlue.Z;
                         }
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                         {

@@ -56,20 +56,15 @@ namespace PixelGlueCore
                 action.Invoke();
 
             foreach (var scene in SceneManager.ActiveGameScenes)
-            {
-                if (!scene.IsReady || !scene.IsActive)
-                    continue;
                 scene.Update(gameTime);
-            }
+
             while (_elapsedTime >= _updateTime)
             {
                 _elapsedTime -= _updateTime;
                 foreach (var scene in SceneManager.ActiveGameScenes)
-                {
-                    if (!scene.IsReady || !scene.IsActive)
-                        continue;
                     scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
-                }
+                foreach (var scene in SceneManager.ActiveUIScenes)
+                    scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
             }
 
             while (ActionQueue.Items.Count > 0)
@@ -83,7 +78,7 @@ namespace PixelGlueCore
         {
             PixelGlue.DrawCalls=0;
             PixelGlue.DrawProfiler.StartMeasuring();
-           // _graphics.GraphicsDevice.Clear(Color.Black);
+            _graphics.GraphicsDevice.Clear(Color.Black);
             
             foreach (var scene in SceneManager.ActiveGameScenes)
                 if (scene.IsReady)
