@@ -7,6 +7,7 @@ using PixelGlueCore.Loaders.TiledSharp;
 using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.ECS.Systems.UI;
 using PixelGlueCore.Entities.UI;
+using PixelGlueCore.Helpers;
 
 namespace PixelGlueCore.Scenes
 {
@@ -48,6 +49,23 @@ namespace PixelGlueCore.Scenes
             Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/island.tmx");
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
             AssetManager.LoadTexture("selectionrect3");
+
+            AssetManager.LoadTexture(TextureGen.Pixel("#124E89"), "deep_water");
+            AssetManager.LoadTexture(TextureGen.Pixel("#0099DB"), "water");
+            AssetManager.LoadTexture(TextureGen.Pixel("#4CB7E5"), "shallow_water");
+            AssetManager.LoadTexture(TextureGen.Pixel("#EAD4AA"), "sand");
+            AssetManager.LoadTexture(TextureGen.Pixel("#E8B796"), "sand2");
+            AssetManager.LoadTexture(TextureGen.Pixel("#E4A672"), "sand3");
+            AssetManager.LoadTexture(TextureGen.Pixel("#C28569"), "dirt");
+            AssetManager.LoadTexture(TextureGen.Pixel("#63C74D"), "plains");
+            AssetManager.LoadTexture(TextureGen.Pixel("#3E8948"), "grass");
+            AssetManager.LoadTexture(TextureGen.Pixel("#265c42"), "grass2");
+            AssetManager.LoadTexture(TextureGen.Pixel("#193c3e"), "grass3");
+            AssetManager.LoadTexture(TextureGen.Pixel("#265C42"), "trees");
+            AssetManager.LoadTexture(TextureGen.Pixel("#B86F50"), "rock");
+            AssetManager.LoadTexture(TextureGen.Pixel("#733e39"), "rock2");
+            AssetManager.LoadTexture(TextureGen.Pixel("#3e2731"), "rock3");
+            AssetManager.LoadTexture(TextureGen.Pixel("#C0CBDC"), "snow");
             base.LoadContent(cm);
         }
     }

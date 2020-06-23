@@ -10,7 +10,13 @@ namespace PixelGlueCore.Helpers
         public static Texture2D Blank(int w, int h,Color color)
         {
             var _blankTexture = new Texture2D(PixelGlue.Device,w,h);
-            _blankTexture.SetData(new[] {color});
+            var pixels = new Color[w*h];
+            for(int x =0;x<w;x++)
+            for(int y =0;y<h;y++)
+                pixels[(y*w)+h-1]=color;
+            _blankTexture.SetData(pixels);
+            var pixels2 = new Color[w*h];
+            _blankTexture.GetData(pixels2);
             return _blankTexture;
         }
         public static Texture2D Pixel(string color)

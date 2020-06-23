@@ -75,13 +75,13 @@ namespace PixelGlueCore.ECS.Systems
                             {
                                 WorldGen.LayerZero.Clear();
                                 WorldGen.Tiles2.Clear();
-                                PixelGlue.Z+= PixelGlue.Z;
+                                PixelGlue.Z*=2;
                             }
                         if (Pressed(ref inputComponent, PixelGlueButtons.ScaleMinus))
                         {
                                 WorldGen.LayerZero.Clear();
                                 WorldGen.Tiles2.Clear();
-                                PixelGlue.Z-= PixelGlue.Z;
+                                PixelGlue.Z/=2;
                         }
                         if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
                         {
@@ -111,9 +111,9 @@ namespace PixelGlueCore.ECS.Systems
         private static void Scrolling(ref InputComponent inputComponent, ref CameraFollowTagComponent camera)
         {
             if (inputComponent.Mouse.ScrollWheelValue > inputComponent.Scroll)
-                camera.Zoom *= 2;
+                camera.Zoom*=2;
             else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.Scroll)
-                camera.Zoom /= 2;
+                camera.Zoom/=2;
 
             inputComponent.Scroll = inputComponent.Mouse.ScrollWheelValue;
         }

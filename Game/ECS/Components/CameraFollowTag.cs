@@ -8,7 +8,7 @@ namespace PixelGlueCore.ECS.Components
         public int UniqueId {get;set;}
         public float Zoom { get; set; }
 
-        public CameraFollowTagComponent(int ownerId, int zoom = 1)
+        public CameraFollowTagComponent(int ownerId, int zoom)
         {
             UniqueId = ownerId;
             Zoom = zoom;
