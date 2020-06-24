@@ -1,7 +1,7 @@
 ﻿using System;
-using TerribleSockets.Client;
+using Pixel.TerribleSockets.Client;
 
-using TerribleSockets.Packets;
+using Pixel.TerribleSockets.Packets;
 namespace Server
 {
     public static class PacketHandler

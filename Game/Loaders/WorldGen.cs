@@ -9,13 +9,13 @@ namespace PixelGlueCore.ECS.Systems
 {
     public static class WorldGen
     {
-        public static ConcurrentDictionary<(int x, int y,int z), bool> Tiles2 = new ConcurrentDictionary<(int x, int y,int z), bool>();
+        public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
         public static Thread[] Prefetcher = new Thread[2];
-        public static ConcurrentStack<(int x, int y,int z)>[] Queue = new ConcurrentStack<(int x, int y,int z)>[2];
-        public static ConcurrentDictionary<(int x, int y,int z), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y,int z), DrawableComponent?>();
-        public static ConcurrentDictionary<(int x, int y,int z), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y,int z), DrawableComponent?>();
-        public static Loaders.FastNoise BiomeNoise,PlainNoise,DesertNoise,SwampNoise,MountainNoise,RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, 1, 1);
+        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
+        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+        public static Loaders.FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
+        public static Rectangle srcRect = new Rectangle(0, 0, 16, 16);
         static WorldGen()
         {
             BiomeNoise = new Loaders.FastNoise(203414084);
@@ -65,7 +65,7 @@ namespace PixelGlueCore.ECS.Systems
 
             for (int i = 0; i < Prefetcher.Length; i++)
             {
-                Queue[i] = new ConcurrentStack<(int x, int y,int z)>();
+                Queue[i] = new ConcurrentStack<(int x, int y)>();
                 Prefetcher[i] = new Thread(new ParameterizedThreadStart(Load))
                 {
                     IsBackground = true,
@@ -81,28 +81,28 @@ namespace PixelGlueCore.ECS.Systems
             {
                 while (Queue[id].TryPop(out var t))
                 {
-                    var (x, y, z) = t;
-                    if (LayerZero.ContainsKey((x, y,z)))
+                    var (x, y) = t;
+                    if (LayerZero.ContainsKey((x, y)))
                         continue;
-                    var (terrain,river) = Generate(x, y);
-                    LayerZero.TryAdd((x, y,z), terrain);
-                    LayerOne.TryAdd((x, y,z), river);
-                    Tiles2.TryRemove((x, y,z), out _);
+                    var (terrain, river) = Generate(x, y);
+                    LayerZero.TryAdd((x, y), terrain);
+                    LayerOne.TryAdd((x, y), river);
+                    TilesLoading.TryRemove((x, y), out _);
                     //Thread.Sleep(1);
                 }
                 Thread.Sleep(1);
             }
         }
-        public static (DrawableComponent? terrain,DrawableComponent? river) Generate(int x, int y)
+        public static (DrawableComponent? terrain, DrawableComponent? river) Generate(int x, int y)
         {
-            var dstRect = new Rectangle(x, y, (int)(16*PixelGlue.Z),(int)(16*PixelGlue.Z));
+            var dstRect = new Rectangle(x, y, 16, 16);
             float x2, y2;
             x2 = x;
             y2 = y;
             RiverNoise.GradientPerturbFractal(ref x2, ref y2);
             var terrain = GenerateBiome(x2, y2, dstRect);
             var river = GenerateRiver(x2, y2, dstRect);
-            return (terrain,river);
+            return (terrain, river);
         }
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
         {
@@ -208,40 +208,52 @@ namespace PixelGlueCore.ECS.Systems
             else if (val > 0.4)
                 return new DrawableComponent(0, "grass", srcRect, dstRect);
             else if (val > -0.5)
-                return new DrawableComponent(0, "plains", srcRect, dstRect);
+            {
+                var idx = PixelGlue.Random.Next(-3, 6);
+                if (idx <= 0)
+                    return new DrawableComponent(0, "plains", srcRect, dstRect);
+                else
+                    return new DrawableComponent(0, "plains", srcRect, dstRect);
+            }
             else if (val > -0.55)
                 return new DrawableComponent(0, "shallow_water", srcRect, dstRect);
             else
-                return new DrawableComponent(0, "water", srcRect, dstRect);
+            {
+                var idx = PixelGlue.Random.Next(-3, 6);
+                if (idx <= 0)
+                    return new DrawableComponent(0, "water", srcRect, dstRect);
+                else
+                    return new DrawableComponent(0, "water" + idx, srcRect, dstRect);
+            }
         }
         public static int last;
-        internal static DrawableComponent? GetTileLayerZero(int x, int y,int z)
+        internal static DrawableComponent? GetTileLayerZero(int x, int y)
         {
-            if (!LayerZero.TryGetValue((x, y,z), out var terrainTile))
+            if (!LayerZero.TryGetValue((x, y), out var terrainTile))
             {
-                if (Tiles2.TryGetValue((x, y,z), out _))
+                if (TilesLoading.TryGetValue((x, y), out _))
                     return null;
-                Tiles2.TryAdd((x, y,z), false);
-                Queue[last].Push((x, y,z));
+                TilesLoading.TryAdd((x, y), false);
+                Queue[last].Push((x, y));
                 last++;
                 if (last == Queue.Length)
                     last = 0;
             }
             return terrainTile;
         }
-        internal static DrawableComponent? GetTileLayerOne(int x, int y,int z)
+        internal static DrawableComponent? GetTileLayerOne(int x, int y)
         {
-            if (!LayerOne.TryGetValue((x, y,z), out var terrainTile))
+            if (!LayerOne.TryGetValue((x, y), out var riverTile))
             {
-                if (Tiles2.TryGetValue((x, y,z), out _))
+                if (TilesLoading.TryGetValue((x, y), out _))
                     return null;
-                Tiles2.TryAdd((x, y,z), false);
-                Queue[last].Push((x, y,z));
+                TilesLoading.TryAdd((x, y), false);
+                Queue[last].Push((x,y));
                 last++;
                 if (last == Queue.Length)
                     last = 0;
             }
-            return terrainTile;
+            return riverTile;
         }
     }
 }

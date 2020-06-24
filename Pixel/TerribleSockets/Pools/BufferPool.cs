@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace TerribleSockets.Pools
+namespace Pixel.TerribleSockets.Pools
 {
     public class BufferPool
     {

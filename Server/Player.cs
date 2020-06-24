@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using TerribleSockets.Client;
+using Pixel.TerribleSockets.Client;
 
 namespace Server
 {

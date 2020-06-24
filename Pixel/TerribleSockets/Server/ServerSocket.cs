@@ -2,10 +2,10 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using TerribleSockets.Client;
-using TerribleSockets.Queues;
+using Pixel.TerribleSockets.Client;
+using Pixel.TerribleSockets.Queues;
 
-namespace TerribleSockets.Server
+namespace Pixel.TerribleSockets.Server
 {
     public static class ServerSocket
     {

@@ -1,6 +1,4 @@
-using System;
-
-namespace TerribleSockets
+namespace Pixel.TerribleSockets
 {
     public class NeutralBuffer
     {

@@ -2,7 +2,7 @@ using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Enums;
 using PixelGlueCore.Helpers;
-using TerribleSockets.Packets;
+using Pixel.TerribleSockets.Packets;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Scenes;
 using Microsoft.Xna.Framework;

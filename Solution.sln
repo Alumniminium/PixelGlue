@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Game\Game.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{CA933353-E1EE-41DE-871B-0135867F888C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerribleSockets", "TerribleSockets\TerribleSockets.csproj", "{EE9630B1-BB30-48E1-942B-C399735BFF1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixel", "Pixel\Pixel.csproj", "{EE9630B1-BB30-48E1-942B-C399735BFF1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

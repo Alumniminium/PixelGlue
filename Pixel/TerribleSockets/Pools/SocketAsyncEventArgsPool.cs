@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace TerribleSockets.Pools
+namespace Pixel.TerribleSockets.Pools
 {
     public static class SocketAsyncEventArgsPool
     {

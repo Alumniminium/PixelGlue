@@ -1,6 +1,6 @@
 using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.Helpers;
-using TerribleSockets.Packets;
+using Pixel.TerribleSockets.Packets;
 
 namespace PixelGlueCore.Networking.Handlers
 {

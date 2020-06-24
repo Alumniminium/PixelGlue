@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TerribleSockets.Packets
+namespace Pixel.TerribleSockets.Packets
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct MsgLogin

@@ -8,15 +8,15 @@
     ".NETCoreApp,Version=v3.1": {
       "Server/1.0.0": {
         "dependencies": {
-          "TerribleSockets": "1.0.0"
+          "Pixel": "1.0.0"
         },
         "runtime": {
           "Server.dll": {}
         }
       },
-      "TerribleSockets/1.0.0": {
+      "Pixel/1.0.0": {
         "runtime": {
-          "TerribleSockets.dll": {}
+          "Pixel.dll": {}
         }
       }
     }
@@ -27,7 +27,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "TerribleSockets/1.0.0": {
+    "Pixel/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

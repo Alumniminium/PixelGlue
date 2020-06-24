@@ -3,9 +3,9 @@ using PixelGlueCore.Helpers;
 using PixelGlueCore.Networking;
 using PixelGlueCore.Scenes;
 using System.Collections.Concurrent;
-using TerribleSockets.Client;
-using TerribleSockets.Packets;
-using TerribleSockets.Queues;
+using Pixel.TerribleSockets.Client;
+using Pixel.TerribleSockets.Packets;
+using Pixel.TerribleSockets.Queues;
 
 namespace PixelGlueCore.ECS.Systems
 {

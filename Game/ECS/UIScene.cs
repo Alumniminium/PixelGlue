@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Entities;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace PixelGlueCore.ECS
@@ -72,7 +73,7 @@ namespace PixelGlueCore.ECS
         public override int GetHashCode() => Id;
         public override bool Equals(object obj) => (obj as UIScene)?.Id == Id;
 
-        public override T CreateEntity<T>(int uniqueId) => throw new System.NotImplementedException();
+        public override T CreateEntity<T>(int uniqueId)=> throw new NotSupportedException();
 
         public override void Destroy(PixelEntity entity)
         {

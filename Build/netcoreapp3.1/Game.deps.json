@@ -10,7 +10,7 @@
         "dependencies": {
           "MonoGame.Content.Builder": "3.7.0.9",
           "MonoGame.Framework.DesktopGL.Core": "3.8.0.13",
-          "TerribleSockets": "1.0.0"
+          "Pixel": "1.0.0"
         },
         "runtime": {
           "Game.dll": {}
@@ -67,9 +67,9 @@
           }
         }
       },
-      "TerribleSockets/1.0.0": {
+      "Pixel/1.0.0": {
         "runtime": {
-          "TerribleSockets.dll": {}
+          "Pixel.dll": {}
         }
       }
     }
@@ -94,7 +94,7 @@
       "path": "monogame.framework.desktopgl.core/3.8.0.13",
       "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
     },
-    "TerribleSockets/1.0.0": {
+    "Pixel/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

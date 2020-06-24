@@ -237,7 +237,7 @@ namespace PixelGlueCore.Loaders
     };
 
         [MethodImplAttribute(FN_INLINE)]
-        private static int FastFloor(FN_DECIMAL f) { return (f >= 0 ? (int)f : (int)f - 1); }
+        private static int FastFloor(FN_DECIMAL f) { return f >= 0 ? (int)f : (int)f - 1; }
 
         [MethodImplAttribute(FN_INLINE)]
         private static int FastRound(FN_DECIMAL f) { return (f >= 0) ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5); }
@@ -254,8 +254,8 @@ namespace PixelGlueCore.Loaders
         [MethodImplAttribute(FN_INLINE)]
         private static FN_DECIMAL CubicLerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL c, FN_DECIMAL d, FN_DECIMAL t)
         {
-            FN_DECIMAL p = (d - c) - (a - b);
-            return t * t * t * p + t * t * ((a - b) - p) + t * (c - a) + b;
+            FN_DECIMAL p = d - c - (a - b);
+            return t * t * t * p + t * t * (a - b - p) + t * (c - a) + b;
         }
 
         private void CalculateFractalBounding()
@@ -296,21 +296,6 @@ namespace PixelGlueCore.Loaders
             hash ^= X_PRIME * x;
             hash ^= Y_PRIME * y;
             hash ^= Z_PRIME * z;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            return hash;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static int Hash4D(int seed, int x, int y, int z, int w)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-            hash ^= Z_PRIME * z;
-            hash ^= W_PRIME * w;
 
             hash = hash * hash * hash * 60493;
             hash = (hash >> 13) ^ hash;
@@ -416,45 +401,33 @@ namespace PixelGlueCore.Loaders
                 case NoiseType.Value:
                     return SingleValue(m_seed, x, y, z);
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y, z);
-                        case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y, z);
-                        case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y, z);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleValueFractalFBM(x, y, z),
+                        FractalType.Billow => SingleValueFractalBillow(x, y, z),
+                        FractalType.RigidMulti => SingleValueFractalRigidMulti(x, y, z),
+                        _ => 0,
+                    };
                 case NoiseType.Perlin:
                     return SinglePerlin(m_seed, x, y, z);
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y, z);
-                        case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y, z);
-                        case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y, z);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SinglePerlinFractalFBM(x, y, z),
+                        FractalType.Billow => SinglePerlinFractalBillow(x, y, z),
+                        FractalType.RigidMulti => SinglePerlinFractalRigidMulti(x, y, z),
+                        _ => 0,
+                    };
                 case NoiseType.Simplex:
                     return SingleSimplex(m_seed, x, y, z);
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y, z);
-                        case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y, z);
-                        case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y, z);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleSimplexFractalFBM(x, y, z),
+                        FractalType.Billow => SingleSimplexFractalBillow(x, y, z),
+                        FractalType.RigidMulti => SingleSimplexFractalRigidMulti(x, y, z),
+                        _ => 0,
+                    };
                 case NoiseType.Cellular:
                     switch (m_cellularReturnType)
                     {
@@ -470,17 +443,13 @@ namespace PixelGlueCore.Loaders
                 case NoiseType.Cubic:
                     return SingleCubic(m_seed, x, y, z);
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y, z);
-                        case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y, z);
-                        case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y, z);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleCubicFractalFBM(x, y, z),
+                        FractalType.Billow => SingleCubicFractalBillow(x, y, z),
+                        FractalType.RigidMulti => SingleCubicFractalRigidMulti(x, y, z),
+                        _ => 0,
+                    };
                 default:
                     return 0;
             }
@@ -496,45 +465,33 @@ namespace PixelGlueCore.Loaders
                 case NoiseType.Value:
                     return SingleValue(m_seed, x, y);
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y);
-                        case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y);
-                        case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleValueFractalFBM(x, y),
+                        FractalType.Billow => SingleValueFractalBillow(x, y),
+                        FractalType.RigidMulti => SingleValueFractalRigidMulti(x, y),
+                        _ => 0,
+                    };
                 case NoiseType.Perlin:
                     return SinglePerlin(m_seed, x, y);
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y);
-                        case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y);
-                        case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SinglePerlinFractalFBM(x, y),
+                        FractalType.Billow => SinglePerlinFractalBillow(x, y),
+                        FractalType.RigidMulti => SinglePerlinFractalRigidMulti(x, y),
+                        _ => 0,
+                    };
                 case NoiseType.Simplex:
                     return SingleSimplex(m_seed, x, y);
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y);
-                        case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y);
-                        case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleSimplexFractalFBM(x, y),
+                        FractalType.Billow => SingleSimplexFractalBillow(x, y),
+                        FractalType.RigidMulti => SingleSimplexFractalRigidMulti(x, y),
+                        _ => 0,
+                    };
                 case NoiseType.Cellular:
                     switch (m_cellularReturnType)
                     {
@@ -550,17 +507,13 @@ namespace PixelGlueCore.Loaders
                 case NoiseType.Cubic:
                     return SingleCubic(m_seed, x, y);
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    return m_fractalType switch
                     {
-                        case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y);
-                        case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y);
-                        case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y);
-                        default:
-                            return 0;
-                    }
+                        FractalType.FBM => SingleCubicFractalFBM(x, y),
+                        FractalType.Billow => SingleCubicFractalBillow(x, y),
+                        FractalType.RigidMulti => SingleCubicFractalRigidMulti(x, y),
+                        _ => 0,
+                    };
                 default:
                     return 0;
             }
@@ -624,17 +577,13 @@ namespace PixelGlueCore.Loaders
             y *= m_frequency;
             z *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y, z);
-                case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y, z);
-                case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y, z);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleValueFractalFBM(x, y, z),
+                FractalType.Billow => SingleValueFractalBillow(x, y, z),
+                FractalType.RigidMulti => SingleValueFractalRigidMulti(x, y, z),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -712,7 +661,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = x - x0;
                     ys = y - y0;
                     zs = z - z0;
@@ -745,17 +693,13 @@ namespace PixelGlueCore.Loaders
             x *= m_frequency;
             y *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y);
-                case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y);
-                case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleValueFractalFBM(x, y),
+                FractalType.Billow => SingleValueFractalBillow(x, y),
+                FractalType.RigidMulti => SingleValueFractalRigidMulti(x, y),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -827,7 +771,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = x - x0;
                     ys = y - y0;
                     break;
@@ -854,17 +797,13 @@ namespace PixelGlueCore.Loaders
             y *= m_frequency;
             z *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y, z);
-                case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y, z);
-                case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y, z);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SinglePerlinFractalFBM(x, y, z),
+                FractalType.Billow => SinglePerlinFractalBillow(x, y, z),
+                FractalType.RigidMulti => SinglePerlinFractalRigidMulti(x, y, z),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -942,7 +881,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = x - x0;
                     ys = y - y0;
                     zs = z - z0;
@@ -982,17 +920,13 @@ namespace PixelGlueCore.Loaders
             x *= m_frequency;
             y *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y);
-                case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y);
-                case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SinglePerlinFractalFBM(x, y),
+                FractalType.Billow => SinglePerlinFractalBillow(x, y),
+                FractalType.RigidMulti => SinglePerlinFractalRigidMulti(x, y),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -1065,7 +999,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = x - x0;
                     ys = y - y0;
                     break;
@@ -1097,17 +1030,13 @@ namespace PixelGlueCore.Loaders
             y *= m_frequency;
             z *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y, z);
-                case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y, z);
-                case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y, z);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleSimplexFractalFBM(x, y, z),
+                FractalType.Billow => SingleSimplexFractalBillow(x, y, z),
+                FractalType.RigidMulti => SingleSimplexFractalRigidMulti(x, y, z),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -1274,17 +1203,13 @@ namespace PixelGlueCore.Loaders
             x *= m_frequency;
             y *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y);
-                case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y);
-                case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleSimplexFractalFBM(x, y),
+                FractalType.Billow => SingleSimplexFractalBillow(x, y),
+                FractalType.RigidMulti => SingleSimplexFractalRigidMulti(x, y),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -1532,17 +1457,13 @@ namespace PixelGlueCore.Loaders
             y *= m_frequency;
             z *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y, z);
-                case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y, z);
-                case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y, z);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleCubicFractalFBM(x, y, z),
+                FractalType.Billow => SingleCubicFractalBillow(x, y, z),
+                FractalType.RigidMulti => SingleCubicFractalRigidMulti(x, y, z),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -1666,17 +1587,13 @@ namespace PixelGlueCore.Loaders
             x *= m_frequency;
             y *= m_frequency;
 
-            switch (m_fractalType)
+            return m_fractalType switch
             {
-                case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y);
-                case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y);
-                case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y);
-                default:
-                    return 0;
-            }
+                FractalType.FBM => SingleCubicFractalFBM(x, y),
+                FractalType.Billow => SingleCubicFractalBillow(x, y),
+                FractalType.RigidMulti => SingleCubicFractalRigidMulti(x, y),
+                _ => 0,
+            };
         }
 
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -1867,7 +1784,7 @@ namespace PixelGlueCore.Loaders
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -1965,7 +1882,7 @@ namespace PixelGlueCore.Loaders
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -1974,25 +1891,17 @@ namespace PixelGlueCore.Loaders
                         }
                     }
                     break;
-                default:
-                    break;
             }
 
-            switch (m_cellularReturnType)
+            return m_cellularReturnType switch
             {
-                case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
-                case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
-                default:
-                    return 0;
-            }
+                CellularReturnType.Distance2 => distance[m_cellularDistanceIndex1],
+                CellularReturnType.Distance2Add => distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Sub => distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Mul => distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Div => distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1],
+                _ => 0,
+            };
         }
 
         public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y)
@@ -2022,7 +1931,6 @@ namespace PixelGlueCore.Loaders
             switch (m_cellularDistanceFunction)
             {
                 default:
-                case CellularDistanceFunction.Euclidean:
                     for (int xi = xr - 1; xi <= xr + 1; xi++)
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
@@ -2074,7 +1982,7 @@ namespace PixelGlueCore.Loaders
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
+                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
                             if (newDistance < distance)
                             {
@@ -2113,7 +2021,6 @@ namespace PixelGlueCore.Loaders
             switch (m_cellularDistanceFunction)
             {
                 default:
-                case CellularDistanceFunction.Euclidean:
                     for (int xi = xr - 1; xi <= xr + 1; xi++)
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
@@ -2159,7 +2066,7 @@ namespace PixelGlueCore.Loaders
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
+                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -2169,21 +2076,15 @@ namespace PixelGlueCore.Loaders
                     break;
             }
 
-            switch (m_cellularReturnType)
+            return m_cellularReturnType switch
             {
-                case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
-                case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
-                case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
-                default:
-                    return 0;
-            }
+                CellularReturnType.Distance2 => distance[m_cellularDistanceIndex1],
+                CellularReturnType.Distance2Add => distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Sub => distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Mul => distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0],
+                CellularReturnType.Distance2Div => distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1],
+                _ => 0,
+            };
         }
 
         public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
@@ -2224,7 +2125,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = xf - x0;
                     ys = yf - y0;
                     zs = zf - z0;
@@ -2314,7 +2214,6 @@ namespace PixelGlueCore.Loaders
             switch (m_interp)
             {
                 default:
-                case Interp.Linear:
                     xs = xf - x0;
                     ys = yf - y0;
                     break;

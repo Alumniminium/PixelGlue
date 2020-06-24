@@ -2,9 +2,9 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using TerribleSockets.Queues;
+using Pixel.TerribleSockets.Queues;
 
-namespace TerribleSockets.Client
+namespace Pixel.TerribleSockets.Client
 {
     public class ClientSocket
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace TerribleSockets.Monitoring
+namespace Pixel.TerribleSockets.Monitoring
 {
     public class NetworkMonitor
     {

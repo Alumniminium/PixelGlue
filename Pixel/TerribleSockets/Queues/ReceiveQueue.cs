@@ -3,9 +3,9 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading;
-using TerribleSockets.Client;
+using Pixel.TerribleSockets.Client;
 
-namespace TerribleSockets.Queues
+namespace Pixel.TerribleSockets.Queues
 {
     public static class ReceiveQueue
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using TerribleSockets.Packets;
-using TerribleSockets.Queues;
-using TerribleSockets.Server;
+using Pixel.TerribleSockets.Packets;
+using Pixel.TerribleSockets.Queues;
+using Pixel.TerribleSockets.Server;
 
 namespace Server
 {

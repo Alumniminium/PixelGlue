@@ -107,6 +107,6 @@ namespace PixelGlueCore.ECS
         }
         public override int GetHashCode() => Id;
         public override bool Equals(object obj) => (obj as GameScene)?.Id == Id;
-        public override T CreateUIEntity<T>() => throw new NotImplementedException();
+        public override T CreateUIEntity<T>() => throw new NotSupportedException();
     }
 }

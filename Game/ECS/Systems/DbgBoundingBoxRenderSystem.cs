@@ -8,7 +8,7 @@ namespace PixelGlueCore.ECS.Systems
 {
     public class DbgBoundingBoxRenderSystem : IEntitySystem
     {
-        public string Name { get; set; } = "Update Rate Monitoring System";
+        public string Name { get; set; } = "Debug Boundingbox System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public GameScene Scene{get;set;}
@@ -34,7 +34,7 @@ namespace PixelGlueCore.ECS.Systems
                 //var b =  Vector2.Round(a* 16)+origin;
                 
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drawable.SrcRect.Width, drawable.SrcRect.Height);
-                sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0,Vector2.Zero, SpriteEffects.None, 0);
+                sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0,origin, SpriteEffects.None, 0);
                 PixelGlue.DrawCalls++;
             }
         }

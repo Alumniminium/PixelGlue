@@ -24,12 +24,17 @@ namespace PixelGlueCore.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var overdraw = Scene.Map.TileWidth;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += (int)(16 * PixelGlue.Z))//Scene.Map.TileWidth)
-            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += (int)(16 * PixelGlue.Z))//Scene.Map.TileHeight)
+            var overdraw = Scene.Map.TileWidth*2;
+            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += 16)//Scene.Map.TileWidth)
+            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += 16)//Scene.Map.TileHeight)
                 {
-                    DrawableComponent? terrainTile = WorldGen.GetTileLayerZero(x, y,Scene.Camera.Zoom);
-                    DrawableComponent? riverTile = WorldGen.GetTileLayerOne(x, y,Scene.Camera.Zoom);
+                    //var x2 = x/ Scene.Map.TileWidth;
+                    //var y2 = y/ Scene.Map.TileHeight;
+                    //x2 *= Scene.Map.TileWidth;
+                    //y2 *= Scene.Map.TileHeight;
+                    DrawableComponent? terrainTile = WorldGen.GetTileLayerZero(x,y);
+                    DrawableComponent? riverTile = WorldGen.GetTileLayerOne(x,y);
+
                     if (terrainTile.HasValue)
                     {
                         sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
@@ -45,7 +50,7 @@ namespace PixelGlueCore.ECS.Systems
         }
         private void RenderEntities(SpriteBatch sb, int overdraw)
         {
-            var origin = new Vector2(8, 8);
+            var origin = new Vector2(-8, 8);
             foreach (var (_, entity) in Scene.Entities)
             {
                 if (!entity.Has<DrawableComponent>() || !entity.Has<PositionComponent>())

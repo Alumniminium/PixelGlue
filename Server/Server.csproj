@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TerribleSockets\TerribleSockets.csproj" />
+    <ProjectReference Include="..\Pixel\Pixel.csproj" />
   </ItemGroup>
 
 </Project>
