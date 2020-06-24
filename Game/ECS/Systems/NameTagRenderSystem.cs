@@ -28,14 +28,18 @@ namespace PixelGlueCore.ECS.Systems
                         continue;
 
                     ref readonly var pos = ref entity.Get<PositionComponent>();
+                    if (pos.Position.X < Scene.Camera.ScreenRect.Left || pos.Position.X > Scene.Camera.ScreenRect.Right)
+                        continue;
+                    if (pos.Position.Y < Scene.Camera.ScreenRect.Top  || pos.Position.Y > Scene.Camera.ScreenRect.Bottom)
+                        continue;
+
                     ref readonly var offset = ref child.Get<PositionComponent>();
                     ref readonly var text = ref child.Get<TextComponent>();
 
                     if (!string.IsNullOrEmpty(text.Text))
                     {
-                        AssetManager.Fonts[text.FontName].DrawText(sb, 
-                            (int)(pos.Position.X+offset.Position.X), 
-                            (int)(pos.Position.Y+offset.Position.Y), text.Text);
+                        var p = pos.Position + offset.Position;
+                        AssetManager.Fonts[text.FontName].DrawText(sb,(int)p.X,(int)p.Y, text.Text);
                     }
                 }
             }

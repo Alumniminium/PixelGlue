@@ -32,7 +32,7 @@ namespace PixelGlueCore.ECS.Systems
             switch (ConnectionState)
             {
                 case ConnectionState.NotConnected:
-                    Connect("127.0.0.1", 13338);
+                    Connect("dynamic.alumni.re", 13338);
                     return;
                 case ConnectionState.Connected:
                     ConnectionState = ConnectionState.Authenticating;

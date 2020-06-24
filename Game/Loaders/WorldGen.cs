@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.ECS.Components;
 using System.Threading;
 using System.Collections.Concurrent;
-using PixelGlueCore.Helpers;
 using Pixel.Noise;
 using Pixel.Enums;
 
@@ -85,16 +84,20 @@ namespace PixelGlueCore.ECS.Systems
                     var (x, y) = t;
                     if (LayerZero.ContainsKey((x, y)))
                         continue;
-                    var (terrain, river) = Generate(x, y);
+                    var (terrain, river, tree) = Generate(x, y);
                     LayerZero.TryAdd((x, y), terrain);
-                    LayerOne.TryAdd((x, y), river);
+                    if (river.HasValue)
+                        LayerOne.TryAdd((x, y), river);
+                    else if (tree.HasValue)
+                        LayerOne.TryAdd((x, y), tree);
+
                     TilesLoading.TryRemove((x, y), out _);
                     //Thread.Sleep(1);
                 }
                 Thread.Sleep(1);
             }
         }
-        public static (DrawableComponent? terrain, DrawableComponent? river) Generate(int x, int y)
+        public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? tree) Generate(int x, int y)
         {
             var dstRect = new Rectangle(x, y, PixelGlue.TileSize, PixelGlue.TileSize);
             float x2, y2;
@@ -103,7 +106,16 @@ namespace PixelGlueCore.ECS.Systems
             RiverNoise.GradientPerturbFractal(ref x2, ref y2);
             var terrain = GenerateBiome(x2, y2, dstRect);
             var river = GenerateRiver(x2, y2, dstRect);
-            return (terrain, river);
+            var tree = GenerateTrees(x2, y2, dstRect);
+            return (terrain, river, tree);
+        }
+
+        public static DrawableComponent? GenerateTrees(float x, float y, Rectangle dstRect)
+        {
+            var ground = GeneratePlains(x,y,dstRect);
+            if(ground.HasValue&&ground.Value.TextureName =="trees")
+                    return new DrawableComponent(0, "tree", srcRect, dstRect);
+                    return null;
         }
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
         {
@@ -210,11 +222,14 @@ namespace PixelGlueCore.ECS.Systems
                 return new DrawableComponent(0, "grass", srcRect, dstRect);
             else if (val > -0.5)
             {
-                var idx = PixelGlue.Random.Next(-3, 6);
-                if (idx <= 0)
-                    return new DrawableComponent(0, "plains", srcRect, dstRect);
+                var idx = PixelGlue.Random.Next(1, 9);
+                var idy = PixelGlue.Random.Next(0, 2);
+                if(idy == 1 && idx > 6)
+                    return new DrawableComponent(0, "dawn", new Rectangle(16*3,16,16,16), dstRect);
+                if (idx > 5)
+                    return new DrawableComponent(0, "dawn", new Rectangle(16,0,16,16), dstRect);
                 else
-                    return new DrawableComponent(0, "plains", srcRect, dstRect);
+                    return new DrawableComponent(0, "dawn", new Rectangle(16*idx,16*idy,16,16), dstRect);
             }
             else if (val > -0.55)
                 return new DrawableComponent(0, "shallow_water", srcRect, dstRect);
@@ -222,7 +237,7 @@ namespace PixelGlueCore.ECS.Systems
             {
                 var idx = PixelGlue.Random.Next(-3, 6);
                 if (idx <= 0)
-                    return new DrawableComponent(0, "water", srcRect, dstRect);
+                    return new DrawableComponent(0, "dawn", new Rectangle(256,464,16,16), dstRect);
                 else
                     return new DrawableComponent(0, "water" + idx, srcRect, dstRect);
             }
@@ -249,7 +264,7 @@ namespace PixelGlueCore.ECS.Systems
                 if (TilesLoading.TryGetValue((x, y), out _))
                     return null;
                 TilesLoading.TryAdd((x, y), false);
-                Queue[last].Push((x,y));
+                Queue[last].Push((x, y));
                 last++;
                 if (last == Queue.Length)
                     last = 0;

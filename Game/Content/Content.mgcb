@@ -13,18 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../Build/Content/beach_tileset.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/beach_tileset.png;beach_tileset.png
-
 #begin ../../Build/Content/character.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -36,6 +24,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/character.png;character.png
+
+#begin ../../Build/Content/dawn.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/dawn.png;dawn.png
 
 #begin ../../Build/Content/emoji_0.png
 /importer:TextureImporter
@@ -108,4 +108,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/selectionrect4.png;selectionrect4.png
+
+#begin ../../Build/Content/tree.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/tree.png;tree.png
 

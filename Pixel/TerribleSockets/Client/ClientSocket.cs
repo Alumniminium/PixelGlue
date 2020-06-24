@@ -42,10 +42,13 @@ namespace Pixel.TerribleSockets.Client
                     Disconnect();
 
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                var connectArgs = new SocketAsyncEventArgs
-                {
-                    RemoteEndPoint = new IPEndPoint(IPAddress.Parse(host), port)
-                };
+                var connectArgs = new SocketAsyncEventArgs();
+                try{
+                connectArgs.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(host), port);
+                }
+                catch{
+                    connectArgs.RemoteEndPoint = new IPEndPoint(Dns.GetHostEntry(host).AddressList[0],port);
+                }
                 connectArgs.Completed += Connected;
                 if (!Socket.ConnectAsync(connectArgs))
                     Connected(null, connectArgs);

@@ -47,7 +47,8 @@ namespace PixelGlueCore.Scenes
         {
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
             AssetManager.LoadTexture("selectionrect3");
-            
+            AssetManager.LoadTexture("tree");
+            AssetManager.LoadTexture("dawn");
             AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,PixelGlue.TileSize,PixelGlue.TileSize,"#124E89", NoisePattern.None), "deep_water");
             AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,PixelGlue.TileSize,PixelGlue.TileSize,"#0099DB", NoisePattern.None), "water");
             AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,PixelGlue.TileSize,PixelGlue.TileSize,"#0099DB", NoisePattern.Waves), "water1");
