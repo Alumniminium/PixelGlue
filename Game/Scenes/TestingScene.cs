@@ -8,6 +8,7 @@ using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.ECS.Systems.UI;
 using PixelGlueCore.Entities.UI;
 using PixelGlueCore.Helpers;
+using Pixel.Enums;
 
 namespace PixelGlueCore.Scenes
 {
@@ -49,33 +50,33 @@ namespace PixelGlueCore.Scenes
             Map = TmxMapRenderer.Load("../Build/Content/RuntimeContent/island.tmx");
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
             AssetManager.LoadTexture("selectionrect3");
-
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#124E89", NoisePattern.None), "deep_water");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.None), "water");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.Waves), "water1");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.Waves), "water2");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.Waves), "water3");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.Waves), "water4");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#0099DB", NoisePattern.Waves), "water5");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#4CB7E5", NoisePattern.None), "shallow_water");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#EAD4AA", NoisePattern.Rough), "sand");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#E8B796", NoisePattern.Rough), "sand2");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#E4A672", NoisePattern.Rough), "sand3");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#C28569", NoisePattern.Rough), "dirt");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Rough), "plains");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Flowers), "plains1");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Flowers), "plains2");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Flowers), "plains3");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Flowers), "plains4");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#63C74D", NoisePattern.Flowers), "plains5");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#3E8948", NoisePattern.None), "grass");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#265c42", NoisePattern.None), "grass2");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#193c3e", NoisePattern.None), "grass3");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#265C42", NoisePattern.None), "trees");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#B86F50", NoisePattern.Rough), "rock");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#733e39", NoisePattern.Rough), "rock2");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#3e2731", NoisePattern.Rough), "rock3");
-            AssetManager.LoadTexture(TextureGen.Noise(16,16,"#C0CBDC", NoisePattern.None), "snow");
+            
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#124E89", NoisePattern.None), "deep_water");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.None), "water");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.Waves), "water1");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.Waves), "water2");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.Waves), "water3");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.Waves), "water4");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#0099DB", NoisePattern.Waves), "water5");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#4CB7E5", NoisePattern.None), "shallow_water");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#EAD4AA", NoisePattern.Rough), "sand");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#E8B796", NoisePattern.Rough), "sand2");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#E4A672", NoisePattern.Rough), "sand3");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#C28569", NoisePattern.Rough), "dirt");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Rough), "plains");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Flowers), "plains1");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Flowers), "plains2");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Flowers), "plains3");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Flowers), "plains4");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#63C74D", NoisePattern.Flowers), "plains5");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#3E8948", NoisePattern.None), "grass");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#265c42", NoisePattern.None), "grass2");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#193c3e", NoisePattern.None), "grass3");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#265C42", NoisePattern.None), "trees");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#B86F50", NoisePattern.Rough), "rock");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#733e39", NoisePattern.Rough), "rock2");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#3e2731", NoisePattern.Rough), "rock3");
+            AssetManager.LoadTexture(TextureGen.Noise(PixelGlue.Device,16,16,"#C0CBDC", NoisePattern.None), "snow");
             base.LoadContent(cm);
         }
     }

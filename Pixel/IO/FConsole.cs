@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 
-namespace PixelGlueCore.Helpers
+namespace Pixel.IO
 {
     public static class FConsole
     {

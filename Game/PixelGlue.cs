@@ -2,7 +2,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Loaders;
+using Pixel.Noise;
 using System;
+using Pixel.Diagnostics;
 
 namespace PixelGlueCore
 {
@@ -23,8 +25,6 @@ namespace PixelGlueCore
         public static int DrawCalls { get; internal set; }
         public static string[] Names { get; internal set; }
         public static ContentManager ContentManager { get; set; }
-        
-        public static FastNoise Noise{get;set;} = new FastNoise();
         public static float Z { get; internal set; } = 1f;
     }
 }

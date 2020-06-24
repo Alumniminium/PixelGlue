@@ -68,6 +68,9 @@
         }
       },
       "Pixel/1.0.0": {
+        "dependencies": {
+          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
+        },
         "runtime": {
           "Pixel.dll": {}
         }

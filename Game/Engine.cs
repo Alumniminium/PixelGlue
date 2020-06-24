@@ -66,10 +66,7 @@ namespace PixelGlueCore
                 foreach (var scene in SceneManager.ActiveUIScenes)
                     scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
             }
-
-            while (ActionQueue.Items.Count > 0)
-                ActionQueue.Items.Dequeue().Invoke();
-
+            
             base.Update(gameTime);
             PixelGlue.UpdateProfiler.StopMeasuring();
         }

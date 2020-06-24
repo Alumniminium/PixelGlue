@@ -14,7 +14,60 @@
           "Server.dll": {}
         }
       },
+      "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+        "runtime": {
+          "lib/netstandard2.0/MonoGame.Framework.dll": {
+            "assemblyVersion": "3.8.0.13",
+            "fileVersion": "3.8.0.13"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libSDL2-2.0.so.0": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-x64/native/libopenal.so.1": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/libSDL2-2.0.0.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/libopenal.1.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/SDL2.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/soft_oal.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/SDL2.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/soft_oal.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "Pixel/1.0.0": {
+        "dependencies": {
+          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
+        },
         "runtime": {
           "Pixel.dll": {}
         }
@@ -26,6 +79,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cMsc/UZFS8Uk/a1RDc8OZ9Z2EXrEglWGcZGSvPJiWEcUC5Oo9K9uoZXaprvesM3YbyT1ItzqS4jXjTDR4qT4WA==",
+      "path": "monogame.framework.desktopgl.core/3.8.0.13",
+      "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
     },
     "Pixel/1.0.0": {
       "type": "project",

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-namespace PixelGlueCore.Helpers
+
+namespace Pixel.IO
 {
     public class IniFile
     {

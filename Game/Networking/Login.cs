@@ -6,6 +6,7 @@ using Pixel.TerribleSockets.Packets;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Scenes;
 using Microsoft.Xna.Framework;
+using Pixel.IO;
 
 namespace PixelGlueCore.Networking.Handlers
 {

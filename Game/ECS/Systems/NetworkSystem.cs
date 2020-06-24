@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using Pixel.TerribleSockets.Client;
 using Pixel.TerribleSockets.Packets;
 using Pixel.TerribleSockets.Queues;
+using Pixel.IO;
 
 namespace PixelGlueCore.ECS.Systems
 {

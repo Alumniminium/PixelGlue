@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PixelGlueCore.Helpers
+namespace Pixel.Diagnostics
 {
     public class Profiler
     {

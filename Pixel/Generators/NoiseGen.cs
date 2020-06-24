@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using static PixelGlueCore.Loaders.FastNoise;
+using Pixel.Enums;
+using Pixel.Maths;
+using Pixel.Noise;
+using Pixel;
+using Pixel.Extensions;
 
 namespace PixelGlueCore.Helpers
 {
-    public enum NoisePattern
+    public static class NoiseGen
     {
-        None,
-        Flowers,
-        Rough,
-        Waves
-    }
-    public static class NoisePatterns
-    {
-        public static Loaders.FastNoise WhiteNoise = new Loaders.FastNoise();
+        public static FastNoise WhiteNoise = new FastNoise();
         public static Dictionary<NoisePattern, Func<int, int, Color, Color[]>> Patterns = new Dictionary<NoisePattern, Func<int, int, Color, Color[]>>
         {
             [NoisePattern.None] = None,
@@ -51,10 +47,10 @@ namespace PixelGlueCore.Helpers
         {
             var pixels = None(w,h,color);
 
-            for (int i = 0; i < PixelGlue.Random.Next(6, 12); i++)
+            for (int i = 0; i < Pixel.Pixel.Random.Next(6, 12); i++)
             {
-                var x = PixelGlue.Random.Next(0, w);
-                var y = PixelGlue.Random.Next(0, h);
+                var x =  Pixel.Pixel.Random.Next(0, w);
+                var y =  Pixel.Pixel.Random.Next(0, h);
                 
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;
@@ -66,7 +62,7 @@ namespace PixelGlueCore.Helpers
                 || pixels[(y * w) + x] != color)
                     continue;
 
-                var flower = PixelGlue.Random.Next(0, 101);
+                var flower =  Pixel. Pixel.Random.Next(0, 101);
                 Color flowerColor;
                 if (flower >= 75)
                     flowerColor = "fee761".ToColor();
@@ -90,10 +86,10 @@ namespace PixelGlueCore.Helpers
         {
             var pixels = None(w,h,color);
 
-            for (int i = 0; i < PixelGlue.Random.Next(6, 12); i++)
+            for (int i = 0; i <  Pixel.Pixel.Random.Next(6, 12); i++)
             {
-                var x = PixelGlue.Random.Next(0, w);
-                var y = PixelGlue.Random.Next(0, h);
+                var x =  Pixel.Pixel.Random.Next(0, w);
+                var y =  Pixel.Pixel.Random.Next(0, h);
                 
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;
@@ -113,29 +109,5 @@ namespace PixelGlueCore.Helpers
             }
             return pixels;
         }
-    }
-    public static class TextureGen
-    {
-        public static Texture2D Blank(int w, int h, Color color)
-        {
-            var _blankTexture = new Texture2D(PixelGlue.Device, w, h);
-            var pixels = new Color[w * h];
-            for (int x = 0; x < w; x++)
-                for (int y = 0; y < h; y++)
-                    pixels[(y * w) + x - 1] = color;
-            _blankTexture.SetData(pixels);
-            var pixels2 = new Color[w * h];
-            _blankTexture.GetData(pixels2);
-            return _blankTexture;
-        }
-        public static Texture2D Noise(int w, int h, string hexcolor, NoisePattern pattern)
-        {
-            var color = hexcolor.ToColor();
-            var texture = new Texture2D(PixelGlue.Device, w, h);
-            var pixels = NoisePatterns.Patterns[pattern].Invoke(w, h, color);
-            texture.SetData(pixels);
-            return texture;
-        }
-        public static Texture2D Pixel(string color) => Blank(1, 1, color.ToColor());
     }
 }

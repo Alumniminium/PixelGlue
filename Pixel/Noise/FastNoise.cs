@@ -1,38 +1,25 @@
-#if FN_USE_DOUBLES
-using FN_DECIMAL = System.Double;
-#else
-using FN_DECIMAL = System.Single;
-#endif
-
 using System;
 using System.Runtime.CompilerServices;
-using PixelGlueCore.Helpers;
+using Pixel.Enums;
 
-namespace PixelGlueCore.Loaders
+namespace Pixel.Noise
 {
     public class FastNoise
     {
         private const Int16 FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveInlining;
         private const int FN_CELLULAR_INDEX_MAX = 3;
-
-        public enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal };
-        public enum Interp { Linear, Hermite, Quintic };
-        public enum FractalType { FBM, Billow, RigidMulti };
-        public enum CellularDistanceFunction { Euclidean, Manhattan, Natural };
-        public enum CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div };
-
         private int m_seed = 1337;
-        private FN_DECIMAL m_frequency = (FN_DECIMAL)0.01;
-        private FN_DECIMAL g_frequency = (FN_DECIMAL)0.01;
+        private float m_frequency = (float)0.01;
+        private float g_frequency = (float)0.01;
         private Interp m_interp = Interp.Quintic;
         private NoiseType m_noiseType = NoiseType.Simplex;
 
         private int m_octaves = 3;
-        private FN_DECIMAL m_lacunarity = (FN_DECIMAL)2.0;
-        private FN_DECIMAL m_gain = (FN_DECIMAL)0.5;
+        private float m_lacunarity = (float)2.0;
+        private float m_gain = (float)0.5;
         private FractalType m_fractalType = FractalType.FBM;
 
-        private FN_DECIMAL m_fractalBounding;
+        private float m_fractalBounding;
 
         private CellularDistanceFunction m_cellularDistanceFunction = CellularDistanceFunction.Euclidean;
         private CellularReturnType m_cellularReturnType = CellularReturnType.CellValue;
@@ -41,7 +28,7 @@ namespace PixelGlueCore.Loaders
         private int m_cellularDistanceIndex1 = 1;
         private float m_cellularJitter = 0.45f;
 
-        private FN_DECIMAL m_gradientPerturbAmp = (FN_DECIMAL)1.0;
+        private float m_gradientPerturbAmp = (float)1.0;
 
         public FastNoise(int seed = 1337)
         {
@@ -50,7 +37,7 @@ namespace PixelGlueCore.Loaders
         }
 
         // Returns a 0 float/double
-        public static FN_DECIMAL GetDecimalType() { return 0; }
+        public static float GetDecimalType() { return 0; }
 
         // Returns the seed used by this object
         public int GetSeed() { return m_seed; }
@@ -61,8 +48,8 @@ namespace PixelGlueCore.Loaders
 
         // Sets frequency for all noise types
         // Default: 0.01
-        public void SetFrequency(FN_DECIMAL frequency) { m_frequency = frequency; }
-        public void SetGradientFrequency(FN_DECIMAL frequency) { g_frequency = frequency; }
+        public void SetFrequency(float frequency) { m_frequency = frequency; }
+        public void SetGradientFrequency(float frequency) { g_frequency = frequency; }
 
         // Changes the interpolation method used to smooth between noise values
         // Possible interpolation methods (lowest to highest quality) :
@@ -84,11 +71,11 @@ namespace PixelGlueCore.Loaders
 
         // Sets octave lacunarity for all fractal noise types
         // Default: 2.0
-        public void SetFractalLacunarity(FN_DECIMAL lacunarity) { m_lacunarity = lacunarity; }
+        public void SetFractalLacunarity(float lacunarity) { m_lacunarity = lacunarity; }
 
         // Sets octave gain for all fractal noise types
         // Default: 0.5
-        public void SetFractalGain(FN_DECIMAL gain) { m_gain = gain; CalculateFractalBounding(); }
+        public void SetFractalGain(float gain) { m_gain = gain; CalculateFractalBounding(); }
 
         // Sets method for combining octaves in all fractal noise types
         // Default: FBM
@@ -129,26 +116,15 @@ namespace PixelGlueCore.Loaders
 
         // Sets the maximum perturb distance from original location when using GradientPerturb{Fractal}(...)
         // Default: 1.0
-        public void SetGradientPerturbAmp(FN_DECIMAL gradientPerturbAmp) { m_gradientPerturbAmp = gradientPerturbAmp; }
+        public void SetGradientPerturbAmp(float gradientPerturbAmp) { m_gradientPerturbAmp = gradientPerturbAmp; }
 
         private struct Float2
         {
-            public readonly FN_DECIMAL x, y;
-            public Float2(FN_DECIMAL x, FN_DECIMAL y)
+            public readonly float x, y;
+            public Float2(float x, float y)
             {
                 this.x = x;
                 this.y = y;
-            }
-        }
-
-        private struct Float3
-        {
-            public readonly FN_DECIMAL x, y, z;
-            public Float3(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-            {
-                this.x = x;
-                this.y = y;
-                this.z = z;
             }
         }
 
@@ -237,31 +213,31 @@ namespace PixelGlueCore.Loaders
     };
 
         [MethodImplAttribute(FN_INLINE)]
-        private static int FastFloor(FN_DECIMAL f) { return f >= 0 ? (int)f : (int)f - 1; }
+        private static int FastFloor(float f) { return f >= 0 ? (int)f : (int)f - 1; }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static int FastRound(FN_DECIMAL f) { return (f >= 0) ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5); }
+        private static int FastRound(float f) { return (f >= 0) ? (int)(f + (float)0.5) : (int)(f - (float)0.5); }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL Lerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL t) { return a + t * (b - a); }
+        private static float Lerp(float a, float b, float t) { return a + t * (b - a); }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL InterpHermiteFunc(FN_DECIMAL t) { return t * t * (3 - 2 * t); }
+        private static float InterpHermiteFunc(float t) { return t * t * (3 - 2 * t); }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL InterpQuinticFunc(FN_DECIMAL t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        private static float InterpQuinticFunc(float t) { return t * t * t * (t * (t * 6 - 15) + 10); }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL CubicLerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL c, FN_DECIMAL d, FN_DECIMAL t)
+        private static float CubicLerp(float a, float b, float c, float d, float t)
         {
-            FN_DECIMAL p = d - c - (a - b);
+            float p = d - c - (a - b);
             return t * t * t * p + t * t * (a - b - p) + t * (c - a) + b;
         }
 
         private void CalculateFractalBounding()
         {
-            FN_DECIMAL amp = m_gain;
-            FN_DECIMAL ampFractal = 1;
+            float amp = m_gain;
+            float ampFractal = 1;
             for (int i = 1; i < m_octaves; i++)
             {
                 ampFractal += amp;
@@ -304,28 +280,28 @@ namespace PixelGlueCore.Loaders
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord2D(int seed, int x, int y)
+        private static float ValCoord2D(int seed, int x, int y)
         {
             int n = seed;
             n ^= X_PRIME * x;
             n ^= Y_PRIME * y;
 
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord3D(int seed, int x, int y, int z)
+        private static float ValCoord3D(int seed, int x, int y, int z)
         {
             int n = seed;
             n ^= X_PRIME * x;
             n ^= Y_PRIME * y;
             n ^= Z_PRIME * z;
 
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord4D(int seed, int x, int y, int z, int w)
+        private static float ValCoord4D(int seed, int x, int y, int z, int w)
         {
             int n = seed;
             n ^= X_PRIME * x;
@@ -333,11 +309,11 @@ namespace PixelGlueCore.Loaders
             n ^= Z_PRIME * z;
             n ^= W_PRIME * w;
 
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord2D(int seed, int x, int y, FN_DECIMAL xd, FN_DECIMAL yd)
+        private static float GradCoord2D(int seed, int x, int y, float xd, float yd)
         {
             int hash = seed;
             hash ^= X_PRIME * x;
@@ -352,7 +328,7 @@ namespace PixelGlueCore.Loaders
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord3D(int seed, int x, int y, int z, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd)
+        private static float GradCoord3D(int seed, int x, int y, int z, float xd, float yd, float zd)
         {
             int hash = seed;
             hash ^= X_PRIME * x;
@@ -368,7 +344,7 @@ namespace PixelGlueCore.Loaders
         }
 
         [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord4D(int seed, int x, int y, int z, int w, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd, FN_DECIMAL wd)
+        private static float GradCoord4D(int seed, int x, int y, int z, int w, float xd, float yd, float zd, float wd)
         {
             int hash = seed;
             hash ^= X_PRIME * x;
@@ -380,7 +356,7 @@ namespace PixelGlueCore.Loaders
             hash = (hash >> 13) ^ hash;
 
             hash &= 31;
-            FN_DECIMAL a = yd, b = zd, c = wd;            // X,Y,Z
+            float a = yd, b = zd, c = wd;            // X,Y,Z
             switch (hash >> 3)
             {          // OR, DEPENDING ON HIGH ORDER 2 BITS:
                 case 1: a = wd; b = xd; c = yd; break;     // W,X,Y
@@ -390,7 +366,7 @@ namespace PixelGlueCore.Loaders
             return ((hash & 4) == 0 ? -a : a) + ((hash & 2) == 0 ? -b : b) + ((hash & 1) == 0 ? -c : c);
         }
 
-        public FN_DECIMAL GetNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetNoise(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -455,7 +431,7 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        public FN_DECIMAL GetNoise(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetNoise(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -521,14 +497,14 @@ namespace PixelGlueCore.Loaders
 
         // White Noise
         [MethodImplAttribute(FN_INLINE)]
-        private int FloatCast2Int(FN_DECIMAL f)
+        private int FloatCast2Int(float f)
         {
             var i = BitConverter.DoubleToInt64Bits(f);
 
             return (int)(i ^ (i >> 32));
         }
 
-        public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
+        public float GetWhiteNoise(float x, float y, float z, float w)
         {
             int xi = FloatCast2Int(x);
             int yi = FloatCast2Int(y);
@@ -538,7 +514,7 @@ namespace PixelGlueCore.Loaders
             return ValCoord4D(m_seed, xi, yi, zi, wi);
         }
 
-        public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetWhiteNoise(float x, float y, float z)
         {
             int xi = FloatCast2Int(x);
             int yi = FloatCast2Int(y);
@@ -547,7 +523,7 @@ namespace PixelGlueCore.Loaders
             return ValCoord3D(m_seed, xi, yi, zi);
         }
 
-        public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetWhiteNoise(float x, float y)
         {
             int xi = FloatCast2Int(x);
             int yi = FloatCast2Int(y);
@@ -555,23 +531,23 @@ namespace PixelGlueCore.Loaders
             return ValCoord2D(m_seed, xi, yi);
         }
 
-        public FN_DECIMAL GetWhiteNoiseInt(int x, int y, int z, int w)
+        public float GetWhiteNoiseInt(int x, int y, int z, int w)
         {
             return ValCoord4D(m_seed, x, y, z, w);
         }
 
-        public FN_DECIMAL GetWhiteNoiseInt(int x, int y, int z)
+        public float GetWhiteNoiseInt(int x, int y, int z)
         {
             return ValCoord3D(m_seed, x, y, z);
         }
 
-        public FN_DECIMAL GetWhiteNoiseInt(int x, int y)
+        public float GetWhiteNoiseInt(int x, int y)
         {
             return ValCoord2D(m_seed, x, y);
         }
 
         // Value Noise
-        public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetValueFractal(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -586,11 +562,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleValueFractalFBM(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleValue(seed, x, y, z);
-            FN_DECIMAL amp = 1;
+            float sum = SingleValue(seed, x, y, z);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -605,11 +581,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleValueFractalBillow(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -624,11 +600,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleValueFractalRigidMulti(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y, z));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleValue(seed, x, y, z));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -643,12 +619,12 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetValue(float x, float y, float z)
         {
             return SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
         }
 
-        private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleValue(int seed, float x, float y, float z)
         {
             int x0 = FastFloor(x);
             int y0 = FastFloor(y);
@@ -657,7 +633,7 @@ namespace PixelGlueCore.Loaders
             int y1 = y0 + 1;
             int z1 = z0 + 1;
 
-            FN_DECIMAL xs, ys, zs;
+            float xs, ys, zs;
             switch (m_interp)
             {
                 default:
@@ -677,18 +653,18 @@ namespace PixelGlueCore.Loaders
                     break;
             }
 
-            FN_DECIMAL xf00 = Lerp(ValCoord3D(seed, x0, y0, z0), ValCoord3D(seed, x1, y0, z0), xs);
-            FN_DECIMAL xf10 = Lerp(ValCoord3D(seed, x0, y1, z0), ValCoord3D(seed, x1, y1, z0), xs);
-            FN_DECIMAL xf01 = Lerp(ValCoord3D(seed, x0, y0, z1), ValCoord3D(seed, x1, y0, z1), xs);
-            FN_DECIMAL xf11 = Lerp(ValCoord3D(seed, x0, y1, z1), ValCoord3D(seed, x1, y1, z1), xs);
+            float xf00 = Lerp(ValCoord3D(seed, x0, y0, z0), ValCoord3D(seed, x1, y0, z0), xs);
+            float xf10 = Lerp(ValCoord3D(seed, x0, y1, z0), ValCoord3D(seed, x1, y1, z0), xs);
+            float xf01 = Lerp(ValCoord3D(seed, x0, y0, z1), ValCoord3D(seed, x1, y0, z1), xs);
+            float xf11 = Lerp(ValCoord3D(seed, x0, y1, z1), ValCoord3D(seed, x1, y1, z1), xs);
 
-            FN_DECIMAL yf0 = Lerp(xf00, xf10, ys);
-            FN_DECIMAL yf1 = Lerp(xf01, xf11, ys);
+            float yf0 = Lerp(xf00, xf10, ys);
+            float yf1 = Lerp(xf01, xf11, ys);
 
             return Lerp(yf0, yf1, zs);
         }
 
-        public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetValueFractal(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -702,11 +678,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleValueFractalFBM(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleValue(seed, x, y);
-            FN_DECIMAL amp = 1;
+            float sum = SingleValue(seed, x, y);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -720,11 +696,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleValueFractalBillow(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -737,11 +713,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleValueFractalRigidMulti(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleValue(seed, x, y));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -755,19 +731,19 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetValue(float x, float y)
         {
             return SingleValue(m_seed, x * m_frequency, y * m_frequency);
         }
 
-        private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleValue(int seed, float x, float y)
         {
             int x0 = FastFloor(x);
             int y0 = FastFloor(y);
             int x1 = x0 + 1;
             int y1 = y0 + 1;
 
-            FN_DECIMAL xs, ys;
+            float xs, ys;
             switch (m_interp)
             {
                 default:
@@ -784,14 +760,14 @@ namespace PixelGlueCore.Loaders
                     break;
             }
 
-            FN_DECIMAL xf0 = Lerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), xs);
-            FN_DECIMAL xf1 = Lerp(ValCoord2D(seed, x0, y1), ValCoord2D(seed, x1, y1), xs);
+            float xf0 = Lerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), xs);
+            float xf1 = Lerp(ValCoord2D(seed, x0, y1), ValCoord2D(seed, x1, y1), xs);
 
             return Lerp(xf0, xf1, ys);
         }
 
         // Gradient Noise
-        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetPerlinFractal(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -806,11 +782,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SinglePerlinFractalFBM(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SinglePerlin(seed, x, y, z);
-            FN_DECIMAL amp = 1;
+            float sum = SinglePerlin(seed, x, y, z);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -825,11 +801,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SinglePerlinFractalBillow(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -844,11 +820,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SinglePerlinFractalRigidMulti(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y, z));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SinglePerlin(seed, x, y, z));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -863,12 +839,12 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetPerlin(float x, float y, float z)
         {
             return SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
         }
 
-        private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SinglePerlin(int seed, float x, float y, float z)
         {
             int x0 = FastFloor(x);
             int y0 = FastFloor(y);
@@ -877,7 +853,7 @@ namespace PixelGlueCore.Loaders
             int y1 = y0 + 1;
             int z1 = z0 + 1;
 
-            FN_DECIMAL xs, ys, zs;
+            float xs, ys, zs;
             switch (m_interp)
             {
                 default:
@@ -897,25 +873,25 @@ namespace PixelGlueCore.Loaders
                     break;
             }
 
-            FN_DECIMAL xd0 = x - x0;
-            FN_DECIMAL yd0 = y - y0;
-            FN_DECIMAL zd0 = z - z0;
-            FN_DECIMAL xd1 = xd0 - 1;
-            FN_DECIMAL yd1 = yd0 - 1;
-            FN_DECIMAL zd1 = zd0 - 1;
+            float xd0 = x - x0;
+            float yd0 = y - y0;
+            float zd0 = z - z0;
+            float xd1 = xd0 - 1;
+            float yd1 = yd0 - 1;
+            float zd1 = zd0 - 1;
 
-            FN_DECIMAL xf00 = Lerp(GradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), GradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
-            FN_DECIMAL xf10 = Lerp(GradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), GradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
-            FN_DECIMAL xf01 = Lerp(GradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), GradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
-            FN_DECIMAL xf11 = Lerp(GradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), GradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
+            float xf00 = Lerp(GradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), GradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
+            float xf10 = Lerp(GradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), GradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
+            float xf01 = Lerp(GradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), GradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
+            float xf11 = Lerp(GradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), GradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
 
-            FN_DECIMAL yf0 = Lerp(xf00, xf10, ys);
-            FN_DECIMAL yf1 = Lerp(xf01, xf11, ys);
+            float yf0 = Lerp(xf00, xf10, ys);
+            float yf1 = Lerp(xf01, xf11, ys);
 
             return Lerp(yf0, yf1, zs);
         }
 
-        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetPerlinFractal(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -929,11 +905,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
+        private float SinglePerlinFractalFBM(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SinglePerlin(seed, x, y);
-            FN_DECIMAL amp = 1;
+            float sum = SinglePerlin(seed, x, y);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -947,11 +923,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
+        private float SinglePerlinFractalBillow(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -965,11 +941,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
+        private float SinglePerlinFractalRigidMulti(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SinglePerlin(seed, x, y));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -983,19 +959,19 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetPerlin(float x, float y)
         {
             return SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
         }
 
-        private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y)
+        private float SinglePerlin(int seed, float x, float y)
         {
             int x0 = FastFloor(x);
             int y0 = FastFloor(y);
             int x1 = x0 + 1;
             int y1 = y0 + 1;
 
-            FN_DECIMAL xs, ys;
+            float xs, ys;
             switch (m_interp)
             {
                 default:
@@ -1012,19 +988,19 @@ namespace PixelGlueCore.Loaders
                     break;
             }
 
-            FN_DECIMAL xd0 = x - x0;
-            FN_DECIMAL yd0 = y - y0;
-            FN_DECIMAL xd1 = xd0 - 1;
-            FN_DECIMAL yd1 = yd0 - 1;
+            float xd0 = x - x0;
+            float yd0 = y - y0;
+            float xd1 = xd0 - 1;
+            float yd1 = yd0 - 1;
 
-            FN_DECIMAL xf0 = Lerp(GradCoord2D(seed, x0, y0, xd0, yd0), GradCoord2D(seed, x1, y0, xd1, yd0), xs);
-            FN_DECIMAL xf1 = Lerp(GradCoord2D(seed, x0, y1, xd0, yd1), GradCoord2D(seed, x1, y1, xd1, yd1), xs);
+            float xf0 = Lerp(GradCoord2D(seed, x0, y0, xd0, yd0), GradCoord2D(seed, x1, y0, xd1, yd0), xs);
+            float xf1 = Lerp(GradCoord2D(seed, x0, y1, xd0, yd1), GradCoord2D(seed, x1, y1, xd1, yd1), xs);
 
             return Lerp(xf0, xf1, ys);
         }
 
         // Simplex Noise
-        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetSimplexFractal(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1039,11 +1015,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleSimplexFractalFBM(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleSimplex(seed, x, y, z);
-            FN_DECIMAL amp = 1;
+            float sum = SingleSimplex(seed, x, y, z);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1058,11 +1034,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleSimplexFractalBillow(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1077,11 +1053,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleSimplexFractalRigidMulti(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y, z));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleSimplex(seed, x, y, z));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1096,26 +1072,26 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetSimplex(float x, float y, float z)
         {
             return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
         }
 
-        private const FN_DECIMAL F3 = (FN_DECIMAL)(1.0 / 3.0);
-        private const FN_DECIMAL G3 = (FN_DECIMAL)(1.0 / 6.0);
-        private const FN_DECIMAL G33 = G3 * 3 - 1;
+        private const float F3 = (float)(1.0 / 3.0);
+        private const float G3 = (float)(1.0 / 6.0);
+        private const float G33 = G3 * 3 - 1;
 
-        private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleSimplex(int seed, float x, float y, float z)
         {
-            FN_DECIMAL t = (x + y + z) * F3;
+            float t = (x + y + z) * F3;
             int i = FastFloor(x + t);
             int j = FastFloor(y + t);
             int k = FastFloor(z + t);
 
             t = (i + j + k) * G3;
-            FN_DECIMAL x0 = x - (i - t);
-            FN_DECIMAL y0 = y - (j - t);
-            FN_DECIMAL z0 = z - (k - t);
+            float x0 = x - (i - t);
+            float y0 = y - (j - t);
+            float z0 = z - (k - t);
 
             int i1, j1, k1;
             int i2, j2, k2;
@@ -1151,19 +1127,19 @@ namespace PixelGlueCore.Loaders
                 }
             }
 
-            FN_DECIMAL x1 = x0 - i1 + G3;
-            FN_DECIMAL y1 = y0 - j1 + G3;
-            FN_DECIMAL z1 = z0 - k1 + G3;
-            FN_DECIMAL x2 = x0 - i2 + F3;
-            FN_DECIMAL y2 = y0 - j2 + F3;
-            FN_DECIMAL z2 = z0 - k2 + F3;
-            FN_DECIMAL x3 = x0 + G33;
-            FN_DECIMAL y3 = y0 + G33;
-            FN_DECIMAL z3 = z0 + G33;
+            float x1 = x0 - i1 + G3;
+            float y1 = y0 - j1 + G3;
+            float z1 = z0 - k1 + G3;
+            float x2 = x0 - i2 + F3;
+            float y2 = y0 - j2 + F3;
+            float z2 = z0 - k2 + F3;
+            float x3 = x0 + G33;
+            float y3 = y0 + G33;
+            float z3 = z0 + G33;
 
-            FN_DECIMAL n0, n1, n2, n3;
+            float n0, n1, n2, n3;
 
-            t = (FN_DECIMAL)0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+            t = (float)0.6 - x0 * x0 - y0 * y0 - z0 * z0;
             if (t < 0) n0 = 0;
             else
             {
@@ -1171,7 +1147,7 @@ namespace PixelGlueCore.Loaders
                 n0 = t * t * GradCoord3D(seed, i, j, k, x0, y0, z0);
             }
 
-            t = (FN_DECIMAL)0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+            t = (float)0.6 - x1 * x1 - y1 * y1 - z1 * z1;
             if (t < 0) n1 = 0;
             else
             {
@@ -1179,7 +1155,7 @@ namespace PixelGlueCore.Loaders
                 n1 = t * t * GradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1);
             }
 
-            t = (FN_DECIMAL)0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+            t = (float)0.6 - x2 * x2 - y2 * y2 - z2 * z2;
             if (t < 0) n2 = 0;
             else
             {
@@ -1187,7 +1163,7 @@ namespace PixelGlueCore.Loaders
                 n2 = t * t * GradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2);
             }
 
-            t = (FN_DECIMAL)0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+            t = (float)0.6 - x3 * x3 - y3 * y3 - z3 * z3;
             if (t < 0) n3 = 0;
             else
             {
@@ -1198,7 +1174,7 @@ namespace PixelGlueCore.Loaders
             return 32 * (n0 + n1 + n2 + n3);
         }
 
-        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetSimplexFractal(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1212,11 +1188,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleSimplexFractalFBM(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleSimplex(seed, x, y);
-            FN_DECIMAL amp = 1;
+            float sum = SingleSimplex(seed, x, y);
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1230,11 +1206,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleSimplexFractalBillow(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1248,11 +1224,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleSimplexFractalRigidMulti(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleSimplex(seed, x, y));
+            float amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
             {
@@ -1266,30 +1242,30 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetSimplex(float x, float y)
         {
             return SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
         }
 
-        //private const FN_DECIMAL F2 = (FN_DECIMAL)(1.0 / 2.0);
-        //private const FN_DECIMAL G2 = (FN_DECIMAL)(1.0 / 4.0);
+        //private const float F2 = (float)(1.0 / 2.0);
+        //private const float G2 = (float)(1.0 / 4.0);
 
-        private const FN_DECIMAL SQRT3 = (FN_DECIMAL)1.7320508075688772935274463415059;
-        private const FN_DECIMAL F2 = (FN_DECIMAL)0.5 * (SQRT3 - (FN_DECIMAL)1.0);
-        private const FN_DECIMAL G2 = ((FN_DECIMAL)3.0 - SQRT3) / (FN_DECIMAL)6.0;
+        private const float SQRT3 = (float)1.7320508075688772935274463415059;
+        private const float F2 = (float)0.5 * (SQRT3 - (float)1.0);
+        private const float G2 = ((float)3.0 - SQRT3) / (float)6.0;
 
-        private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleSimplex(int seed, float x, float y)
         {
-            FN_DECIMAL t = (x + y) * F2;
+            float t = (x + y) * F2;
             int i = FastFloor(x + t);
             int j = FastFloor(y + t);
 
             t = (i + j) * G2;
-            FN_DECIMAL X0 = i - t;
-            FN_DECIMAL Y0 = j - t;
+            float X0 = i - t;
+            float Y0 = j - t;
 
-            FN_DECIMAL x0 = x - X0;
-            FN_DECIMAL y0 = y - Y0;
+            float x0 = x - X0;
+            float y0 = y - Y0;
 
             int i1, j1;
             if (x0 > y0)
@@ -1301,14 +1277,14 @@ namespace PixelGlueCore.Loaders
                 i1 = 0; j1 = 1;
             }
 
-            FN_DECIMAL x1 = x0 - i1 + G2;
-            FN_DECIMAL y1 = y0 - j1 + G2;
-            FN_DECIMAL x2 = x0 - 1 + 2 * G2;
-            FN_DECIMAL y2 = y0 - 1 + 2 * G2;
+            float x1 = x0 - i1 + G2;
+            float y1 = y0 - j1 + G2;
+            float x2 = x0 - 1 + 2 * G2;
+            float y2 = y0 - 1 + 2 * G2;
 
-            FN_DECIMAL n0, n1, n2;
+            float n0, n1, n2;
 
-            t = (FN_DECIMAL)0.5 - x0 * x0 - y0 * y0;
+            t = (float)0.5 - x0 * x0 - y0 * y0;
             if (t < 0) n0 = 0;
             else
             {
@@ -1316,7 +1292,7 @@ namespace PixelGlueCore.Loaders
                 n0 = t * t * GradCoord2D(seed, i, j, x0, y0);
             }
 
-            t = (FN_DECIMAL)0.5 - x1 * x1 - y1 * y1;
+            t = (float)0.5 - x1 * x1 - y1 * y1;
             if (t < 0) n1 = 0;
             else
             {
@@ -1324,7 +1300,7 @@ namespace PixelGlueCore.Loaders
                 n1 = t * t * GradCoord2D(seed, i + i1, j + j1, x1, y1);
             }
 
-            t = (FN_DECIMAL)0.5 - x2 * x2 - y2 * y2;
+            t = (float)0.5 - x2 * x2 - y2 * y2;
             if (t < 0) n2 = 0;
             else
             {
@@ -1335,7 +1311,7 @@ namespace PixelGlueCore.Loaders
             return 50 * (n0 + n1 + n2);
         }
 
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
+        public float GetSimplex(float x, float y, float z, float w)
         {
             return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
         }
@@ -1352,26 +1328,26 @@ namespace PixelGlueCore.Loaders
         2,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,2,0,0,0,0,3,2,0,1,3,2,1,0
     };
 
-        private const FN_DECIMAL F4 = (FN_DECIMAL)((2.23606797 - 1.0) / 4.0);
-        private const FN_DECIMAL G4 = (FN_DECIMAL)((5.0 - 2.23606797) / 20.0);
+        private const float F4 = (float)((2.23606797 - 1.0) / 4.0);
+        private const float G4 = (float)((5.0 - 2.23606797) / 20.0);
 
-        private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
+        private float SingleSimplex(int seed, float x, float y, float z, float w)
         {
-            FN_DECIMAL n0, n1, n2, n3, n4;
-            FN_DECIMAL t = (x + y + z + w) * F4;
+            float n0, n1, n2, n3, n4;
+            float t = (x + y + z + w) * F4;
             int i = FastFloor(x + t);
             int j = FastFloor(y + t);
             int k = FastFloor(z + t);
             int l = FastFloor(w + t);
             t = (i + j + k + l) * G4;
-            FN_DECIMAL X0 = i - t;
-            FN_DECIMAL Y0 = j - t;
-            FN_DECIMAL Z0 = k - t;
-            FN_DECIMAL W0 = l - t;
-            FN_DECIMAL x0 = x - X0;
-            FN_DECIMAL y0 = y - Y0;
-            FN_DECIMAL z0 = z - Z0;
-            FN_DECIMAL w0 = w - W0;
+            float X0 = i - t;
+            float Y0 = j - t;
+            float Z0 = k - t;
+            float W0 = l - t;
+            float x0 = x - X0;
+            float y0 = y - Y0;
+            float z0 = z - Z0;
+            float w0 = w - W0;
 
             int c = (x0 > y0) ? 32 : 0;
             c += (x0 > z0) ? 16 : 0;
@@ -1394,52 +1370,52 @@ namespace PixelGlueCore.Loaders
             int l2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
             int l3 = SIMPLEX_4D[c] >= 1 ? 1 : 0;
 
-            FN_DECIMAL x1 = x0 - i1 + G4;
-            FN_DECIMAL y1 = y0 - j1 + G4;
-            FN_DECIMAL z1 = z0 - k1 + G4;
-            FN_DECIMAL w1 = w0 - l1 + G4;
-            FN_DECIMAL x2 = x0 - i2 + 2 * G4;
-            FN_DECIMAL y2 = y0 - j2 + 2 * G4;
-            FN_DECIMAL z2 = z0 - k2 + 2 * G4;
-            FN_DECIMAL w2 = w0 - l2 + 2 * G4;
-            FN_DECIMAL x3 = x0 - i3 + 3 * G4;
-            FN_DECIMAL y3 = y0 - j3 + 3 * G4;
-            FN_DECIMAL z3 = z0 - k3 + 3 * G4;
-            FN_DECIMAL w3 = w0 - l3 + 3 * G4;
-            FN_DECIMAL x4 = x0 - 1 + 4 * G4;
-            FN_DECIMAL y4 = y0 - 1 + 4 * G4;
-            FN_DECIMAL z4 = z0 - 1 + 4 * G4;
-            FN_DECIMAL w4 = w0 - 1 + 4 * G4;
+            float x1 = x0 - i1 + G4;
+            float y1 = y0 - j1 + G4;
+            float z1 = z0 - k1 + G4;
+            float w1 = w0 - l1 + G4;
+            float x2 = x0 - i2 + 2 * G4;
+            float y2 = y0 - j2 + 2 * G4;
+            float z2 = z0 - k2 + 2 * G4;
+            float w2 = w0 - l2 + 2 * G4;
+            float x3 = x0 - i3 + 3 * G4;
+            float y3 = y0 - j3 + 3 * G4;
+            float z3 = z0 - k3 + 3 * G4;
+            float w3 = w0 - l3 + 3 * G4;
+            float x4 = x0 - 1 + 4 * G4;
+            float y4 = y0 - 1 + 4 * G4;
+            float z4 = z0 - 1 + 4 * G4;
+            float w4 = w0 - 1 + 4 * G4;
 
-            t = (FN_DECIMAL)0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+            t = (float)0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
             if (t < 0) n0 = 0;
             else
             {
                 t *= t;
                 n0 = t * t * GradCoord4D(seed, i, j, k, l, x0, y0, z0, w0);
             }
-            t = (FN_DECIMAL)0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+            t = (float)0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
             if (t < 0) n1 = 0;
             else
             {
                 t *= t;
                 n1 = t * t * GradCoord4D(seed, i + i1, j + j1, k + k1, l + l1, x1, y1, z1, w1);
             }
-            t = (FN_DECIMAL)0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+            t = (float)0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
             if (t < 0) n2 = 0;
             else
             {
                 t *= t;
                 n2 = t * t * GradCoord4D(seed, i + i2, j + j2, k + k2, l + l2, x2, y2, z2, w2);
             }
-            t = (FN_DECIMAL)0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+            t = (float)0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
             if (t < 0) n3 = 0;
             else
             {
                 t *= t;
                 n3 = t * t * GradCoord4D(seed, i + i3, j + j3, k + k3, l + l3, x3, y3, z3, w3);
             }
-            t = (FN_DECIMAL)0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+            t = (float)0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
             if (t < 0) n4 = 0;
             else
             {
@@ -1451,7 +1427,7 @@ namespace PixelGlueCore.Loaders
         }
 
         // Cubic Noise
-        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetCubicFractal(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1466,11 +1442,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCubicFractalFBM(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleCubic(seed, x, y, z);
-            FN_DECIMAL amp = 1;
+            float sum = SingleCubic(seed, x, y, z);
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1486,11 +1462,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCubicFractalBillow(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1506,11 +1482,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCubicFractalRigidMulti(float x, float y, float z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y, z));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleCubic(seed, x, y, z));
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1526,14 +1502,14 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetCubic(float x, float y, float z)
         {
             return SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
         }
 
-        private const FN_DECIMAL CUBIC_3D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5 * 1.5);
+        private const float CUBIC_3D_BOUNDING = 1 / (float)(1.5 * 1.5 * 1.5);
 
-        private FN_DECIMAL SingleCubic(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCubic(int seed, float x, float y, float z)
         {
             int x1 = FastFloor(x);
             int y1 = FastFloor(y);
@@ -1549,9 +1525,9 @@ namespace PixelGlueCore.Loaders
             int y3 = y1 + 2;
             int z3 = z1 + 2;
 
-            FN_DECIMAL xs = x - (FN_DECIMAL)x1;
-            FN_DECIMAL ys = y - (FN_DECIMAL)y1;
-            FN_DECIMAL zs = z - (FN_DECIMAL)z1;
+            float xs = x - (float)x1;
+            float ys = y - (float)y1;
+            float zs = z - (float)z1;
 
             return CubicLerp(
                 CubicLerp(
@@ -1582,7 +1558,7 @@ namespace PixelGlueCore.Loaders
         }
 
 
-        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetCubicFractal(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1596,11 +1572,11 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCubicFractalFBM(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = SingleCubic(seed, x, y);
-            FN_DECIMAL amp = 1;
+            float sum = SingleCubic(seed, x, y);
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1615,11 +1591,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCubicFractalBillow(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
-            FN_DECIMAL amp = 1;
+            float sum = Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1634,11 +1610,11 @@ namespace PixelGlueCore.Loaders
             return sum * m_fractalBounding;
         }
 
-        private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCubicFractalRigidMulti(float x, float y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y));
-            FN_DECIMAL amp = 1;
+            float sum = 1 - Math.Abs(SingleCubic(seed, x, y));
+            float amp = 1;
             int i = 0;
 
             while (++i < m_octaves)
@@ -1653,7 +1629,7 @@ namespace PixelGlueCore.Loaders
             return sum;
         }
 
-        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetCubic(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1661,9 +1637,9 @@ namespace PixelGlueCore.Loaders
             return SingleCubic(0, x, y);
         }
 
-        private const FN_DECIMAL CUBIC_2D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5);
+        private const float CUBIC_2D_BOUNDING = 1 / (float)(1.5 * 1.5);
 
-        private FN_DECIMAL SingleCubic(int seed, FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCubic(int seed, float x, float y)
         {
             int x1 = FastFloor(x);
             int y1 = FastFloor(y);
@@ -1675,8 +1651,8 @@ namespace PixelGlueCore.Loaders
             int x3 = x1 + 2;
             int y3 = y1 + 2;
 
-            FN_DECIMAL xs = x - (FN_DECIMAL)x1;
-            FN_DECIMAL ys = y - (FN_DECIMAL)y1;
+            float xs = x - (float)x1;
+            float ys = y - (float)y1;
 
             return CubicLerp(
                        CubicLerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), ValCoord2D(seed, x2, y0), ValCoord2D(seed, x3, y0),
@@ -1691,7 +1667,7 @@ namespace PixelGlueCore.Loaders
         }
 
         // Cellular Noise
-        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        public float GetCellular(float x, float y, float z)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1708,13 +1684,13 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private FN_DECIMAL SingleCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCellular(float x, float y, float z)
         {
             int xr = FastRound(x);
             int yr = FastRound(y);
             int zr = FastRound(z);
 
-            FN_DECIMAL distance = 999999;
+            float distance = 999999;
             int xc = 0, yc = 0, zc = 0;
 
             switch (m_cellularDistanceFunction)
@@ -1728,11 +1704,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+                                float newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
                                 if (newDistance < distance)
                                 {
@@ -1754,11 +1730,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
+                                float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -1780,11 +1756,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -1815,13 +1791,13 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private FN_DECIMAL SingleCellular2Edge(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        private float SingleCellular2Edge(float x, float y, float z)
         {
             int xr = FastRound(x);
             int yr = FastRound(y);
             int zr = FastRound(z);
 
-            FN_DECIMAL[] distance = { 999999, 999999, 999999, 999999 };
+            float[] distance = { 999999, 999999, 999999, 999999 };
 
             switch (m_cellularDistanceFunction)
             {
@@ -1834,11 +1810,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+                                float newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -1856,11 +1832,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
+                                float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -1878,11 +1854,11 @@ namespace PixelGlueCore.Loaders
                             {
                                 Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                float vecX = xi - x + vec.x * m_cellularJitter;
+                                float vecY = yi - y + vec.y * m_cellularJitter;
+                                float vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -1904,7 +1880,7 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y)
+        public float GetCellular(float x, float y)
         {
             x *= m_frequency;
             y *= m_frequency;
@@ -1920,12 +1896,12 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private FN_DECIMAL SingleCellular(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCellular(float x, float y)
         {
             int xr = FastRound(x);
             int yr = FastRound(y);
 
-            FN_DECIMAL distance = 999999;
+            float distance = 999999;
             int xc = 0, yc = 0;
 
             switch (m_cellularDistanceFunction)
@@ -1937,10 +1913,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = vecX * vecX + vecY * vecY;
+                            float newDistance = vecX * vecX + vecY * vecY;
 
                             if (newDistance < distance)
                             {
@@ -1958,10 +1934,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY));
+                            float newDistance = (Math.Abs(vecX) + Math.Abs(vecY));
 
                             if (newDistance < distance)
                             {
@@ -1979,10 +1955,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
+                            float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
                             if (newDistance < distance)
                             {
@@ -2011,12 +1987,12 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private FN_DECIMAL SingleCellular2Edge(FN_DECIMAL x, FN_DECIMAL y)
+        private float SingleCellular2Edge(float x, float y)
         {
             int xr = FastRound(x);
             int yr = FastRound(y);
 
-            FN_DECIMAL[] distance = { 999999, 999999, 999999, 999999 };
+            float[] distance = { 999999, 999999, 999999, 999999 };
 
             switch (m_cellularDistanceFunction)
             {
@@ -2027,10 +2003,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = vecX * vecX + vecY * vecY;
+                            float newDistance = vecX * vecX + vecY * vecY;
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -2045,10 +2021,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY);
+                            float newDistance = Math.Abs(vecX) + Math.Abs(vecY);
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -2063,10 +2039,10 @@ namespace PixelGlueCore.Loaders
                         {
                             Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            float vecX = xi - x + vec.x * m_cellularJitter;
+                            float vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
+                            float newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
@@ -2087,16 +2063,16 @@ namespace PixelGlueCore.Loaders
             };
         }
 
-        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
+        public void GradientPerturb(ref float x, ref float y, ref float z)
         {
             SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y, ref z);
         }
 
-        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
+        public void GradientPerturbFractal(ref float x, ref float y, ref float z)
         {
             int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
+            float amp = m_gradientPerturbAmp * m_fractalBounding;
+            float freq = m_frequency;
 
             SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y, ref z);
 
@@ -2108,11 +2084,11 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private void SingleGradientPerturb(int seed, FN_DECIMAL perturbAmp, FN_DECIMAL frequency, ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
+        private void SingleGradientPerturb(int seed, float perturbAmp, float frequency, ref float x, ref float y, ref float z)
         {
-            FN_DECIMAL xf = x * frequency;
-            FN_DECIMAL yf = y * frequency;
-            FN_DECIMAL zf = z * frequency;
+            float xf = x * frequency;
+            float yf = y * frequency;
+            float zf = z * frequency;
 
             int x0 = FastFloor(xf);
             int y0 = FastFloor(yf);
@@ -2121,7 +2097,7 @@ namespace PixelGlueCore.Loaders
             int y1 = y0 + 1;
             int z1 = z0 + 1;
 
-            FN_DECIMAL xs, ys, zs;
+            float xs, ys, zs;
             switch (m_interp)
             {
                 default:
@@ -2144,20 +2120,20 @@ namespace PixelGlueCore.Loaders
             Float3 vec0 = CELL_3D[Hash3D(seed, x0, y0, z0) & 255];
             Float3 vec1 = CELL_3D[Hash3D(seed, x1, y0, z0) & 255];
 
-            FN_DECIMAL lx0x = Lerp(vec0.x, vec1.x, xs);
-            FN_DECIMAL ly0x = Lerp(vec0.y, vec1.y, xs);
-            FN_DECIMAL lz0x = Lerp(vec0.z, vec1.z, xs);
+            float lx0x = Lerp(vec0.x, vec1.x, xs);
+            float ly0x = Lerp(vec0.y, vec1.y, xs);
+            float lz0x = Lerp(vec0.z, vec1.z, xs);
 
             vec0 = CELL_3D[Hash3D(seed, x0, y1, z0) & 255];
             vec1 = CELL_3D[Hash3D(seed, x1, y1, z0) & 255];
 
-            FN_DECIMAL lx1x = Lerp(vec0.x, vec1.x, xs);
-            FN_DECIMAL ly1x = Lerp(vec0.y, vec1.y, xs);
-            FN_DECIMAL lz1x = Lerp(vec0.z, vec1.z, xs);
+            float lx1x = Lerp(vec0.x, vec1.x, xs);
+            float ly1x = Lerp(vec0.y, vec1.y, xs);
+            float lz1x = Lerp(vec0.z, vec1.z, xs);
 
-            FN_DECIMAL lx0y = Lerp(lx0x, lx1x, ys);
-            FN_DECIMAL ly0y = Lerp(ly0x, ly1x, ys);
-            FN_DECIMAL lz0y = Lerp(lz0x, lz1x, ys);
+            float lx0y = Lerp(lx0x, lx1x, ys);
+            float ly0y = Lerp(ly0x, ly1x, ys);
+            float lz0y = Lerp(lz0x, lz1x, ys);
 
             vec0 = CELL_3D[Hash3D(seed, x0, y0, z1) & 255];
             vec1 = CELL_3D[Hash3D(seed, x1, y0, z1) & 255];
@@ -2178,16 +2154,16 @@ namespace PixelGlueCore.Loaders
             z += Lerp(lz0y, Lerp(lz0x, lz1x, ys), zs) * perturbAmp;
         }
 
-        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y)
+        public void GradientPerturb(ref float x, ref float y)
         {
             SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y);
         }
 
-        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y)
+        public void GradientPerturbFractal(ref float x, ref float y)
         {
             int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = g_frequency;
+            float amp = m_gradientPerturbAmp * m_fractalBounding;
+            float freq = g_frequency;
             //FConsole.WriteLine($"Pre Pertub: {x},{y}");
             SingleGradientPerturb(seed, amp, g_frequency, ref x, ref y);
             //FConsole.WriteLine($"PostPertub: {x},{y}");
@@ -2200,17 +2176,17 @@ namespace PixelGlueCore.Loaders
             }
         }
 
-        private void SingleGradientPerturb(int seed, FN_DECIMAL perturbAmp, FN_DECIMAL frequency, ref FN_DECIMAL x, ref FN_DECIMAL y)
+        private void SingleGradientPerturb(int seed, float perturbAmp, float frequency, ref float x, ref float y)
         {
-            FN_DECIMAL xf = x * frequency;
-            FN_DECIMAL yf = y * frequency;
+            float xf = x * frequency;
+            float yf = y * frequency;
 
             int x0 = FastFloor(xf);
             int y0 = FastFloor(yf);
             int x1 = x0 + 1;
             int y1 = y0 + 1;
 
-            FN_DECIMAL xs, ys;
+            float xs, ys;
             switch (m_interp)
             {
                 default:
@@ -2230,14 +2206,14 @@ namespace PixelGlueCore.Loaders
             Float2 vec0 = CELL_2D[Hash2D(seed, x0, y0) & 255];
             Float2 vec1 = CELL_2D[Hash2D(seed, x1, y0) & 255];
 
-            FN_DECIMAL lx0x = Lerp(vec0.x, vec1.x, xs);
-            FN_DECIMAL ly0x = Lerp(vec0.y, vec1.y, xs);
+            float lx0x = Lerp(vec0.x, vec1.x, xs);
+            float ly0x = Lerp(vec0.y, vec1.y, xs);
 
             vec0 = CELL_2D[Hash2D(seed, x0, y1) & 255];
             vec1 = CELL_2D[Hash2D(seed, x1, y1) & 255];
 
-            FN_DECIMAL lx1x = Lerp(vec0.x, vec1.x, xs);
-            FN_DECIMAL ly1x = Lerp(vec0.y, vec1.y, xs);
+            float lx1x = Lerp(vec0.x, vec1.x, xs);
+            float ly1x = Lerp(vec0.y, vec1.y, xs);
 
             x += Lerp(lx0x, lx1x, ys) * perturbAmp;
             y += Lerp(ly0x, ly1x, ys) * perturbAmp;

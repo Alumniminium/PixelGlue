@@ -8,5 +8,9 @@
   <PropertyGroup>
     <OutputPath>..\Build\</OutputPath>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.*" />
+  </ItemGroup>
 
 </Project>

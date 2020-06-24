@@ -2,8 +2,9 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.ECS.Components;
 using System.Threading;
 using System.Collections.Concurrent;
-using static PixelGlueCore.Loaders.FastNoise;
 using PixelGlueCore.Helpers;
+using Pixel.Noise;
+using Pixel.Enums;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -14,11 +15,11 @@ namespace PixelGlueCore.ECS.Systems
         public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
-        public static Loaders.FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
+        public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
         public static Rectangle srcRect = new Rectangle(0, 0, 16, 16);
         static WorldGen()
         {
-            BiomeNoise = new Loaders.FastNoise(203414084);
+            BiomeNoise = new FastNoise(203414084);
             BiomeNoise.SetNoiseType(NoiseType.Cellular);
             BiomeNoise.SetInterp(Interp.Linear);
             BiomeNoise.SetFrequency(0.00004f);
@@ -28,7 +29,7 @@ namespace PixelGlueCore.ECS.Systems
             BiomeNoise.SetGradientPerturbAmp(1000);
             BiomeNoise.SetGradientFrequency(0.0004f);
 
-            RiverNoise = new Loaders.FastNoise(203414084);
+            RiverNoise = new FastNoise(203414084);
             RiverNoise.SetNoiseType(NoiseType.Cellular);
             RiverNoise.SetInterp(Interp.Linear);
             RiverNoise.SetFrequency(0.00004f);
@@ -38,22 +39,22 @@ namespace PixelGlueCore.ECS.Systems
             RiverNoise.SetGradientPerturbAmp(1000);
             RiverNoise.SetGradientFrequency(0.0004f);
 
-            PlainNoise = new Loaders.FastNoise(1337);
+            PlainNoise = new FastNoise(1337);
             PlainNoise.SetNoiseType(NoiseType.SimplexFractal);
             PlainNoise.SetInterp(Interp.Quintic);
             PlainNoise.SetFrequency(0.001f);
 
-            DesertNoise = new Loaders.FastNoise(30);
+            DesertNoise = new FastNoise(30);
             DesertNoise.SetNoiseType(NoiseType.SimplexFractal);
             DesertNoise.SetInterp(Interp.Quintic);
             DesertNoise.SetFrequency(0.0015f);
 
-            SwampNoise = new Loaders.FastNoise(330);
+            SwampNoise = new FastNoise(330);
             SwampNoise.SetNoiseType(NoiseType.SimplexFractal);
             SwampNoise.SetInterp(Interp.Quintic);
             SwampNoise.SetFrequency(0.0015f);
 
-            MountainNoise = new Loaders.FastNoise(330);
+            MountainNoise = new FastNoise(330);
             MountainNoise.SetNoiseType(NoiseType.Cellular);
             MountainNoise.SetInterp(Interp.Linear);
             MountainNoise.SetFrequency(0.00004f);
