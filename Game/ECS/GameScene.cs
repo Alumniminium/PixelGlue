@@ -16,7 +16,6 @@ namespace PixelGlueCore.ECS
     {
         public ConcurrentDictionary<int, int> UniqueIdToEntityId;
         public Camera Camera;
-        public TmxMap Map;
 
         public GameScene()
         {

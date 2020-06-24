@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using PixelGlueCore.ECS.Components;
 
 namespace TiledSharp
 {
@@ -35,7 +34,6 @@ namespace TiledSharp
         public PropertyDict Properties { get; private set; }
 
         public TmxList<ITmxLayer> Layers { get; set; }
-        public DrawableComponent[][] TileArray;
 
         public TmxMap(string filename)
         {

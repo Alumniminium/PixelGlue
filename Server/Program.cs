@@ -32,8 +32,8 @@ namespace Server
                         if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
-                            npc.X += Random.Next(-1, 2) * 16;
-                            npc.Y += Random.Next(-1, 2) * 16;
+                            npc.X += Random.Next(-1, 2) * 32;
+                            npc.Y += Random.Next(-1, 2) * 32;
 
                             foreach (var kvp2 in Collections.Players)
                             {

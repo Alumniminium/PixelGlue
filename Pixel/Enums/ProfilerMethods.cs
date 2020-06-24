@@ -1,4 +1,4 @@
-namespace PixelGlueCore.Enums
+namespace Pixel.Enums
 {
     public enum ProfilerMethod
     {

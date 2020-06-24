@@ -8,7 +8,7 @@ namespace PixelGlueCore.ECS.Components
     {
         public int UniqueId {get;set;}
         public const string TextureName = "selectionrect4";
-        public static readonly Rectangle SrcRect = new Rectangle(0,0,32,32);
+        public static readonly Rectangle SrcRect = new Rectangle(0,0,PixelGlue.TileSize,PixelGlue.TileSize);
 
         public DbgBoundingBoxComponent(int ownerId)
         {

@@ -10,11 +10,6 @@ namespace PixelGlueCore.ECS.Components
         public string TextureName;
         public Rectangle SrcRect;
         public Rectangle DestRect;
-        /*
-            shoes
-            src rect = (x,y,w,h)
-            dest rect = x+(16-src rect width), y-(16-src rect height))
-        */
 
         public DrawableComponent(int ownerId, string textureName, Rectangle srcRect)
         {

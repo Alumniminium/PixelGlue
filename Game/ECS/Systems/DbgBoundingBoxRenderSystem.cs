@@ -30,8 +30,6 @@ namespace PixelGlueCore.ECS.Systems
 
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
-                //var a = Vector2.Floor(pos.Position/ 16);
-                //var b =  Vector2.Round(a* 16)+origin;
                 
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drawable.SrcRect.Width, drawable.SrcRect.Height);
                 sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0,origin, SpriteEffects.None, 0);

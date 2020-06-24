@@ -16,7 +16,7 @@ namespace PixelGlueCore.ECS.Systems
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, 16, 16);
+        public static Rectangle srcRect = new Rectangle(0, 0, PixelGlue.TileSize, PixelGlue.TileSize);
         static WorldGen()
         {
             BiomeNoise = new FastNoise(203414084);
@@ -96,7 +96,7 @@ namespace PixelGlueCore.ECS.Systems
         }
         public static (DrawableComponent? terrain, DrawableComponent? river) Generate(int x, int y)
         {
-            var dstRect = new Rectangle(x, y, 16, 16);
+            var dstRect = new Rectangle(x, y, PixelGlue.TileSize, PixelGlue.TileSize);
             float x2, y2;
             x2 = x;
             y2 = y;

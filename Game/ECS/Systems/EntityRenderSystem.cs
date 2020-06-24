@@ -24,16 +24,16 @@ namespace PixelGlueCore.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var overdraw = Scene.Map.TileWidth*2;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += 16)//Scene.Map.TileWidth)
-            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += 16)//Scene.Map.TileHeight)
+            var overdraw = PixelGlue.TileSize*2;
+            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += PixelGlue.TileSize)
+            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += PixelGlue.TileSize)
                 {
-                    //var x2 = x/ Scene.Map.TileWidth;
-                    //var y2 = y/ Scene.Map.TileHeight;
-                    //x2 *= Scene.Map.TileWidth;
-                    //y2 *= Scene.Map.TileHeight;
-                    DrawableComponent? terrainTile = WorldGen.GetTileLayerZero(x,y);
-                    DrawableComponent? riverTile = WorldGen.GetTileLayerOne(x,y);
+                    var x2 = x/ PixelGlue.TileSize;
+                    var y2 = y/ PixelGlue.TileSize;
+                    x2 *= PixelGlue.TileSize;
+                    y2 *= PixelGlue.TileSize;
+                    DrawableComponent? terrainTile = WorldGen.GetTileLayerZero(x2,y2);
+                    DrawableComponent? riverTile = WorldGen.GetTileLayerOne(x2,y2);
 
                     if (terrainTile.HasValue)
                     {

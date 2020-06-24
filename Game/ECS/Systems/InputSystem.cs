@@ -53,13 +53,13 @@ namespace PixelGlueCore.ECS.Systems
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
                             moveComponent.SpeedMulti = 100f;
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y - (scene.Map.TileHeight * moveComponent.SpeedMulti);
+                            destination.Y = positionComponent.Position.Y - (PixelGlue.TileSize * moveComponent.SpeedMulti);
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y + (scene.Map.TileHeight * moveComponent.SpeedMulti);
+                            destination.Y = positionComponent.Position.Y + (PixelGlue.TileSize * moveComponent.SpeedMulti);
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X - (scene.Map.TileWidth * moveComponent.SpeedMulti);
+                            destination.X = positionComponent.Position.X - (PixelGlue.TileSize * moveComponent.SpeedMulti);
                         if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X + (scene.Map.TileWidth * moveComponent.SpeedMulti);
+                            destination.X = positionComponent.Position.X + (PixelGlue.TileSize * moveComponent.SpeedMulti);
                         if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
                             moveComponent.SpeedMulti = 1;
                         if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))
