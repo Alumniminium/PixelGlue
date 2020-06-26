@@ -37,10 +37,12 @@ namespace Server
 
                             foreach (var kvp2 in Collections.Players)
                             {
-                                //Console.WriteLine($"Sending walk {npc.UniqueId}.");
                                 var player = kvp2.Value;
-
-                                if(Pixel.Maths.PixelMath.GetDistance(player.Location,npc.Location) < 10)
+                                var distance = Pixel.Maths.PixelMath.GetDistance(player.Location,npc.Location);
+                                
+                                Console.WriteLine($"Sending Walk/{npc.UniqueId} to player/{kvp2.Value.Username}. Distance: {distance}`");
+                                
+                                if(distance < 10)
                                     kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Location));
                             }
                         }
