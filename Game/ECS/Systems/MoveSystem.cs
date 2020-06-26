@@ -3,8 +3,8 @@ using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Scenes;
 using PixelGlueCore.Enums;
-using Pixel.Extensions;
-using Pixel.Maths;
+using PixelShared.Extensions;
+using PixelShared.Maths;
 
 namespace PixelGlueCore.ECS.Systems
 {

@@ -11,8 +11,8 @@ namespace Server
         public Npc(int uid)
         {
             UniqueId = uid;
-            var x = 256 + Pixel.Pixel.Random.Next(1,10) * Pixel.Pixel.TileSize;
-            var y = 256 + Pixel.Pixel.Random.Next(1,10) * Pixel.Pixel.TileSize;
+            var x = 256 + (PixelShared.Pixel.Random.Next(1,10) * PixelShared.Pixel.TileSize);
+            var y = 256 + (PixelShared.Pixel.Random.Next(1,10) * PixelShared.Pixel.TileSize);
             Location = new Vector2(x,y);
         }
     }

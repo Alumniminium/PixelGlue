@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using PixelGlueCore.Helpers;
 using PixelGlueCore.Loaders;
-using Pixel.Noise;
+using PixelShared.Noise;
 using System;
-using Pixel.Diagnostics;
+using PixelShared.Diagnostics;
 
 namespace PixelGlueCore
 {

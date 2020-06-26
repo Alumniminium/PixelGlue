@@ -2,11 +2,11 @@ using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.Enums;
 using PixelGlueCore.Helpers;
-using Pixel.TerribleSockets.Packets;
+using PixelShared.TerribleSockets.Packets;
 using PixelGlueCore.Entities;
 using PixelGlueCore.Scenes;
 using Microsoft.Xna.Framework;
-using Pixel.IO;
+using PixelShared.IO;
 
 namespace PixelGlueCore.Networking.Handlers
 {

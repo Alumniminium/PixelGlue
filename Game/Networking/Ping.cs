@@ -1,7 +1,7 @@
 using PixelGlueCore.ECS.Systems;
 using PixelGlueCore.Helpers;
-using Pixel.TerribleSockets.Packets;
-using Pixel.IO;
+using PixelShared.TerribleSockets.Packets;
+using PixelShared.IO;
 
 namespace PixelGlueCore.Networking.Handlers
 {

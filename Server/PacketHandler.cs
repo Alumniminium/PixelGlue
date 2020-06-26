@@ -1,7 +1,7 @@
 ﻿using System;
-using Pixel.TerribleSockets.Client;
+using PixelShared.TerribleSockets.Client;
 
-using Pixel.TerribleSockets.Packets;
+using PixelShared.TerribleSockets.Packets;
 namespace Server
 {
     public static class PacketHandler
@@ -45,7 +45,7 @@ namespace Server
                             Console.WriteLine("Authentication failed.");
 
                         player.Socket.Send(msgLogin);
-
+                        player.Socket.Send(MsgWalk.Create(player.UniqueId,player.Location));
                         break;
                     }
                 case 1001:

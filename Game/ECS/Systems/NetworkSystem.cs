@@ -3,10 +3,10 @@ using PixelGlueCore.Helpers;
 using PixelGlueCore.Networking;
 using PixelGlueCore.Scenes;
 using System.Collections.Concurrent;
-using Pixel.TerribleSockets.Client;
-using Pixel.TerribleSockets.Packets;
-using Pixel.TerribleSockets.Queues;
-using Pixel.IO;
+using PixelShared.TerribleSockets.Client;
+using PixelShared.TerribleSockets.Packets;
+using PixelShared.TerribleSockets.Queues;
+using PixelShared.IO;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -32,7 +32,7 @@ namespace PixelGlueCore.ECS.Systems
             switch (ConnectionState)
             {
                 case ConnectionState.NotConnected:
-                    Connect("dynamic.alumni.re", 13338);
+                    Connect("192.168.0.3", 13338);
                     return;
                 case ConnectionState.Connected:
                     ConnectionState = ConnectionState.Authenticating;

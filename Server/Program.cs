@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Pixel.TerribleSockets.Packets;
-using Pixel.TerribleSockets.Queues;
-using Pixel.TerribleSockets.Server;
+using PixelShared.TerribleSockets.Packets;
+using PixelShared.TerribleSockets.Queues;
+using PixelShared.TerribleSockets.Server;
 
 namespace Server
 {
@@ -32,17 +32,17 @@ namespace Server
                         if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
-                            npc.Location.X += Random.Next(-1, 2) * Pixel.Pixel.TileSize;
-                            npc.Location.Y += Random.Next(-1, 2) * Pixel.Pixel.TileSize;
+                            npc.Location.X += Random.Next(-1, 2) * PixelShared.Pixel.TileSize;
+                            npc.Location.Y += Random.Next(-1, 2) * PixelShared.Pixel.TileSize;
 
                             foreach (var kvp2 in Collections.Players)
                             {
                                 var player = kvp2.Value;
-                                var distance = Pixel.Maths.PixelMath.GetDistance(player.Location,npc.Location);
+                                var distance = PixelShared.Maths.PixelMath.GetDistance(player.Location,npc.Location);
                                 
-                                Console.WriteLine($"Sending Walk/{npc.UniqueId} to player/{kvp2.Value.Username}. Distance: {distance}`");
+                                Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Location.X},{(int)npc.Location.Y} to player {(int)kvp2.Value.Location.X}{(int)kvp2.Value.Location.Y}. Distance: {distance}`");
                                 
-                                if(distance < 10)
+                                if(distance < 100)
                                     kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Location));
                             }
                         }

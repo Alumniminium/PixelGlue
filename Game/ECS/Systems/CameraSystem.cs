@@ -27,8 +27,8 @@ namespace PixelGlueCore.ECS.Systems
                         ref readonly var loc = ref entity.Get<PositionComponent>();
 
                         var camLoc = loc.Position + new Vector2(8, 8);
-                        var camX = (int)camLoc.X / Pixel.Pixel.TileSize * Pixel.Pixel.TileSize;
-                        var camY = (int)camLoc.Y / Pixel.Pixel.TileSize * Pixel.Pixel.TileSize;
+                        var camX = (int)camLoc.X / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
+                        var camY = (int)camLoc.Y / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
                         
                         scene.Camera.ScreenRect = new Rectangle((int)(camX - (PixelGlue.HalfVirtualScreenWidth / follow.Zoom)), (int)(camY - (PixelGlue.HalfVirtualScreenHeight / follow.Zoom)), (int)(PixelGlue.VirtualScreenWidth / follow.Zoom), (int)(PixelGlue.VirtualScreenHeight / follow.Zoom));
                         scene.Camera.Transform = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)

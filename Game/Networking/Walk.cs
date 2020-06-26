@@ -1,7 +1,7 @@
 using PixelGlueCore.ECS.Components;
 using PixelGlueCore.World;
 using Microsoft.Xna.Framework;
-using Pixel.TerribleSockets.Packets;
+using PixelShared.TerribleSockets.Packets;
 using PixelGlueCore.Scenes;
 using PixelGlueCore.Entities;
 using PixelGlueCore.ECS;

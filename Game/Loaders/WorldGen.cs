@@ -2,8 +2,8 @@ using Microsoft.Xna.Framework;
 using PixelGlueCore.ECS.Components;
 using System.Threading;
 using System.Collections.Concurrent;
-using Pixel.Noise;
-using Pixel.Enums;
+using PixelShared.Noise;
+using PixelShared.Enums;
 using System.Collections.Generic;
 using System;
 
@@ -18,7 +18,7 @@ namespace PixelGlueCore.ECS.Systems
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerTwo = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, Pixel.Pixel.TileSize, Pixel.Pixel.TileSize);
+        public static Rectangle srcRect = new Rectangle(0, 0, PixelShared.Pixel.TileSize, PixelShared.Pixel.TileSize);
         static WorldGen()
         {
             BiomeNoise = new FastNoise(203414084);
@@ -102,7 +102,7 @@ namespace PixelGlueCore.ECS.Systems
         }
         public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? decor) Generate(int x, int y)
         {
-            var dstRect = new Rectangle(x, y, Pixel.Pixel.TileSize, Pixel.Pixel.TileSize);
+            var dstRect = new Rectangle(x, y, PixelShared.Pixel.TileSize, PixelShared.Pixel.TileSize);
             float x2, y2;
             x2 = x;
             y2 = y;
