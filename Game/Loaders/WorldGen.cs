@@ -148,10 +148,10 @@ namespace PixelGlueCore.ECS.Systems
 
         private static (DrawableComponent? ground, DrawableComponent? decor) GenerateMountains(float x, float y, Rectangle dstRect)
         {
-            DrawableComponent? ground =null;
-            DrawableComponent? decor =null;
+            DrawableComponent? decor = null;
             var val = MountainNoise.GetNoise(x, y);
 
+            DrawableComponent? ground;
             if (val > 0.9f)
                 ground = new DrawableComponent(0, "snow", srcRect, dstRect);
             else if (val > 0.7f)
@@ -169,29 +169,29 @@ namespace PixelGlueCore.ECS.Systems
             else
                 ground = new DrawableComponent(0, "sand", srcRect, dstRect);
 
-                return (ground,decor);
+            return (ground,decor);
         }
         private static (DrawableComponent?,DrawableComponent?) GenerateDesert(float x, float y, Rectangle dstRect)
         {
-            DrawableComponent? ground =null;
-            DrawableComponent? decor =null;
+            DrawableComponent? decor = null;
             var val = DesertNoise.GetNoise(x / 32, y / 32);
             val += 0.5f * DesertNoise.GetNoise(x / 16, y / 16);
             val += 0.15f * DesertNoise.GetNoise(x / 8, y / 8);
+            DrawableComponent? ground;
             //val += 0.75f * RiverNoise.GetNoise(x, y);
 
             if (val > 0.7f)
-                ground= new DrawableComponent(0, "rock", srcRect, dstRect);
+                ground = new DrawableComponent(0, "rock", srcRect, dstRect);
             else if (val > 0.4f)
-                ground= new DrawableComponent(0, "sand3", srcRect, dstRect);
+                ground = new DrawableComponent(0, "sand3", srcRect, dstRect);
             else if (val > 0f)
-                ground= new DrawableComponent(0, "sand2", srcRect, dstRect);
+                ground = new DrawableComponent(0, "sand2", srcRect, dstRect);
             else if (val > -0.6)
-                ground= new DrawableComponent(0, "sand3", srcRect, dstRect);
+                ground = new DrawableComponent(0, "sand3", srcRect, dstRect);
             else
-                ground= new DrawableComponent(0, "dirt", srcRect, dstRect);
+                ground = new DrawableComponent(0, "dirt", srcRect, dstRect);
 
-                return (ground,decor);
+            return (ground,decor);
         }
         private static (DrawableComponent?,DrawableComponent?) GenerateSwamp(float x, float y, Rectangle dstRect)
         {

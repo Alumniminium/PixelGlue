@@ -23,9 +23,9 @@ namespace PixelGlueCore.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var overdraw = PixelGlue.TileSize*2;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += PixelGlue.TileSize)
-            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += PixelGlue.TileSize)
+            var overdraw = Pixel.Pixel.TileSize*2;
+            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += Pixel.Pixel.TileSize)
+            for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += Pixel.Pixel.TileSize)
             {
                 var (terrainTile,riverTile) = WorldGen.GetTiles(x,y);
                 
