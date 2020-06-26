@@ -32,13 +32,16 @@ namespace Server
                         if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
-                            npc.X += Random.Next(-1, 2) * 32;
-                            npc.Y += Random.Next(-1, 2) * 32;
+                            npc.Location.X += Random.Next(-1, 2) * Pixel.Pixel.TileSize;
+                            npc.Location.Y += Random.Next(-1, 2) * Pixel.Pixel.TileSize;
 
                             foreach (var kvp2 in Collections.Players)
                             {
                                 //Console.WriteLine($"Sending walk {npc.UniqueId}.");
-                                kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.X, npc.Y));
+                                var player = kvp2.Value;
+
+                                if(Pixel.Maths.PixelMath.GetDistance(player.Location,npc.Location) < 10)
+                                    kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Location));
                             }
                         }
                     }

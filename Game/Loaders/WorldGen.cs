@@ -5,19 +5,20 @@ using System.Collections.Concurrent;
 using Pixel.Noise;
 using Pixel.Enums;
 using System.Collections.Generic;
+using System;
 
 namespace PixelGlueCore.ECS.Systems
 {
     public static class WorldGen
     {
         public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-        public static Thread[] Prefetcher = new Thread[2];
-        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
+        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*4];
+        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[Environment.ProcessorCount*4];
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerTwo = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, PixelGlue.TileSize, PixelGlue.TileSize);
+        public static Rectangle srcRect = new Rectangle(0, 0, Pixel.Pixel.TileSize, Pixel.Pixel.TileSize);
         static WorldGen()
         {
             BiomeNoise = new FastNoise(203414084);
@@ -94,14 +95,14 @@ namespace PixelGlueCore.ECS.Systems
                         LayerOne.TryAdd((x, y), tree);
 
                     TilesLoading.TryRemove((x, y), out _);
-                    //Thread.Sleep(1);
+                    Thread.Sleep(1);
                 }
                 Thread.Sleep(1);
             }
         }
         public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? decor) Generate(int x, int y)
         {
-            var dstRect = new Rectangle(x, y, PixelGlue.TileSize, PixelGlue.TileSize);
+            var dstRect = new Rectangle(x, y, Pixel.Pixel.TileSize, Pixel.Pixel.TileSize);
             float x2, y2;
             x2 = x;
             y2 = y;

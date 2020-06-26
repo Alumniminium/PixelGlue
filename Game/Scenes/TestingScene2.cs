@@ -28,7 +28,7 @@ namespace PixelGlueCore.Scenes
         {
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
             var origin = new Vector2(-23, 8);
-            var overdraw = PixelGlue.TileSize * 2;
+            var overdraw = Pixel.Pixel.TileSize * 2;
 
             foreach (var (_,entity) in Entities)
             {

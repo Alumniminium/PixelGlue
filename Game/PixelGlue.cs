@@ -26,6 +26,5 @@ namespace PixelGlueCore
         public static string[] Names { get; internal set; }
         public static ContentManager ContentManager { get; set; }
         public static float Z { get; internal set; } = 1f;
-        public static int TileSize => 16;
     }
 }

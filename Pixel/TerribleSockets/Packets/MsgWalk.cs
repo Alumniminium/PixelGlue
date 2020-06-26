@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 
 namespace Pixel.TerribleSockets.Packets
 {
@@ -21,6 +22,17 @@ namespace Pixel.TerribleSockets.Packets
             msg->UniqueId = uniqueId;
             msg->X = x;
             msg->Y = y;
+            return *msg;
+        }
+        public static MsgWalk Create(int uniqueId, Vector2 location)
+        {
+            var msg = stackalloc MsgWalk[1];
+            msg->Length = sizeof(MsgWalk);
+            msg->Id = 1001;
+            msg->TickCount = Environment.TickCount;
+            msg->UniqueId = uniqueId;
+            msg->X = (int)location.X;
+            msg->Y = (int)location.Y;
             return *msg;
         }
         public static implicit operator byte[](MsgWalk msg)
