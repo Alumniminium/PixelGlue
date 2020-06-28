@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using PixelShared.Enums;
 using PixelShared.Extensions;
 
-namespace PixelGlueCore.Helpers
+namespace Pixel.Helpers
 {
     public static class TextureGen
     {

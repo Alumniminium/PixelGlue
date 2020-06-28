@@ -23,7 +23,7 @@ namespace Server
             {
                 Console.WriteLine("Heartbeat Thread started.");
                 for (int i = 10; i < BotCount; i++)
-                    Collections.Npcs.TryAdd(1 + i, new Npc(i));
+                    Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 +i));
                 while (true)
                 {
                     foreach (var kvp in Collections.Npcs)

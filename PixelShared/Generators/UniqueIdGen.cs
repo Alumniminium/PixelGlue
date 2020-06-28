@@ -1,4 +1,4 @@
-namespace PixelGlueCore.Helpers
+namespace Pixel.Helpers
 {
     public static class UniqueIdGen
     {

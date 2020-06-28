@@ -7,7 +7,7 @@ using PixelShared.Noise;
 using PixelShared;
 using PixelShared.Extensions;
 
-namespace PixelGlueCore.Helpers
+namespace Pixel.Helpers
 {
     public static class NoiseGen
     {
