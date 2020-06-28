@@ -9,15 +9,12 @@ namespace Pixel.Scenes
     {
         public static Queue<Action> QueuedTasks = new Queue<Action>();
         public static ContentManager _content;
-        public static List<GameScene> ActiveGameScenes;
-        public static List<UIScene> ActiveUIScenes;
+        public static Scene ActiveScene;
         public static List<Scene> LoadedScenes;
         public static void Initialize(ContentManager content)
         {
             _content = content;
             LoadedScenes = new List<Scene>();
-            ActiveGameScenes = new List<GameScene>();
-            ActiveUIScenes = new List<UIScene>();
         }
 
         public static void ActivateScene(Scene scene)
@@ -30,28 +27,8 @@ namespace Pixel.Scenes
                     scene.Initialize();
                     LoadedScenes.Add(scene);
                 }
-                if (scene is GameScene gameScene)
-                    ActiveGameScenes.Add(gameScene);
-                if (scene is UIScene uiScene)
-                    ActiveUIScenes.Add(uiScene);
+                ActiveScene = scene;
                 scene.IsActive = true;
-            });
-        }
-        public static void DeactivateScene<T>() where T : Scene
-        {
-            QueuedTasks.Enqueue(() =>
-            {
-                foreach (var loadedScene in LoadedScenes)
-                {
-                    if (loadedScene.IsActive)
-                    {
-                        loadedScene.IsActive = false;
-                        if (loadedScene is GameScene gameScene)
-                            ActiveGameScenes.Remove(gameScene);
-                        if (loadedScene is UIScene uiScene)
-                            ActiveUIScenes.Remove(uiScene);
-                    }
-                }
             });
         }
     }

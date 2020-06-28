@@ -15,7 +15,7 @@ namespace Pixel.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var (user, pass) = packet.GetUserPass();
-            var scene = SceneManager.ActiveGameScenes[^1];
+            var scene = SceneManager.ActiveScene;
             var player = scene.CreateEntity<Player>(packet.UniqueId);
             player.Scene= scene;
             player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));

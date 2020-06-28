@@ -16,16 +16,12 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            for (int i = 0; i < SceneManager.ActiveGameScenes.Count; i++)
+            foreach (var entity in CompIter.Get<MoveComponent, PositionComponent>())
             {
-                var scene = SceneManager.ActiveGameScenes[i];
-                foreach (var entity in CompIter.Get<MoveComponent,PositionComponent>(scene))
-                {
-                    ref var mov = ref entity.Get<MoveComponent>();
-                    ref var pc = ref entity.Get<PositionComponent>();
+                ref var mov = ref entity.Get<MoveComponent>();
+                ref var pc = ref entity.Get<PositionComponent>();
 
-                    MoveOneTile(deltaTime, ref mov, ref pc);
-                }
+                MoveOneTile(deltaTime, ref mov, ref pc);
             }
         }
 
@@ -34,7 +30,7 @@ namespace Pixel.ECS.Systems
             if (movable.Destination != position.Position)
             {
                 movable.Moving = true;
-                var distanceToDest = PixelMath.GetDistance(position.Position,movable.Destination);
+                var distanceToDest = PixelMath.GetDistance(position.Position, movable.Destination);
                 var moveDistance = movable.Speed * deltaTime;
                 if (distanceToDest > moveDistance)
                 {

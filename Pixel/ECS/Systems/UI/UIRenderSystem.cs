@@ -14,8 +14,8 @@ namespace Pixel.ECS.Systems.UI
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public UIScene Scene{get;set;}
-        public UIRenderSystem(UIScene scene)
+        public Scene Scene{get;set;}
+        public UIRenderSystem(Scene scene)
         {
             Scene=scene;
         }

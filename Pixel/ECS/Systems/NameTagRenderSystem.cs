@@ -9,8 +9,8 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Name Tag Render System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public GameScene Scene {get;set;}
-        public NameTagRenderSystem(GameScene scene)
+        public Scene Scene {get;set;}
+        public NameTagRenderSystem(Scene scene)
         {
             Scene=scene;
         }

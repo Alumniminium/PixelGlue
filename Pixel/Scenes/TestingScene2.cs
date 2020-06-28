@@ -10,7 +10,7 @@ using Pixel.Networking;
 
 namespace Pixel.Scenes
 {
-    public class TestingScene2 : GameScene
+    public class TestingScene2 : Scene
     {
         public override void Initialize()
         {

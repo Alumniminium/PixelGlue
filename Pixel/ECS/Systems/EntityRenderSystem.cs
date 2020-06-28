@@ -12,8 +12,8 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Procedural Entity Rendering System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public GameScene Scene { get; set; }
-        public ProceduralEntityRenderSystem(GameScene scene)
+        public Scene Scene { get; set; }
+        public ProceduralEntityRenderSystem(Scene scene)
         {
             Scene = scene;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -46,7 +46,7 @@ namespace Pixel.ECS.Systems
         private void RenderEntities(SpriteBatch sb, int overdraw)
         {
             var origin = new Vector2(-8, 8);
-            foreach (var entity in CompIter.Get<DrawableComponent,PositionComponent>(Scene))
+            foreach (var entity in CompIter.Get<DrawableComponent,PositionComponent>())
             {
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();

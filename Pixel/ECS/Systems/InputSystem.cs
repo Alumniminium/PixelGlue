@@ -20,11 +20,8 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            foreach (var s in SceneManager.ActiveGameScenes)
-            {
-                if (s is GameScene scene)
-                {
-                    foreach (var entity in CompIter.Get<InputComponent,MoveComponent,PositionComponent,CameraFollowTagComponent>(scene))
+            var scene = SceneManager.ActiveScene;
+                    foreach (var entity in CompIter.Get<InputComponent,MoveComponent,PositionComponent,CameraFollowTagComponent>())
                     {
                         ref var inputComponent = ref entity.Get<InputComponent>();
                         ref var moveComponent = ref entity.Get<MoveComponent>();
@@ -76,9 +73,7 @@ namespace Pixel.ECS.Systems
 
                         inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
                     }
-                }
-            }
-        }
+                }          
 
         private static void Rotating(ref InputComponent inputComponent, ref PositionComponent positionComponent)
         {
@@ -140,10 +135,10 @@ namespace Pixel.ECS.Systems
             testScene2.Systems.Add(new MoveSystem());
             testScene2.Systems.Add(new CameraSystem());
             SceneManager.ActivateScene(testScene2);
-            SceneManager.DeactivateScene<TestingScene>();
+            //SceneManager.DeactivateScene<TestingScene>();
         }
 
-        private static void OpenDialog(GameScene scene)
+        private static void OpenDialog(Scene scene)
         {
             var player = scene.Find<Player>();
             player.Add(new DialogComponent(player.EntityId, 1, 0));

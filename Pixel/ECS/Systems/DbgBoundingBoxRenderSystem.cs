@@ -12,8 +12,8 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Debug Boundingbox System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public GameScene Scene{get;set;}
-        public DbgBoundingBoxRenderSystem(GameScene scene)
+        public Scene Scene{get;set;}
+        public DbgBoundingBoxRenderSystem(Scene scene)
         {
             Scene=scene;
         }
@@ -24,7 +24,7 @@ namespace Pixel.ECS.Systems
             if (Scene.Camera == null)
                 return;
             var origin = new Vector2(0, 8);
-            foreach (var entity in CompIter.Get<PositionComponent,DrawableComponent>(Scene))
+            foreach (var entity in CompIter.Get<PositionComponent,DrawableComponent>())
             {                
                 ref readonly var pos  = ref entity.Get<PositionComponent>();
                 ref readonly var drw = ref entity.Get<DrawableComponent>();

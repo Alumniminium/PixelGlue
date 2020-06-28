@@ -49,22 +49,19 @@ namespace Pixel
 
         protected override void Update(GameTime gameTime)
         {
+            CompIter.Update();
             Global.UpdateProfiler.StartMeasuring();
             _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             while (SceneManager.QueuedTasks.TryDequeue(out var action))
                 action.Invoke();
 
-            foreach (var scene in SceneManager.ActiveGameScenes)
-                scene.Update(gameTime);
-
+            SceneManager.ActiveScene.Update(gameTime);
+            
             while (_elapsedTime >= _updateTime)
             {
                 _elapsedTime -= _updateTime;
-                foreach (var scene in SceneManager.ActiveGameScenes)
-                    scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
-                foreach (var scene in SceneManager.ActiveUIScenes)
-                    scene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
+                SceneManager.ActiveScene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
             }
             
             base.Update(gameTime);
@@ -77,12 +74,8 @@ namespace Pixel
             Global.DrawProfiler.StartMeasuring();
             _graphics.GraphicsDevice.Clear(Color.Black);
             
-            foreach (var scene in SceneManager.ActiveGameScenes)
-                if (scene.IsReady)
-                    scene.Draw(_spriteBatch);
-            foreach (var scene in SceneManager.ActiveUIScenes)
-                if (scene.IsReady)
-                    scene.Draw(_spriteBatch);
+            if (SceneManager.ActiveScene.IsReady)
+                SceneManager.ActiveScene.Draw(_spriteBatch);
 
             base.Draw(gameTime);
             Global.DrawProfiler.StopMeasuring();

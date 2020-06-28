@@ -17,12 +17,8 @@ namespace Pixel.ECS.Systems
 
         public void Update(float deltaTime)
         {
-            foreach (var scene in SceneManager.ActiveGameScenes)
-            {
-                foreach (var (_,_) in scene.Entities)
-                {
                     //if (!scene.TryGetComponent<DialogComponent>(kvp.Key,out var dialog))
-                        continue;
+                     
                     //if(!dialog.UpdateRequired)
                     //    return;
 //
@@ -58,5 +54,3 @@ namespace Pixel.ECS.Systems
                 }
             }
         }
-    }
-}

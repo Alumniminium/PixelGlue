@@ -9,8 +9,7 @@ namespace Pixel.Entities
 {
     public class Entity
     {
-        public GameScene Scene;
-        public UIScene UIScene;
+        public Scene Scene;
         public int EntityId;
         public int UniqueId => Has<Networked>() ? Get<Networked>().EntityId : -1;
         public Entity Parent;

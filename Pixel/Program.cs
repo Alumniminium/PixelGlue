@@ -29,19 +29,7 @@ namespace Pixel
             {
                 Id = 1
             };
-
-            var globalScene = new GameScene
-            {
-                Id = 0
-            };
-            globalScene.Systems.Add(new InputSystem());
-            globalScene.Systems.Add(new NetworkSystem());
-            globalScene.Systems.Add(new DialogSystem());
-            globalScene.Systems.Add(new GCMonitor());
-
-            SceneManager.ActivateScene(new TestingUIScene());
             SceneManager.Initialize(engine.Content);
-            SceneManager.ActivateScene(globalScene);
             SceneManager.ActivateScene(testScene);
 
             FConsole.WriteLine("Initializing scene systems...");

@@ -15,14 +15,15 @@ namespace Pixel.Networking.Handlers
             var uniqueId = packet.UniqueId;
             var location = new Vector2(packet.X, packet.Y);
             var tickCount = packet.TickCount;
-            var scene = SceneManager.ActiveGameScenes[^1];
+            var scene = SceneManager.ActiveScene;
             if(!scene.UniqueIdToEntityId.TryGetValue(uniqueId,out var entityId))
             {
-                var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-                var entity = scene.CreateEntity<Entity>(uniqueId);
+                var entity = scene.CreateEntity<Npc>(uniqueId);
                 var name = Global.Names[Global.Random.Next(0,Global.Names.Length)];
                 
+                var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                 entity.Add(new DrawableComponent(entity.EntityId,srcEntity.TextureName, srcEntity.SrcRect));
+                
                 entity.Add(new PositionComponent(entity.EntityId,packet.X, packet.Y, 0));
                 entity.Add(new MoveComponent(entity.EntityId,8, packet.X, packet.Y));
                 entity.Add(new DbgBoundingBoxComponent(entity.EntityId));

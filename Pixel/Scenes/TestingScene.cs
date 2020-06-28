@@ -9,12 +9,10 @@ using PixelShared.Enums;
 
 namespace Pixel.Scenes
 {
-    public class TestingUIScene :UIScene
+    public class TestingUIScene : Scene
     {
         public override void Initialize()
         {
-            Systems.Add(new UIRenderSystem(this));
-            Systems.Add(new SmartFramerate(this,4));
             //var redbox = CreateUIEntity<UIRectangle>();
             //var textblock = CreateUIEntity<Textblock>();
             //var textblock2 = CreateUIEntity<Textblock>();
@@ -28,17 +26,23 @@ namespace Pixel.Scenes
             base.Initialize();
         }
     }
-    public class TestingScene : GameScene
+    public class TestingScene : Scene
     {
         public override void Initialize()
         {
             Camera = CreateEntity<Camera>(-1);
+            Systems.Add(new NetworkSystem());
+            Systems.Add(new InputSystem());
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             Systems.Add(new ProceduralEntityRenderSystem(this));
             Systems.Add(new NameTagRenderSystem(this));
+            Systems.Add(new DialogSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem(this));
-            
+
+            Systems.Add(new UIRenderSystem(this));
+            Systems.Add(new SmartFramerate(this,4));
+            Systems.Add(new GCMonitor());
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)

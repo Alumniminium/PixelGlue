@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using TiledSharp;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.IO;
@@ -12,12 +11,18 @@ using Pixel.Enums;
 
 namespace Pixel.ECS
 {
-    public class GameScene :Scene
+    public class Scene
     {
+        public int Id;
+        public bool IsActive;
+        public bool IsReady;
+        public int LastEntityId = 1;
+        public ConcurrentDictionary<int, Entity> Entities;
+        public List<IEntitySystem> Systems;
         public ConcurrentDictionary<int, int> UniqueIdToEntityId,EntityIdToUniqueId;
         public Camera Camera;
 
-        public GameScene()
+        public Scene()
         {
             Entities = new ConcurrentDictionary<int, Entity>();
             UniqueIdToEntityId = new ConcurrentDictionary<int, int>();
@@ -25,19 +30,20 @@ namespace Pixel.ECS
             Systems = new List<IEntitySystem>();
         }
 
-        public override void Initialize()
+        public virtual void Initialize()
         {            
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
         }
 
-        public override void LoadContent(ContentManager cm)
+        public virtual void LoadContent(ContentManager cm)
         {
+            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt","profont");
             Global.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',',StringSplitOptions.RemoveEmptyEntries);
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public override void Update(GameTime deltaTime)
+        public virtual void Update(GameTime deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
             {
@@ -46,7 +52,7 @@ namespace Pixel.ECS
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public override void FixedUpdate(float deltaTime)
+        public virtual void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
             {
@@ -55,7 +61,7 @@ namespace Pixel.ECS
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public override void Draw(SpriteBatch sb)
+        public virtual void Draw(SpriteBatch sb)
         {
             if (Camera == null)
                 return;
@@ -69,7 +75,7 @@ namespace Pixel.ECS
             sb.End();
         }
         
-        public override void Destroy(Entity entity)
+        public virtual void Destroy(Entity entity)
         {            
             Entities.TryRemove(entity.EntityId, out _);
             EntityIdToUniqueId.TryRemove(entity.EntityId,out var uid);
@@ -77,12 +83,11 @@ namespace Pixel.ECS
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public override T CreateEntity<T>(int uniqueId)
+        public virtual T CreateEntity<T>(int uniqueId) where T : Entity, new()
         {
             var entity = new T
             {
                 EntityId = LastEntityId,
-                Scene = this
             };
             UniqueIdToEntityId.TryAdd(uniqueId,entity.EntityId);
             EntityIdToUniqueId.TryAdd(entity.EntityId,uniqueId);
@@ -91,7 +96,7 @@ namespace Pixel.ECS
             return entity;
         } 
 
-        public override T GetSystem<T>()
+        public virtual T GetSystem<T>()
         {
             foreach (var sys in Systems)
                 if (sys is T t)
@@ -100,7 +105,7 @@ namespace Pixel.ECS
         }
        
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public T Find<T>() where T : Entity
+        public virtual T Find<T>() where T : Entity
         {
             foreach (var (_,entity) in Entities)
                 if (entity is T t)
@@ -108,7 +113,6 @@ namespace Pixel.ECS
             return null;
         }
         public override int GetHashCode() => Id;
-        public override bool Equals(object obj) => (obj as GameScene)?.Id == Id;
-        public override T CreateUIEntity<T>() => throw new NotSupportedException();
+        public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }
 }

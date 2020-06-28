@@ -17,26 +17,21 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            foreach (var s in SceneManager.ActiveGameScenes)
+            var scene = SceneManager.ActiveScene;
+            foreach (var entity in CompIter.Get<CameraFollowTagComponent, PositionComponent>())
             {
-                if (s is GameScene scene && scene.Camera != null)
-                {
-                    foreach(var entity in CompIter.Get<CameraFollowTagComponent,PositionComponent>(scene))
-                    {                        
-                        ref readonly var loc = ref entity.Get<PositionComponent>(); 
-                        ref readonly var follow = ref entity.Get<CameraFollowTagComponent>();
-                                         
-                        var camLoc = loc.Position + new Vector2(8, 8);
-                        var camX = (int)camLoc.X / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
-                        var camY = (int)camLoc.Y / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
-                        
-                        scene.Camera.ScreenRect = new Rectangle((int)(camX - (Global.HalfVirtualScreenWidth / follow.Zoom)), (int)(camY - (Global.HalfVirtualScreenHeight / follow.Zoom)), (int)(Global.VirtualScreenWidth / follow.Zoom), (int)(Global.VirtualScreenHeight / follow.Zoom));
-                        scene.Camera.Transform = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)
-                                                             * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
-                                                             * Matrix.CreateScale(follow.Zoom)
-                                                             * Matrix.CreateTranslation(Global.ScreenWidth / 2, Global.ScreenHeight / 2, 0);
-                    }                   
-                }
+                ref readonly var loc = ref entity.Get<PositionComponent>();
+                ref readonly var follow = ref entity.Get<CameraFollowTagComponent>();
+
+                var camLoc = loc.Position + new Vector2(8, 8);
+                var camX = (int)camLoc.X / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
+                var camY = (int)camLoc.Y / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
+
+                scene.Camera.ScreenRect = new Rectangle((int)(camX - (Global.HalfVirtualScreenWidth / follow.Zoom)), (int)(camY - (Global.HalfVirtualScreenHeight / follow.Zoom)), (int)(Global.VirtualScreenWidth / follow.Zoom), (int)(Global.VirtualScreenHeight / follow.Zoom));
+                scene.Camera.Transform = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)
+                                                     * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
+                                                     * Matrix.CreateScale(follow.Zoom)
+                                                     * Matrix.CreateTranslation(Global.ScreenWidth / 2, Global.ScreenHeight / 2, 0);
             }
         }
     }
