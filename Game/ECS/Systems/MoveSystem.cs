@@ -5,6 +5,7 @@ using PixelGlueCore.Scenes;
 using PixelGlueCore.Enums;
 using PixelShared.Extensions;
 using PixelShared.Maths;
+using PixelGlueCore.Entities;
 
 namespace PixelGlueCore.ECS.Systems
 {
@@ -25,13 +26,19 @@ namespace PixelGlueCore.ECS.Systems
                     if (!entity.Has<MoveComponent>() || !entity.Has<PositionComponent>())
                         continue;
 
-                    ref var movable = ref entity.Get<MoveComponent>();
-                    ref var position = ref entity.Get<PositionComponent>();
+                    ref var mov = ref entity.Get<MoveComponent>();
+                    ref var pc = ref entity.Get<PositionComponent>();
 
                     //if (movable.Destination == Vector2.Zero)
                     //    continue;
 
-                    MoveOneTile(deltaTime, ref movable, ref position);
+                    MoveOneTile(deltaTime, ref mov, ref pc);
+
+                    if(entity is Player player)
+                    {
+                        ref var net = ref player.Get<Networked>();
+                        net.Position = pc.Position;
+                    }
                 }
             }
         }
@@ -41,7 +48,7 @@ namespace PixelGlueCore.ECS.Systems
             if (movable.Destination != position.Position)
             {
                 movable.Moving = true;
-                var distanceToDest = position.Position.GetDistance(movable.Destination);
+                var distanceToDest = PixelMath.GetDistance(position.Position,movable.Destination);
                 var moveDistance = movable.Speed * deltaTime;
                 if (distanceToDest > moveDistance)
                 {

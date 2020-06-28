@@ -14,7 +14,7 @@ namespace PixelGlueCore.ECS.Systems
     {
         public string Name { get; set; } = "Network System";
         private static ClientSocket Socket { get; } = new ClientSocket(null);
-        public static ConnectionState ConnectionState { get; set; } = ConnectionState.NotConnected;
+        public static ConnectionState ConnectionState { get; set; }
         private static ConcurrentQueue<byte[]> PendingPackets { get; } = new ConcurrentQueue<byte[]>();
         private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
         public bool IsActive { get; set; }
@@ -32,7 +32,7 @@ namespace PixelGlueCore.ECS.Systems
             switch (ConnectionState)
             {
                 case ConnectionState.NotConnected:
-                    Connect("192.168.0.3", 13338);
+                    Connect("127.0.0.1", 13338);
                     return;
                 case ConnectionState.Connected:
                     ConnectionState = ConnectionState.Authenticating;

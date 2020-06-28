@@ -6,17 +6,14 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "Game/1.0.0": {
+      "PixelShared/1.0.0": {
         "dependencies": {
-          "MonoGame.Content.Builder": "3.7.0.9",
-          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13",
-          "PixelShared": "1.0.0"
+          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
         },
         "runtime": {
-          "Game.dll": {}
+          "PixelShared.dll": {}
         }
       },
-      "MonoGame.Content.Builder/3.7.0.9": {},
       "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
         "runtime": {
           "lib/netstandard2.0/MonoGame.Framework.dll": {
@@ -66,29 +63,14 @@
             "fileVersion": "0.0.0.0"
           }
         }
-      },
-      "PixelShared/1.0.0": {
-        "dependencies": {
-          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
-        },
-        "runtime": {
-          "PixelShared.dll": {}
-        }
       }
     }
   },
   "libraries": {
-    "Game/1.0.0": {
+    "PixelShared/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
-    },
-    "MonoGame.Content.Builder/3.7.0.9": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-AAt9ns5w6c9JkZFC2UC+nB8v+kTDgRP1ONaB5lLSfzBhrGULUoNwMxiRAzi7GlPVj5yynu3PHNi8kZTOUIdF9g==",
-      "path": "monogame.content.builder/3.7.0.9",
-      "hashPath": "monogame.content.builder.3.7.0.9.nupkg.sha512"
     },
     "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
       "type": "package",
@@ -96,11 +78,6 @@
       "sha512": "sha512-cMsc/UZFS8Uk/a1RDc8OZ9Z2EXrEglWGcZGSvPJiWEcUC5Oo9K9uoZXaprvesM3YbyT1ItzqS4jXjTDR4qT4WA==",
       "path": "monogame.framework.desktopgl.core/3.8.0.13",
       "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
-    },
-    "PixelShared/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

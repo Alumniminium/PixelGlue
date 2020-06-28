@@ -1,3 +1,17 @@
+No behavior in entities, helper methods are ok, no fields in systems, no methods in components.
+World = 
+    |> System[] =
+        |> Behavior
+    |> Component[]
+        |> Data
+    |> Dict<id,Entity>
+        |> Entity =
+            |> Id
+            |> Component[]
+
+
+
+
 EntityId and UniqueId are seperate. Need to have a lookup table to lookup which EntityId corresponds to which UniqueId on the server.
 
 
