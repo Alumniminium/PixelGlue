@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using PixelShared.Maths;
 using Pixel.Helpers;
-using Pixel.Scenes;
 using Pixel.ECS.Components;
 using Pixel.Enums;
 
@@ -16,46 +14,34 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
-            foreach (var entity in CompIter.Get<MoveComponent, PositionComponent>())
+            foreach (var entity in CompIter.Get<VelocityComponent, PositionComponent>())
             {
-                ref var mov = ref entity.Get<MoveComponent>();
+                ref var vc = ref entity.Get<VelocityComponent>();
                 ref var pc = ref entity.Get<PositionComponent>();
 
-                MoveOneTile(deltaTime, ref mov, ref pc);
+                MoveOneTile(deltaTime, ref vc, ref pc);
             }
         }
 
-        private static void MoveOneTile(float deltaTime, ref MoveComponent movable, ref PositionComponent position)
+        private static void MoveOneTile(float dt, ref VelocityComponent vc, ref PositionComponent pc)
         {
-            if (movable.Destination != position.Position)
+            if (pc.Destination != pc.Position)
             {
-                movable.Moving = true;
-                var distanceToDest = PixelMath.GetDistance(position.Position, movable.Destination);
-                var moveDistance = movable.Speed * deltaTime;
+                var dir = (pc.Destination - pc.Position);
+                dir.Normalize();
+
+                vc.Velocity = dir * vc.Speed * vc.SpeedMulti * dt;
+                
+                var distanceToDest = Vector2.Distance(pc.Position,pc.Destination);
+                var moveDistance = Vector2.Distance(pc.Position, pc.Position + vc.Velocity);
+
                 if (distanceToDest > moveDistance)
-                {
-                    var velocity = Vector2.Zero;
-                    if (position.Position.X < movable.Destination.X)
-                        velocity.X += movable.Speed * deltaTime;
-                    if (position.Position.X > movable.Destination.X)
-                        velocity.X -= movable.Speed * deltaTime;
-                    if (position.Position.Y < movable.Destination.Y)
-                        velocity.Y += movable.Speed * deltaTime;
-                    if (position.Position.Y > movable.Destination.Y)
-                        velocity.Y -= movable.Speed * deltaTime;
-                    if (velocity.X != 0 && velocity.Y != 0) // we're moving diagnonally
-                        velocity *= 0.707f; // divide by sqrt of 0.5 to fix velocity
-                    position.Position += velocity * movable.SpeedMulti;
-                }
+                    pc.Position += vc.Velocity;
                 else
-                {
-                    position.Position = movable.Destination;
-                    movable.Moving = false;
-                }
-            }
-            else
-            {
-                movable.Moving = false;
+                    {
+                        pc.Position = pc.Destination;
+                        vc.Velocity = Vector2.Zero;
+                    }
             }
         }
     }

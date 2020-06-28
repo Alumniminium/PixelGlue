@@ -19,8 +19,8 @@ namespace Pixel.Networking.Handlers
             var player = scene.CreateEntity<Player>(packet.UniqueId);
             player.Scene= scene;
             player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
-            player.Add(new MoveComponent(player.EntityId,40, 256, 264));
-            player.Add(new PositionComponent(player.EntityId,256,264,0));
+            player.Add(new VelocityComponent(player.EntityId,64));
+            player.Add(new PositionComponent(player.EntityId,0,0,0));
             player.Add(new InputComponent(player.EntityId));
             player.Add(new CameraFollowTagComponent(player.EntityId,1));
             player.Add(new Networked(packet.UniqueId));

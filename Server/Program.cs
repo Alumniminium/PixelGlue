@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
 using PixelShared.TerribleSockets.Server;
@@ -38,7 +39,7 @@ namespace Server
                             foreach (var kvp2 in Collections.Players)
                             {
                                 var player = kvp2.Value;
-                                var distance = PixelShared.Maths.PixelMath.GetDistance(player.Location,npc.Location);
+                                var distance = Vector2.Distance(player.Location,npc.Location);
                                 
                                 Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Location.X},{(int)npc.Location.Y} to player {(int)kvp2.Value.Location.X}{(int)kvp2.Value.Location.Y}. Distance: {distance}`");
                                 

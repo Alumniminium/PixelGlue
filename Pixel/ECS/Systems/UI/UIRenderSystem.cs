@@ -25,6 +25,8 @@ namespace Pixel.ECS.Systems.UI
         }
         public void Draw(SpriteBatch spriteBatch) // this should be scene independent I think
         {
+            spriteBatch.End();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             foreach (var (_, child) in Scene.Entities)
             {
                 if (child.Parent != null || !child.Has<DrawableComponent>())

@@ -25,7 +25,7 @@ namespace Pixel.Networking.Handlers
                 entity.Add(new DrawableComponent(entity.EntityId,srcEntity.TextureName, srcEntity.SrcRect));
                 
                 entity.Add(new PositionComponent(entity.EntityId,packet.X, packet.Y, 0));
-                entity.Add(new MoveComponent(entity.EntityId,8, packet.X, packet.Y));
+                entity.Add(new VelocityComponent(entity.EntityId,32));
                 entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
 
                 var nameTag = scene.CreateEntity<NameTag>(entity.UniqueId);
@@ -37,13 +37,10 @@ namespace Pixel.Networking.Handlers
             else
             {
                 var entity = scene.Entities[entityId];
-                if (!entity.Has<MoveComponent>())
-                    return;
-                ref var movable = ref entity.Get<MoveComponent>();
-                //ref var position = ref entity.Get<PositionComponent>();
+                ref var position = ref entity.Get<PositionComponent>();
                 //ref var text = ref entity.Get<TextComponent>();
                 //text.Text = uniqueId.ToString();
-                movable.Destination = location;
+                position.Destination = location;
             }
         }
     }

@@ -48,7 +48,7 @@ namespace Pixel.Scenes
         public override void LoadContent(ContentManager cm)
         {
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
-            AssetManager.LoadTexture("selectionrect3");
+            AssetManager.LoadTexture("selectionrect4");
             AssetManager.LoadTexture("tree");
             AssetManager.LoadTexture("dawn");
             AssetManager.LoadTexture(TextureGen.Noise(Global.Device,PixelShared.Pixel.TileSize,PixelShared.Pixel.TileSize,"#124E89", NoisePattern.None), "deep_water");

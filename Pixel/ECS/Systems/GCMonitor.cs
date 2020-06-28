@@ -16,6 +16,7 @@ namespace Pixel.ECS.Systems
         {
             GenCollections = new int[3];
             IsReady=true;
+            IsActive=true;
         }
         public void FixedUpdate(float gameTime)
         {

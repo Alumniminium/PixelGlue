@@ -4,21 +4,19 @@ using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {
-    public struct MoveComponent: IEntityComponent
+    public struct VelocityComponent: IEntityComponent
     {
         public int EntityId {get;set;}
-        public float Speed;
+        public Vector2 Velocity;
         public float SpeedMulti;
-        public bool Moving;
-        public Vector2 Destination;
+        public float Speed;
 
-        public MoveComponent(int ownerId, float speed, int destX, int destY)
+        public VelocityComponent(int ownerId,float speed)
         {
             EntityId=ownerId;
+            Velocity=Vector2.Zero;
             Speed = speed;
             SpeedMulti=1;
-            Moving = false;
-            Destination = new Vector2(destX, destY);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Pixel.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var origin = new Vector2(0, 8);
+            var origin = new Vector2(0, 0);
             foreach (var entity in CompIter.Get<PositionComponent,DrawableComponent>())
             {                
                 ref readonly var pos  = ref entity.Get<PositionComponent>();

@@ -45,7 +45,7 @@ namespace Pixel.ECS.Systems
         }
         private void RenderEntities(SpriteBatch sb, int overdraw)
         {
-            var origin = new Vector2(-8, 8);
+            var origin = new Vector2(8, 8);
             foreach (var entity in CompIter.Get<DrawableComponent,PositionComponent>())
             {
                 ref readonly var pos = ref entity.Get<PositionComponent>();
@@ -56,7 +56,7 @@ namespace Pixel.ECS.Systems
                 if (pos.Position.Y < Scene.Camera.ScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ScreenRect.Bottom + overdraw)
                     continue;
 
-                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
+                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position+origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;
             }
         }

@@ -21,57 +21,58 @@ namespace Pixel.ECS.Systems
         public void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;
-                    foreach (var entity in CompIter.Get<InputComponent,MoveComponent,PositionComponent,CameraFollowTagComponent>())
+                    foreach (var entity in CompIter.Get<InputComponent,VelocityComponent,PositionComponent,CameraFollowTagComponent>())
                     {
-                        ref var inputComponent = ref entity.Get<InputComponent>();
-                        ref var moveComponent = ref entity.Get<MoveComponent>();
-                        ref var positionComponent = ref entity.Get<PositionComponent>();
-                        ref var camera = ref entity.Get<CameraFollowTagComponent>();
+                        ref var ic = ref entity.Get<InputComponent>();
+                        ref var vc = ref entity.Get<VelocityComponent>();
+                        ref var pc = ref entity.Get<PositionComponent>();
+                        ref var cf = ref entity.Get<CameraFollowTagComponent>();
 
-                        inputComponent.Mouse = Mouse.GetState();
-                        inputComponent.Keyboard = Keyboard.GetState();
-                        inputComponent.GamePad = GamePad.GetState(PlayerIndex.One);
+                        ic.Mouse = Mouse.GetState();
+                        ic.Keyboard = Keyboard.GetState();
+                        ic.GamePad = GamePad.GetState(PlayerIndex.One);
 
-                        Scrolling(ref inputComponent, ref camera);
-                        Rotating(ref inputComponent, ref positionComponent);
+                        Scrolling(ref ic, ref cf);
+                        Rotating(ref ic, ref pc);
 
-                        var destination = positionComponent.Position;
+                        var destination = pc.Position;
 
-                        if (inputComponent.Mouse.LeftButton == ButtonState.Pressed)
+                        if (ic.Mouse.LeftButton == ButtonState.Pressed)
                         {
                             if (entity.Scene != null)
-                                moveComponent.Destination = entity.Scene.Camera.ScreenToWorld(inputComponent.Mouse.Position.ToVector2());
+                                pc.Destination = entity.Scene.Camera.ScreenToWorld(ic.Mouse.Position.ToVector2());
                         }
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint) && !moveComponent.Moving)
-                            moveComponent.SpeedMulti = 100f;
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Up) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y - (PixelShared.Pixel.TileSize * moveComponent.SpeedMulti);
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Down) && !moveComponent.Moving)
-                            destination.Y = positionComponent.Position.Y + (PixelShared.Pixel.TileSize * moveComponent.SpeedMulti);
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Left) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X - (PixelShared.Pixel.TileSize * moveComponent.SpeedMulti);
-                        if (KeyDown(ref inputComponent, PixelGlueButtons.Right) && !moveComponent.Moving)
-                            destination.X = positionComponent.Position.X + (PixelShared.Pixel.TileSize * moveComponent.SpeedMulti);
-                        if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
-                            moveComponent.SpeedMulti = 1;
-                        if (Pressed(ref inputComponent, PixelGlueButtons.EscapeMenu))
+                        //if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint))
+                        //    moveComponent.Velocity *= 10;
+                        //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
+                        //    moveComponent.Velocity /= 10;
+                        if (KeyDown(ref ic, PixelGlueButtons.Up) && pc.Position == pc.Destination)
+                            destination.Y -= PixelShared.Pixel.TileSize;
+                        if (KeyDown(ref ic, PixelGlueButtons.Down) && pc.Position == pc.Destination)
+                            destination.Y += PixelShared.Pixel.TileSize;
+                        if (KeyDown(ref ic, PixelGlueButtons.Left) && pc.Position == pc.Destination)
+                            destination.X -= PixelShared.Pixel.TileSize;
+                        if (KeyDown(ref ic, PixelGlueButtons.Right) && pc.Position == pc.Destination)
+                            destination.X += PixelShared.Pixel.TileSize;
+                        
+                        if (Pressed(ref ic, PixelGlueButtons.EscapeMenu))
                             Environment.Exit(0);
-                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
+                        if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
                             Global.Profiling = !Global.Profiling;
-                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgSwitchScene))
+                        if (Pressed(ref ic, PixelGlueButtons.DbgSwitchScene))
                             SwitchScene();
-                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgProfiling))
+                        if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
                             OpenDialog(scene);
-                        if (Pressed(ref inputComponent, PixelGlueButtons.DbgBoundingBoxes))
+                        if (Pressed(ref ic, PixelGlueButtons.DbgBoundingBoxes))
                         {
                             var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                             system.IsActive = !system.IsActive;
                         }
 
-                        if (destination != positionComponent.Position)
-                            moveComponent.Destination = destination;
+                        if (destination != pc.Position)
+                            pc.Destination = destination;
 
-                        inputComponent.OldKeys = inputComponent.Keyboard.GetPressedKeys();
+                        ic.OldKeys = ic.Keyboard.GetPressedKeys();
                     }
                 }          
 
