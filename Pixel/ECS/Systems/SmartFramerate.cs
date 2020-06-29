@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Enums;
 using Pixel.Entities;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {

@@ -7,6 +7,7 @@ using PixelShared.TerribleSockets.Client;
 using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
 using PixelShared.IO;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {

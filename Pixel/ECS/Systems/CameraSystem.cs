@@ -5,6 +5,7 @@ using Pixel.Scenes;
 using Pixel.Enums;
 using System.Collections.Generic;
 using Pixel.Helpers;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {

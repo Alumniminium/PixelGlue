@@ -6,14 +6,15 @@ using PixelShared.Noise;
 using PixelShared.Enums;
 using System.Collections.Generic;
 using System;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {
     public static class WorldGen
     {
         public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*4];
-        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[Environment.ProcessorCount*4];
+        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*8];
+        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerTwo = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
@@ -66,15 +67,17 @@ namespace Pixel.ECS.Systems
             MountainNoise.SetGradientPerturbAmp(1000);
             MountainNoise.SetGradientFrequency(0.0004f);
 
+            for(int i = 0; i < Queue.Length; i++)
+                Queue[i] = new ConcurrentStack<(int x, int y)>();
+
             for (int i = 0; i < Prefetcher.Length; i++)
             {
-                Queue[i] = new ConcurrentStack<(int x, int y)>();
                 Prefetcher[i] = new Thread(new ParameterizedThreadStart(Load))
                 {
                     IsBackground = true,
                     Priority = ThreadPriority.Lowest,
                 };
-                Prefetcher[i].Start(i);
+                Prefetcher[i].Start(i % 2);
             }
         }
         public static void Load(object idobj)
@@ -95,7 +98,7 @@ namespace Pixel.ECS.Systems
                         LayerOne.TryAdd((x, y), tree);
 
                     TilesLoading.TryRemove((x, y), out _);
-                    Thread.Sleep(1);
+                    Thread.Sleep(Global.Random.Next(0,100));
                 }
                 Thread.Sleep(1);
             }

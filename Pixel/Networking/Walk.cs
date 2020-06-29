@@ -5,6 +5,7 @@ using PixelShared.TerribleSockets.Packets;
 using Pixel.Scenes;
 using Pixel.Entities;
 using Pixel.ECS;
+using PixelShared;
 
 namespace Pixel.Networking.Handlers
 {

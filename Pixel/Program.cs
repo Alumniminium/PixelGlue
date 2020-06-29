@@ -4,6 +4,7 @@ using Pixel.ECS.Systems;
 using Pixel.Scenes;
 using System;
 using System.Threading;
+using PixelShared;
 
 namespace Pixel
 {

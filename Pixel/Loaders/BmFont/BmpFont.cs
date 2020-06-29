@@ -6,6 +6,7 @@ using System.IO;
 using Pixel.Loaders.BmFont.Models;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using PixelShared;
 
 namespace Pixel.Loaders
 {

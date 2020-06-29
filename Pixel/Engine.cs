@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS;
 using Pixel.Helpers;
 using Pixel.Scenes;
+using PixelShared;
 
 namespace Pixel
 {

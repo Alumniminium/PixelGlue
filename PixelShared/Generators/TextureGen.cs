@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelShared;
 using PixelShared.Enums;
 using PixelShared.Extensions;
 
@@ -19,10 +20,10 @@ namespace Pixel.Helpers
             _blankTexture.GetData(pixels2);
             return _blankTexture;
         }
-        public static Texture2D Noise(GraphicsDevice device,int w, int h, string hexcolor, NoisePattern pattern)
+        public static Texture2D Noise(int w, int h, string hexcolor, NoisePattern pattern)
         {
             var color = hexcolor.ToColor();
-            var texture = new Texture2D(device, w, h);
+            var texture = new Texture2D(Global.Device, w, h);
             var pixels = NoiseGen.Patterns[pattern].Invoke(w, h, color);
             texture.SetData(pixels);
             return texture;

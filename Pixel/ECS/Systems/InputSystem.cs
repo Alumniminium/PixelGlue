@@ -8,6 +8,7 @@ using Pixel.Enums;
 using Pixel.Entities;
 using Pixel.ECS.Systems;
 using Pixel.Helpers;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {
@@ -89,14 +90,14 @@ namespace Pixel.ECS.Systems
             if (inputComponent.Mouse.ScrollWheelValue > inputComponent.Scroll)
             {
                 camera.Zoom *= 2;
-                WorldGen.LayerZero=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), DrawableComponent?>();
-                WorldGen.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
+                //WorldGenSystem.LayerZero=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+                //WorldGenSystem.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
             }
             else if (inputComponent.Mouse.ScrollWheelValue < inputComponent.Scroll)
             {
                 camera.Zoom /= 2;
-                WorldGen.LayerZero=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), DrawableComponent?>();
-                WorldGen.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
+                //WorldGenSystem.LayerZero=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+                //WorldGenSystem.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
             }
 
             inputComponent.Scroll = inputComponent.Mouse.ScrollWheelValue;

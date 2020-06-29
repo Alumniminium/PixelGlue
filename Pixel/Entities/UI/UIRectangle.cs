@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Pixel.ECS;
 using Pixel.ECS.Components;
 using Pixel.Helpers;
+using PixelShared;
 
 namespace Pixel.Entities.UI
 {

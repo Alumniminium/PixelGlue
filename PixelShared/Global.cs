@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using PixelShared.Diagnostics;
 
-namespace Pixel
+namespace PixelShared
 {
     public static class Global
     {
@@ -19,8 +19,8 @@ namespace Pixel
         public static GraphicsDevice Device { get; set; }
         public static Profiler UpdateProfiler { get; set; } = new Profiler();
         public static Profiler DrawProfiler { get; set; } = new Profiler();
-        public static int DrawCalls { get; internal set; }
-        public static string[] Names { get; internal set; }
+        public static int DrawCalls { get; set; }
+        public static string[] Names { get; set; }
         public static ContentManager ContentManager { get; set; }
     }
 }

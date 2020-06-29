@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Loaders;
+using PixelShared;
 using System.Collections.Generic;
 
 namespace Pixel.ECS

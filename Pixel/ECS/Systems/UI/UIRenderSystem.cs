@@ -6,6 +6,7 @@ using Pixel.ECS;
 using Pixel.ECS.Components;
 using Pixel.Enums;
 using Pixel.Entities.UI;
+using PixelShared;
 
 namespace Pixel.ECS.Systems.UI
 {

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Enums;
 using Pixel.Helpers;
+using PixelShared;
 
 namespace Pixel.ECS.Systems
 {

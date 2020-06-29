@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Helpers;
 using Pixel.Networking;
+using PixelShared;
 
 namespace Pixel.Scenes
 {

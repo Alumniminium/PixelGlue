@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System;
 using Pixel.Enums;
+using PixelShared;
 
 namespace Pixel.ECS
 {
