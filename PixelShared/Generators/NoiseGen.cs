@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelShared.Enums;
+using PixelShared.Extensions;
 using PixelShared.Maths;
 using PixelShared.Noise;
-using PixelShared;
-using PixelShared.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace Pixel.Helpers
 {
@@ -27,31 +26,31 @@ namespace Pixel.Helpers
                 for (int y = 0; y < h; y++)
                     pixels[(y * w) + x] = color;
             return pixels;
-        }        
+        }
         public static Color[] Rough(int w, int h, Color color)
         {
-            var pixels = None(w,h,color);
+            var pixels = None(w, h, color);
             WhiteNoise.SetFrequency(0.25f);
             WhiteNoise.SetFractalOctaves(2);
             WhiteNoise.SetFractalType(FractalType.Billow);
             for (int x = 0; x < w; x++)
-            for (int y = 0; y < h; y++)
+                for (int y = 0; y < h; y++)
                 {
-                    var val = WhiteNoise.GetSimplexFractal(x,y);
-                    var multi = PixelMath.Map(val,-1,1,0,1);
+                    var val = WhiteNoise.GetSimplexFractal(x, y);
+                    var multi = PixelMath.Map(val, -1, 1, 0, 1);
                     pixels[(y * w) + x].A = (byte)(pixels[(y * w) + x].A * multi);
                 }
             return pixels;
         }
         public static Color[] Flowers(int w, int h, Color color)
         {
-            var pixels = None(w,h,color);
+            var pixels = None(w, h, color);
 
             for (int i = 0; i < PixelShared.Pixel.Random.Next(6, 12); i++)
             {
-                var x =  PixelShared.Pixel.Random.Next(0, w);
-                var y =  PixelShared.Pixel.Random.Next(0, h);
-                
+                var x = PixelShared.Pixel.Random.Next(0, w);
+                var y = PixelShared.Pixel.Random.Next(0, h);
+
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;
 
@@ -62,7 +61,7 @@ namespace Pixel.Helpers
                 || pixels[(y * w) + x] != color)
                     continue;
 
-                var flower =  PixelShared. Pixel.Random.Next(0, 101);
+                var flower = PixelShared.Pixel.Random.Next(0, 101);
                 Color flowerColor;
                 if (flower >= 75)
                     flowerColor = "fee761".ToColor();
@@ -84,13 +83,13 @@ namespace Pixel.Helpers
         }
         public static Color[] Waves(int w, int h, Color color)
         {
-            var pixels = None(w,h,color);
+            var pixels = None(w, h, color);
 
-            for (int i = 0; i <  PixelShared.Pixel.Random.Next(6, 12); i++)
+            for (int i = 0; i < PixelShared.Pixel.Random.Next(6, 12); i++)
             {
-                var x =  PixelShared.Pixel.Random.Next(0, w);
-                var y =  PixelShared.Pixel.Random.Next(0, h);
-                
+                var x = PixelShared.Pixel.Random.Next(0, w);
+                var y = PixelShared.Pixel.Random.Next(0, h);
+
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;
 

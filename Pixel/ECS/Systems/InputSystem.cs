@@ -1,14 +1,13 @@
-using Pixel.ECS.Components;
-using Microsoft.Xna.Framework.Input;
-using System;
-using Pixel.Scenes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Pixel.Configuration;
-using Pixel.Enums;
+using Pixel.ECS.Components;
 using Pixel.Entities;
-using Pixel.ECS.Systems;
+using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using PixelShared;
+using System;
 
 namespace Pixel.ECS.Systems
 {
@@ -22,60 +21,60 @@ namespace Pixel.ECS.Systems
         public void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;
-                    foreach (var entity in CompIter.Get<InputComponent,VelocityComponent,PositionComponent,CameraFollowTagComponent>())
-                    {
-                        ref var ic = ref entity.Get<InputComponent>();
-                        ref var vc = ref entity.Get<VelocityComponent>();
-                        ref var pc = ref entity.Get<PositionComponent>();
-                        ref var cf = ref entity.Get<CameraFollowTagComponent>();
+            foreach (var entity in CompIter<InputComponent, VelocityComponent, PositionComponent, CameraFollowTagComponent>.Get(deltaTime))
+            {
+                ref var ic = ref entity.Get<InputComponent>();
+                ref var vc = ref entity.Get<VelocityComponent>();
+                ref var pc = ref entity.Get<PositionComponent>();
+                ref var cf = ref entity.Get<CameraFollowTagComponent>();
 
-                        ic.Mouse = Mouse.GetState();
-                        ic.Keyboard = Keyboard.GetState();
-                        ic.GamePad = GamePad.GetState(PlayerIndex.One);
+                ic.Mouse = Mouse.GetState();
+                ic.Keyboard = Keyboard.GetState();
+                ic.GamePad = GamePad.GetState(PlayerIndex.One);
 
-                        Scrolling(ref ic, ref cf);
-                        Rotating(ref ic, ref pc);
+                Scrolling(ref ic, ref cf);
+                Rotating(ref ic, ref pc);
 
-                        var destination = pc.Position;
+                var destination = pc.Position;
 
-                        if (ic.Mouse.LeftButton == ButtonState.Pressed)
-                        {
-                            if (entity.Scene != null)
-                                pc.Destination = entity.Scene.Camera.ScreenToWorld(ic.Mouse.Position.ToVector2());
-                        }
-                        //if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint))
-                        //    moveComponent.Velocity *= 10;
-                        //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
-                        //    moveComponent.Velocity /= 10;
-                        if (KeyDown(ref ic, PixelGlueButtons.Up) && pc.Position == pc.Destination)
-                            destination.Y -= PixelShared.Pixel.TileSize;
-                        if (KeyDown(ref ic, PixelGlueButtons.Down) && pc.Position == pc.Destination)
-                            destination.Y += PixelShared.Pixel.TileSize;
-                        if (KeyDown(ref ic, PixelGlueButtons.Left) && pc.Position == pc.Destination)
-                            destination.X -= PixelShared.Pixel.TileSize;
-                        if (KeyDown(ref ic, PixelGlueButtons.Right) && pc.Position == pc.Destination)
-                            destination.X += PixelShared.Pixel.TileSize;
-                        
-                        if (Pressed(ref ic, PixelGlueButtons.EscapeMenu))
-                            Environment.Exit(0);
-                        if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
-                            Global.Profiling = !Global.Profiling;
-                        if (Pressed(ref ic, PixelGlueButtons.DbgSwitchScene))
-                            SwitchScene();
-                        if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
-                            OpenDialog(scene);
-                        if (Pressed(ref ic, PixelGlueButtons.DbgBoundingBoxes))
-                        {
-                            var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
-                            system.IsActive = !system.IsActive;
-                        }
+                if (ic.Mouse.LeftButton == ButtonState.Pressed)
+                {
+                    if (entity.Scene != null)
+                        pc.Destination = entity.Scene.Camera.ScreenToWorld(ic.Mouse.Position.ToVector2());
+                }
+                //if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint))
+                //    moveComponent.Velocity *= 10;
+                //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
+                //    moveComponent.Velocity /= 10;
+                if (KeyDown(ref ic, PixelGlueButtons.Up) && pc.Position == pc.Destination)
+                    destination.Y -= PixelShared.Pixel.TileSize;
+                if (KeyDown(ref ic, PixelGlueButtons.Down) && pc.Position == pc.Destination)
+                    destination.Y += PixelShared.Pixel.TileSize;
+                if (KeyDown(ref ic, PixelGlueButtons.Left) && pc.Position == pc.Destination)
+                    destination.X -= PixelShared.Pixel.TileSize;
+                if (KeyDown(ref ic, PixelGlueButtons.Right) && pc.Position == pc.Destination)
+                    destination.X += PixelShared.Pixel.TileSize;
 
-                        if (destination != pc.Position)
-                            pc.Destination = destination;
+                if (Pressed(ref ic, PixelGlueButtons.EscapeMenu))
+                    Environment.Exit(0);
+                if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
+                    Global.Profiling = !Global.Profiling;
+                if (Pressed(ref ic, PixelGlueButtons.DbgSwitchScene))
+                    SwitchScene();
+                if (Pressed(ref ic, PixelGlueButtons.DbgProfiling))
+                    OpenDialog(scene);
+                if (Pressed(ref ic, PixelGlueButtons.DbgBoundingBoxes))
+                {
+                    var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
+                    system.IsActive = !system.IsActive;
+                }
 
-                        ic.OldKeys = ic.Keyboard.GetPressedKeys();
-                    }
-                }          
+                if (destination != pc.Position)
+                    pc.Destination = destination;
+
+                ic.OldKeys = ic.Keyboard.GetPressedKeys();
+            }
+        }
 
         private static void Rotating(ref InputComponent inputComponent, ref PositionComponent positionComponent)
         {

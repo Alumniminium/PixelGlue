@@ -122,12 +122,12 @@ namespace TiledSharp
 
     public class TmxImage
     {
-        public string Source { get;   }
-        public string Format { get;   }
-        public Stream Data { get;   }
-        public TmxColor Trans { get;   }
-        public int? Width { get;   }
-        public int? Height { get;   }
+        public string Source { get; }
+        public string Format { get; }
+        public Stream Data { get; }
+        public TmxColor Trans { get; }
+        public int? Width { get; }
+        public int? Height { get; }
 
         public TmxImage(XElement xImage, string tmxDir = "")
         {
@@ -153,9 +153,9 @@ namespace TiledSharp
 
     public class TmxColor
     {
-        public int R { get;   }
-        public int G { get;   }
-        public int B { get;   }
+        public int R { get; }
+        public int G { get; }
+        public int B { get; }
 
         public TmxColor(XAttribute xColor)
         {
@@ -171,7 +171,7 @@ namespace TiledSharp
 
     public class TmxBase64Data
     {
-        public Stream Data { get;   }
+        public Stream Data { get; }
 
         public TmxBase64Data(XElement xData)
         {

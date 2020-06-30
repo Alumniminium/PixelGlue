@@ -1,14 +1,14 @@
-using Pixel.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
-using System.IO;
-using System;
+using Pixel.Entities;
 using Pixel.Enums;
 using PixelShared;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS
 {
@@ -20,7 +20,7 @@ namespace Pixel.ECS
         public int LastEntityId = 1;
         public ConcurrentDictionary<int, Entity> Entities;
         public List<IEntitySystem> Systems;
-        public ConcurrentDictionary<int, int> UniqueIdToEntityId,EntityIdToUniqueId;
+        public ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
         public Camera Camera;
 
         public Scene()
@@ -32,7 +32,7 @@ namespace Pixel.ECS
         }
 
         public virtual void Initialize()
-        {            
+        {
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
@@ -40,8 +40,8 @@ namespace Pixel.ECS
 
         public virtual void LoadContent(ContentManager cm)
         {
-            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt","profont");
-            Global.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',',StringSplitOptions.RemoveEmptyEntries);
+            AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont");
+            Global.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Update(GameTime deltaTime)
@@ -66,7 +66,7 @@ namespace Pixel.ECS
         {
             if (Camera == null)
                 return;
-            
+
             sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
@@ -75,12 +75,12 @@ namespace Pixel.ECS
             }
             sb.End();
         }
-        
+
         public virtual void Destroy(Entity entity)
-        {            
+        {
             Entities.TryRemove(entity.EntityId, out _);
-            EntityIdToUniqueId.TryRemove(entity.EntityId,out var uid);
-            UniqueIdToEntityId.TryRemove(uid,out _);
+            EntityIdToUniqueId.TryRemove(entity.EntityId, out var uid);
+            UniqueIdToEntityId.TryRemove(uid, out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -94,7 +94,7 @@ namespace Pixel.ECS
             Entities.TryAdd(entity.EntityId, entity);
             LastEntityId++;
             return entity;
-        } 
+        }
 
         public virtual T GetSystem<T>()
         {
@@ -103,11 +103,11 @@ namespace Pixel.ECS
                     return t;
             return default;
         }
-       
+
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual T Find<T>() where T : Entity
         {
-            foreach (var (_,entity) in Entities)
+            foreach (var (_, entity) in Entities)
                 if (entity is T t)
                     return t;
             return null;

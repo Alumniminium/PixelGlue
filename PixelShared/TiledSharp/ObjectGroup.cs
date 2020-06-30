@@ -65,16 +65,16 @@ namespace TiledSharp
         public TmxObjectType ObjectType { get; }
         public string Type { get; }
         public double X { get; }
-        public double Y { get;   }
-        public double Width { get;   }
-        public double Height { get;   }
-        public double Rotation { get;   }
-        public TmxLayerTile Tile { get;   }
-        public bool Visible { get;   }
-        public TmxText Text { get;   }
+        public double Y { get; }
+        public double Width { get; }
+        public double Height { get; }
+        public double Rotation { get; }
+        public TmxLayerTile Tile { get; }
+        public bool Visible { get; }
+        public TmxText Text { get; }
 
-        public Collection<TmxObjectPoint> Points { get;   }
-        public PropertyDict Properties { get;   }
+        public Collection<TmxObjectPoint> Points { get; }
+        public PropertyDict Properties { get; }
 
         public TmxObject(XElement xObject)
         {
@@ -143,8 +143,8 @@ namespace TiledSharp
 
     public class TmxObjectPoint
     {
-        public double X { get;   }
-        public double Y { get;   }
+        public double X { get; }
+        public double Y { get; }
 
         public TmxObjectPoint(double x, double y)
         {
@@ -164,17 +164,17 @@ namespace TiledSharp
 
     public class TmxText
     {
-        public string FontFamily { get;   }
-        public int PixelSize { get;   }
-        public bool Wrap { get;   }
-        public TmxColor Color { get;   }
-        public bool Bold { get;   }
-        public bool Italic { get;   }
-        public bool Underline { get;   }
-        public bool Strikeout { get;   }
-        public bool Kerning { get;   }
-        public TmxAlignment Alignment { get;   }
-        public string Value { get;   }
+        public string FontFamily { get; }
+        public int PixelSize { get; }
+        public bool Wrap { get; }
+        public TmxColor Color { get; }
+        public bool Bold { get; }
+        public bool Italic { get; }
+        public bool Underline { get; }
+        public bool Strikeout { get; }
+        public bool Kerning { get; }
+        public TmxAlignment Alignment { get; }
+        public string Value { get; }
 
         public TmxText(XElement xText)
         {
@@ -194,8 +194,8 @@ namespace TiledSharp
 
     public class TmxAlignment
     {
-        public TmxHorizontalAlignment Horizontal { get;   }
-        public TmxVerticalAlignment Vertical { get;   }
+        public TmxHorizontalAlignment Horizontal { get; }
+        public TmxVerticalAlignment Vertical { get; }
 
         public TmxAlignment(XAttribute halign, XAttribute valign)
         {

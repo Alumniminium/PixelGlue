@@ -1,14 +1,12 @@
 using Pixel.Enums;
-using Pixel.Helpers;
 using Pixel.Networking;
-using Pixel.Scenes;
-using System.Collections.Concurrent;
+using PixelShared;
+using PixelShared.IO;
 using PixelShared.TerribleSockets.Client;
 using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
-using PixelShared.IO;
-using PixelShared;
 using System;
+using System.Collections.Concurrent;
 
 namespace Pixel.ECS.Systems
 {
@@ -29,7 +27,7 @@ namespace Pixel.ECS.Systems
             Socket.OnDisconnect += Disconnected;
             Socket.OnConnected += Connected;
         }
-        public void FixedUpdate(float _){}
+        public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
         {
             switch (ConnectionState)
@@ -61,9 +59,9 @@ namespace Pixel.ECS.Systems
         {
             if (ConnectionState != ConnectionState.NotConnected)
                 return;
-            if(LastConnect.AddSeconds(5) > DateTime.UtcNow)
+            if (LastConnect.AddSeconds(5) > DateTime.UtcNow)
                 return;
-            LastConnect=DateTime.UtcNow;
+            LastConnect = DateTime.UtcNow;
             ConnectionState = ConnectionState.Connecting;
             FConsole.WriteLine("[NetworkSystem] Connecting to Server...");
             Socket.ConnectAsync(ip, port);

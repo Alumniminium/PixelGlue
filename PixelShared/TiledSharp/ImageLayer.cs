@@ -7,20 +7,20 @@ namespace TiledSharp
 {
     public class TmxImageLayer : ITmxLayer
     {
-        public string Name { get;   }
+        public string Name { get; }
 
         // TODO: Legacy (Tiled Java) attributes (x, y, width, height)
-        public int? Width { get;   }
-        public int? Height { get;   }
+        public int? Width { get; }
+        public int? Height { get; }
 
-        public bool Visible { get;   }
-        public double Opacity { get;   }
-        public double OffsetX { get;   }
-        public double OffsetY { get;   }
+        public bool Visible { get; }
+        public double Opacity { get; }
+        public double OffsetX { get; }
+        public double OffsetY { get; }
 
-        public TmxImage Image { get;   }
+        public TmxImage Image { get; }
 
-        public PropertyDict Properties { get;   }
+        public PropertyDict Properties { get; }
 
         double? ITmxLayer.OffsetX => OffsetX;
         double? ITmxLayer.OffsetY => OffsetY;

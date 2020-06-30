@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Pixel.Enums;
+using System.Collections.Generic;
 
 namespace Pixel.Configuration
 {

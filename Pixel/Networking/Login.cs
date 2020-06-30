@@ -1,12 +1,10 @@
-using Pixel.ECS.Systems;
 using Pixel.ECS.Components;
-using Pixel.Enums;
-using Pixel.Helpers;
-using PixelShared.TerribleSockets.Packets;
+using Pixel.ECS.Systems;
 using Pixel.Entities;
+using Pixel.Enums;
 using Pixel.Scenes;
-using Microsoft.Xna.Framework;
 using PixelShared.IO;
+using PixelShared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
 {
@@ -21,7 +19,7 @@ namespace Pixel.Networking.Handlers
 
             FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
 
-            if (!player.Has<Networked>())
+            if (player.Has<NetworkComponent>())
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " failed to authenticate! (not implemented)");
                 scene.Destroy(player);
@@ -29,7 +27,7 @@ namespace Pixel.Networking.Handlers
             else
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " authenticated! (not implemented)");
-                player.Add(new Networked(scene,player.EntityId,packet.UniqueId));
+                player.Add(new NetworkComponent(scene, player.EntityId, packet.UniqueId));
                 NetworkSystem.ConnectionState = ConnectionState.Authenticated;
             }
         }

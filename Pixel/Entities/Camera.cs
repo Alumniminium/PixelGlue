@@ -1,5 +1,4 @@
-﻿using Pixel.ECS;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Pixel.Entities
 {

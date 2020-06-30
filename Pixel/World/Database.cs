@@ -1,9 +1,5 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using PixelShared.IO;
-using Pixel;
 using Pixel.ECS;
-using Pixel.Helpers;
+using PixelShared.IO;
 using System;
 using System.Collections.Generic;
 

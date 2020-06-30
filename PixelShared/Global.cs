@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using PixelShared.Diagnostics;
+using System;
 
 namespace PixelShared
 {
@@ -13,8 +13,8 @@ namespace PixelShared
         public static int ScreenHeight { get; set; } = 900;
         public const int VirtualScreenWidth = 400;//320;
         public const int VirtualScreenHeight = 225;//180;
-        public const int HalfVirtualScreenWidth =VirtualScreenWidth/2;
-        public const int HalfVirtualScreenHeight = VirtualScreenHeight/2;
+        public const int HalfVirtualScreenWidth = VirtualScreenWidth / 2;
+        public const int HalfVirtualScreenHeight = VirtualScreenHeight / 2;
         public static bool Profiling { get; set; }
         public static GraphicsDevice Device { get; set; }
         public static Profiler UpdateProfiler { get; set; } = new Profiler();

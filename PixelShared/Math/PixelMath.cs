@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using PixelShared.Enums;
-
-namespace PixelShared.Maths
+﻿namespace PixelShared.Maths
 {
     public static class PixelMath
     {

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PixelShared.TerribleSockets.Queues;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using PixelShared.TerribleSockets.Queues;
 
 namespace PixelShared.TerribleSockets.Client
 {
@@ -43,11 +43,13 @@ namespace PixelShared.TerribleSockets.Client
 
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 var connectArgs = new SocketAsyncEventArgs();
-                try{
-                connectArgs.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(host), port);
+                try
+                {
+                    connectArgs.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(host), port);
                 }
-                catch{
-                    connectArgs.RemoteEndPoint = new IPEndPoint(Dns.GetHostEntry(host).AddressList[0],port);
+                catch
+                {
+                    connectArgs.RemoteEndPoint = new IPEndPoint(Dns.GetHostEntry(host).AddressList[0], port);
                 }
                 connectArgs.Completed += Connected;
                 if (!Socket.ConnectAsync(connectArgs))

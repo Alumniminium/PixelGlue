@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.ECS;
-using Pixel.Helpers;
 using Pixel.Scenes;
 using PixelShared;
 
@@ -41,7 +39,7 @@ namespace Pixel
                 HardwareModeSwitch = false
             };
             _graphics.ApplyChanges();
-            Global.Device=_graphics.GraphicsDevice;
+            Global.Device = _graphics.GraphicsDevice;
         }
         protected override void LoadContent()
         {
@@ -50,7 +48,6 @@ namespace Pixel
 
         protected override void Update(GameTime gameTime)
         {
-            CompIter.Update();
             Global.UpdateProfiler.StartMeasuring();
             _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -58,23 +55,23 @@ namespace Pixel
                 action.Invoke();
 
             SceneManager.ActiveScene.Update(gameTime);
-            
+
             while (_elapsedTime >= _updateTime)
             {
                 _elapsedTime -= _updateTime;
                 SceneManager.ActiveScene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
             }
-            
+
             base.Update(gameTime);
             Global.UpdateProfiler.StopMeasuring();
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            Global.DrawCalls=0;
+            Global.DrawCalls = 0;
             Global.DrawProfiler.StartMeasuring();
             _graphics.GraphicsDevice.Clear(Color.Black);
-            
+
             if (SceneManager.ActiveScene.IsReady)
                 SceneManager.ActiveScene.Draw(_spriteBatch);
 

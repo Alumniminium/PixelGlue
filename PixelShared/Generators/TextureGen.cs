@@ -28,6 +28,6 @@ namespace Pixel.Helpers
             texture.SetData(pixels);
             return texture;
         }
-        public static Texture2D Pixel(GraphicsDevice device,string color) => Blank(device,1, 1, color.ToColor());
+        public static Texture2D Pixel(GraphicsDevice device, string color) => Blank(device, 1, 1, color.ToColor());
     }
 }

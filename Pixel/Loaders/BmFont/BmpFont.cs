@@ -1,12 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
 using Pixel.Loaders.BmFont.Models;
-using System.Xml.Serialization;
-using System.Collections.Generic;
 using PixelShared;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace Pixel.Loaders
 {
@@ -19,7 +18,7 @@ namespace Pixel.Loaders
         {
             _characterMap = new Dictionary<char, BmpFontChar>();
             var fontFilePath = Path.Combine(contentManager.RootDirectory, fontName);
-            fontTexture = contentManager.Load<Texture2D>(Path.GetFileName(fontName).Replace(".fnt","_0"));
+            fontTexture = contentManager.Load<Texture2D>(Path.GetFileName(fontName).Replace(".fnt", "_0"));
             Load(fontFilePath);
         }
         private void Load(string filename)

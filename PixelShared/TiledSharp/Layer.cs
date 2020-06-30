@@ -10,17 +10,17 @@ namespace TiledSharp
 {
     public class TmxLayer : ITmxLayer
     {
-        public string Name { get;   }
+        public string Name { get; }
 
         // TODO: Legacy (Tiled Java) attributes (x, y, width, height)
 
-        public double Opacity { get;   }
-        public bool Visible { get;   }
-        public double? OffsetX { get;   }
-        public double? OffsetY { get;   }
+        public double Opacity { get; }
+        public bool Visible { get; }
+        public double? OffsetX { get; }
+        public double? OffsetY { get; }
 
-        public Collection<TmxLayerTile> Tiles { get;   }
-        public PropertyDict Properties { get;   }
+        public Collection<TmxLayerTile> Tiles { get; }
+        public PropertyDict Properties { get; }
 
         public TmxLayer(XElement xLayer, int width, int height)
         {
@@ -84,12 +84,12 @@ namespace TiledSharp
         private const uint FLIPPED_VERTICALLY_FLAG = 0x40000000;
         private const uint FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 
-        public int Gid { get;   }
-        public int X { get;   }
-        public int Y { get;   }
-        public bool HorizontalFlip { get;   }
-        public bool VerticalFlip { get;   }
-        public bool DiagonalFlip { get;   }
+        public int Gid { get; }
+        public int X { get; }
+        public int Y { get; }
+        public bool HorizontalFlip { get; }
+        public bool VerticalFlip { get; }
+        public bool DiagonalFlip { get; }
         public object Rectangle { get; set; }
         public TmxLayerTile(uint id, int x, int y)
         {

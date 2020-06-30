@@ -1,9 +1,9 @@
-﻿using System;
+﻿using PixelShared.TerribleSockets.Client;
+using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading;
-using PixelShared.TerribleSockets.Client;
 
 namespace PixelShared.TerribleSockets.Queues
 {

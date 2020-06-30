@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Pixel.ECS;
 using Pixel.ECS.Components;
 using Pixel.Enums;
 using Pixel.Helpers;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.Entities
 {
@@ -11,19 +11,19 @@ namespace Pixel.Entities
     {
         public Scene Scene;
         public int EntityId;
-        public int UniqueId => Has<Networked>() ? Get<Networked>().EntityId : -1;
+        public int UniqueId => Has<NetworkComponent>() ? Get<NetworkComponent>().EntityId : -1;
         public Entity Parent;
         public List<Entity> Children;
 
         public Entity()
         {
-            Children=new List<Entity>();
+            Children = new List<Entity>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add<T>(T component) where T : struct => GameComponents<T>.Items[EntityId] = component;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Has<T>() where T : struct,IEntityComponent => GameComponents<T>.Items[EntityId].EntityId == EntityId;
+        public bool Has<T>() where T : struct, IEntityComponent => GameComponents<T>.Items[EntityId].EntityId == EntityId;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref GameComponents<T>.Items[EntityId];
 

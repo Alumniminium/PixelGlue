@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
 using PixelShared.TerribleSockets.Server;
+using System;
+using System.Threading;
 
 namespace Server
 {
@@ -24,7 +24,8 @@ namespace Server
             {
                 Console.WriteLine("Heartbeat Thread started.");
                 for (int i = 10; i < BotCount; i++)
-                    Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 +i));
+                    Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
+                Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
                 while (true)
                 {
                     foreach (var kvp in Collections.Npcs)
@@ -39,12 +40,13 @@ namespace Server
                             foreach (var kvp2 in Collections.Players)
                             {
                                 var player = kvp2.Value;
-                                var distance = Vector2.Distance(player.Location,npc.Location);
-                                
-                                Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Location.X},{(int)npc.Location.Y} to player {(int)kvp2.Value.Location.X}{(int)kvp2.Value.Location.Y}. Distance: {distance}`");
-                                
-                                if(distance < 100)
+                                var distance = Vector2.Distance(player.Location, npc.Location);
+
+                                if (distance < 100)
+                                {
+                                    Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Location.X},{(int)npc.Location.Y} to player {(int)kvp2.Value.Location.X}{(int)kvp2.Value.Location.Y}. Distance: {distance}`");
                                     kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Location));
+                                }
                             }
                         }
                     }

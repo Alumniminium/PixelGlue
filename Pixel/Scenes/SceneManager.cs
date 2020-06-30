@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Pixel.ECS;
+using System;
+using System.Collections.Generic;
 
 namespace Pixel.Scenes
 {

@@ -1,10 +1,8 @@
-﻿using PixelShared.IO;
-using Pixel.ECS;
-using Pixel.ECS.Systems;
-using Pixel.Scenes;
+﻿using Pixel.Scenes;
+using PixelShared;
+using PixelShared.IO;
 using System;
 using System.Threading;
-using PixelShared;
 
 namespace Pixel
 {
@@ -17,7 +15,7 @@ namespace Pixel
             FConsole.WriteLine("Setting Thread Priority to highest...");
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             FConsole.WriteLine("Initializing the engine...");
-            
+
             var engine = new Engine(false)
             {
                 IsFixedTimeStep = false

@@ -5,8 +5,8 @@ namespace Pixel.Loaders
 {
     public class BmpFontChar
     {
-        public FontChar FontChar{get;}
-        public Rectangle SrcRect{get;}
+        public FontChar FontChar { get; }
+        public Rectangle SrcRect { get; }
 
         public BmpFontChar(FontChar fontCharacter)
         {

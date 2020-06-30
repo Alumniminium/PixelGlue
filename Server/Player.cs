@@ -1,6 +1,6 @@
-using System;
 using Microsoft.Xna.Framework;
 using PixelShared.TerribleSockets.Client;
+using System;
 
 namespace Server
 {

@@ -13,20 +13,20 @@ namespace TiledSharp
 
     public class TmxTileset : TmxDocument, ITmxElement
     {
-        public int FirstGid { get;   }
-        public string Name { get;   }
-        public int TileWidth { get;   }
-        public int TileHeight { get;   }
-        public int Spacing { get;   }
-        public int Margin { get;   }
-        public int? Columns { get;   }
-        public int? TileCount { get;   }
+        public int FirstGid { get; }
+        public string Name { get; }
+        public int TileWidth { get; }
+        public int TileHeight { get; }
+        public int Spacing { get; }
+        public int Margin { get; }
+        public int? Columns { get; }
+        public int? TileCount { get; }
 
-        public Dictionary<int, TmxTilesetTile> Tiles { get;   }
-        public TmxTileOffset TileOffset { get;   }
-        public PropertyDict Properties { get;   }
-        public TmxImage Image { get;   }
-        public TmxList<TmxTerrain> Terrains { get;   }
+        public Dictionary<int, TmxTilesetTile> Tiles { get; }
+        public TmxTileOffset TileOffset { get; }
+        public PropertyDict Properties { get; }
+        public TmxImage Image { get; }
+        public TmxList<TmxTerrain> Terrains { get; }
 
         // TSX file constructor
         public TmxTileset(XContainer xDoc, string tmxDir) :
@@ -101,8 +101,8 @@ namespace TiledSharp
 
     public class TmxTileOffset
     {
-        public int X { get;   }
-        public int Y { get;   }
+        public int X { get; }
+        public int Y { get; }
 
         public TmxTileOffset(XElement xTileOffset)
         {
@@ -121,10 +121,10 @@ namespace TiledSharp
 
     public class TmxTerrain : ITmxElement
     {
-        public string Name { get;   }
-        public int Tile { get;   }
+        public string Name { get; }
+        public int Tile { get; }
 
-        public PropertyDict Properties { get;   }
+        public PropertyDict Properties { get; }
 
         public TmxTerrain(XElement xTerrain)
         {
@@ -136,15 +136,15 @@ namespace TiledSharp
 
     public class TmxTilesetTile
     {
-        public int Id { get;   }
-        public Collection<TmxTerrain> TerrainEdges { get;   }
-        public double Probability { get;   }
-        public string Type { get;   }
+        public int Id { get; }
+        public Collection<TmxTerrain> TerrainEdges { get; }
+        public double Probability { get; }
+        public string Type { get; }
 
-        public PropertyDict Properties { get;   }
-        public TmxImage Image { get;   }
-        public TmxList<TmxObjectGroup> ObjectGroups { get;   }
-        public Collection<TmxAnimationFrame> AnimationFrames { get;   }
+        public PropertyDict Properties { get; }
+        public TmxImage Image { get; }
+        public TmxList<TmxObjectGroup> ObjectGroups { get; }
+        public Collection<TmxAnimationFrame> AnimationFrames { get; }
 
         // Human-readable aliases to the Terrain markers
         public TmxTerrain TopLeft
@@ -209,8 +209,8 @@ namespace TiledSharp
 
     public class TmxAnimationFrame
     {
-        public int Id { get;   }
-        public int Duration { get;   }
+        public int Id { get; }
+        public int Duration { get; }
 
         public TmxAnimationFrame(XElement xFrame)
         {

@@ -1,5 +1,5 @@
-using System.Globalization;
 using Microsoft.Xna.Framework;
+using System.Globalization;
 
 namespace PixelShared.Extensions
 {

@@ -1,5 +1,3 @@
-using System;
-
 namespace Pixel.Helpers
 {
     public static class GameComponents<T> where T : struct

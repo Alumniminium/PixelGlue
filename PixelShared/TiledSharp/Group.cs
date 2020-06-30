@@ -16,9 +16,9 @@ namespace TiledSharp
         public double? OffsetX { get; private set; }
         public double? OffsetY { get; private set; }
 
-        public TmxList<ITmxLayer> Layers { get;}
+        public TmxList<ITmxLayer> Layers { get; }
 
-        public TmxList<TmxLayer> TileLayers { get;  }
+        public TmxList<TmxLayer> TileLayers { get; }
         public TmxList<TmxObjectGroup> ObjectGroups { get; }
         public TmxList<TmxImageLayer> ImageLayers { get; }
         public TmxList<TmxGroup> Groups { get; }

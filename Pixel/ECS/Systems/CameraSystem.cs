@@ -1,10 +1,8 @@
-using Pixel.ECS.Components;
 using Microsoft.Xna.Framework;
-using System;
-using Pixel.Scenes;
+using Pixel.ECS.Components;
 using Pixel.Enums;
-using System.Collections.Generic;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using PixelShared;
 
 namespace Pixel.ECS.Systems
@@ -19,7 +17,7 @@ namespace Pixel.ECS.Systems
         public void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;
-            foreach (var entity in CompIter.Get<CameraFollowTagComponent, PositionComponent>())
+            foreach (var entity in CompIter<CameraFollowTagComponent, PositionComponent>.Get(deltaTime))
             {
                 ref readonly var loc = ref entity.Get<PositionComponent>();
                 ref readonly var follow = ref entity.Get<CameraFollowTagComponent>();

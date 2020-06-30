@@ -1,19 +1,18 @@
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using System.Threading;
-using System.Collections.Concurrent;
-using PixelShared.Noise;
 using PixelShared.Enums;
-using System.Collections.Generic;
+using PixelShared.Noise;
 using System;
-using PixelShared;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Pixel.World
 {
     public static class WorldGen
     {
         public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*2];
+        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount * 2];
         public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
@@ -67,7 +66,7 @@ namespace Pixel.World
             MountainNoise.SetGradientPerturbAmp(1000);
             MountainNoise.SetGradientFrequency(0.0004f);
 
-            for(int i = 0; i < Queue.Length; i++)
+            for (int i = 0; i < Queue.Length; i++)
                 Queue[i] = new ConcurrentStack<(int x, int y)>();
 
             for (int i = 0; i < Prefetcher.Length; i++)
@@ -110,9 +109,9 @@ namespace Pixel.World
             x2 = x;
             y2 = y;
             RiverNoise.GradientPerturbFractal(ref x2, ref y2);
-            var (terrain,decor) = GenerateBiome(x2, y2, dstRect);
+            var (terrain, decor) = GenerateBiome(x2, y2, dstRect);
             var river = GenerateRiver(x2, y2, dstRect);
-            return (terrain,decor, river);
+            return (terrain, decor, river);
         }
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
         {
@@ -164,9 +163,9 @@ namespace Pixel.World
             else
                 ground = new DrawableComponent(0, "sand", srcRect, dstRect);
 
-            return (ground,decor);
+            return (ground, decor);
         }
-        private static (DrawableComponent?,DrawableComponent?) GenerateDesert(float x, float y, Rectangle dstRect)
+        private static (DrawableComponent?, DrawableComponent?) GenerateDesert(float x, float y, Rectangle dstRect)
         {
             DrawableComponent? decor = null;
             var val = DesertNoise.GetNoise(x / 32, y / 32);
@@ -186,9 +185,9 @@ namespace Pixel.World
             else
                 ground = new DrawableComponent(0, "dirt", srcRect, dstRect);
 
-            return (ground,decor);
+            return (ground, decor);
         }
-        private static (DrawableComponent?,DrawableComponent?) GenerateSwamp(float x, float y, Rectangle dstRect)
+        private static (DrawableComponent?, DrawableComponent?) GenerateSwamp(float x, float y, Rectangle dstRect)
         {
             DrawableComponent? decor = null;
 
@@ -208,64 +207,53 @@ namespace Pixel.World
                 ground = new DrawableComponent(0, "shallow_water", srcRect, dstRect);
             else
                 ground = new DrawableComponent(0, "water", srcRect, dstRect);
-            return (ground,decor);
+            return (ground, decor);
         }
 
         private static (DrawableComponent?, DrawableComponent?) GeneratePlains(float x, float y, Rectangle dstRect)
         {
             Dictionary<float, (DrawableComponent, DrawableComponent?)> heights = new Dictionary<float, (DrawableComponent, DrawableComponent?)>()
             {
-                [0.85f] = (new DrawableComponent(0, "snow", srcRect, dstRect),null),
-                [0.80f] = (new DrawableComponent(0, "rock2", srcRect, dstRect),null),
-                [0.75f] = (new DrawableComponent(0, "dawn", new Rectangle(480,352,16,16), dstRect), null),
-                [0.70f] = (new DrawableComponent(0, "dawn", new Rectangle(96,272,16,16), dstRect), null),
-                [0.62f] = (new DrawableComponent(0, "dawn", new Rectangle(16*4,0,16,16), dstRect), null),
-                [0.60f] = (new DrawableComponent(0, "dawn", new Rectangle(16*5,0,16,16), dstRect), null),
-                [0.42f] = (new DrawableComponent(0, "dawn", new Rectangle(32,0,16,16), dstRect),new DrawableComponent(0, "dawn", new Rectangle(96+16,0,16,16), dstRect)),
-                [0.40f] = (new DrawableComponent(0, "dawn", new Rectangle(16,0,16,16), dstRect),new DrawableComponent(0, "dawn", new Rectangle(96+32,0,16,16), dstRect)),
-                [0.35f] = (new DrawableComponent(0, "dawn", new Rectangle(96,0,16,16), dstRect),null),
-                [0.30f] = (new DrawableComponent(0, "dawn", new Rectangle(16*3,16,16,16), dstRect),null),
-                [0.20f] = (new DrawableComponent(0, "dawn", new Rectangle(16*2,16,16,16), dstRect),null),
-                [-0.5f] = (new DrawableComponent(0, "dawn", new Rectangle(16,0,16,16), dstRect),null),
-                [-0.6f] = (new DrawableComponent(0, "dawn", new Rectangle(144,496,16,16), dstRect),null),
-                [-1f] = (new DrawableComponent(0, "dawn", new Rectangle(128,496,16,16), dstRect),null),
+                [0.85f] = (new DrawableComponent(0, "snow", srcRect, dstRect), null),
+                [0.80f] = (new DrawableComponent(0, "rock2", srcRect, dstRect), null),
+                [0.75f] = (new DrawableComponent(0, "dawn", new Rectangle(480, 352, 16, 16), dstRect), null),
+                [0.70f] = (new DrawableComponent(0, "dawn", new Rectangle(96, 272, 16, 16), dstRect), null),
+                [0.62f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 4, 0, 16, 16), dstRect), null),
+                [0.60f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 5, 0, 16, 16), dstRect), null),
+                [0.42f] = (new DrawableComponent(0, "dawn", new Rectangle(32, 0, 16, 16), dstRect), new DrawableComponent(0, "dawn", new Rectangle(96 + 16, 0, 16, 16), dstRect)),
+                [0.40f] = (new DrawableComponent(0, "dawn", new Rectangle(16, 0, 16, 16), dstRect), new DrawableComponent(0, "dawn", new Rectangle(96 + 32, 0, 16, 16), dstRect)),
+                [0.35f] = (new DrawableComponent(0, "dawn", new Rectangle(96, 0, 16, 16), dstRect), null),
+                [0.30f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 3, 16, 16, 16), dstRect), null),
+                [0.20f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 2, 16, 16, 16), dstRect), null),
+                [-0.5f] = (new DrawableComponent(0, "dawn", new Rectangle(16, 0, 16, 16), dstRect), null),
+                [-0.6f] = (new DrawableComponent(0, "dawn", new Rectangle(144, 496, 16, 16), dstRect), null),
+                [-1f] = (new DrawableComponent(0, "dawn", new Rectangle(128, 496, 16, 16), dstRect), null),
             };
 
             var val = PlainNoise.GetNoise(x / 32, y / 32);
             val += 0.75f * PlainNoise.GetNoise(x / 26, y / 26);
             val += 0.25f * PlainNoise.GetNoise(x / 8, y / 8);
 
-            foreach(var f in heights)
-                if(val >= f.Key)
+            foreach (var f in heights)
+                if (val >= f.Key)
                     return f.Value;
 
-            return (null,null);
+            return (null, null);
         }
         public static int last;
-        internal static (DrawableComponent?,DrawableComponent?) GetTiles(int x, int y)
+        internal static (DrawableComponent?, DrawableComponent?) GetTiles(int x, int y)
         {
-            ///if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))
-            ///{
-            ///    TilesLoading.TryAdd((x, y), false);
-            ///    Queue[last].Push((x, y));
-            ///    last++;
-            ///    if (last == Queue.Length)
-            ///        last = 0;
-            ///}
-            ///LayerOne.TryGetValue((x, y), out var decorTile);
-            ///LayerTwo.TryGetValue((x, y), out decorTile);
-
-            if (!LayerZero.TryGetValue((1, 1), out var terrainTile) && !TilesLoading.TryGetValue((1, 1), out _))
+            if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))
             {
-                TilesLoading.TryAdd((1, 1), false);
-                Queue[last].Push((1, 1));
+                TilesLoading.TryAdd((x, y), false);
+                Queue[last].Push((x, y));
                 last++;
                 if (last == Queue.Length)
                     last = 0;
             }
-            LayerOne.TryGetValue((1,1), out var decorTile);
-            LayerTwo.TryGetValue((1,1), out decorTile);
-            return (terrainTile,decorTile);
+            LayerOne.TryGetValue((x, y), out var decorTile);
+            LayerTwo.TryGetValue((x, y), out decorTile);
+            return (terrainTile, decorTile);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using PixelShared.TerribleSockets.Client;
+using PixelShared.TerribleSockets.Queues;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using PixelShared.TerribleSockets.Client;
-using PixelShared.TerribleSockets.Queues;
 
 namespace PixelShared.TerribleSockets.Server
 {
@@ -66,7 +66,7 @@ namespace PixelShared.TerribleSockets.Server
                     ReceiveQueue.Add(e);
                     token.ReceiveSync.WaitOne();
                     if (!token.Socket.ReceiveAsync(e))
-                        Received(null,e);
+                        Received(null, e);
                 }
                 catch (Exception exception)
                 {

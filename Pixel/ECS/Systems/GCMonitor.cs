@@ -1,7 +1,6 @@
-using Pixel.Helpers;
-using System;
 using Pixel.Enums;
 using PixelShared.IO;
+using System;
 
 namespace Pixel.ECS.Systems
 {
@@ -15,8 +14,8 @@ namespace Pixel.ECS.Systems
         public void Initialize()
         {
             GenCollections = new int[3];
-            IsReady=true;
-            IsActive=true;
+            IsReady = true;
+            IsActive = true;
         }
         public void FixedUpdate(float gameTime)
         {
@@ -33,6 +32,6 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        public void Update(float deltaTime){}
+        public void Update(float deltaTime) { }
     }
 }

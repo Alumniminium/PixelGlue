@@ -1,6 +1,6 @@
+using PixelShared.Enums;
 using System;
 using System.Runtime.CompilerServices;
-using PixelShared.Enums;
 
 namespace PixelShared.Noise
 {

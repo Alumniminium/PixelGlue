@@ -1,4 +1,3 @@
-using Pixel.ECS;
 using Pixel.Networking.Handlers;
 using System;
 using System.Buffers;
