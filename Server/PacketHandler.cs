@@ -1,4 +1,5 @@
-﻿using PixelShared.TerribleSockets.Client;
+﻿using Microsoft.Xna.Framework;
+using PixelShared.TerribleSockets.Client;
 using PixelShared.TerribleSockets.Packets;
 using System;
 namespace Server
@@ -53,12 +54,14 @@ namespace Server
                         var player = (Player)socket.StateObject;
                         if (player == null)
                             break;
-                        player.Location = new Microsoft.Xna.Framework.Vector2(msgWalk.X,msgWalk.Y);
+                        player.Location = new Vector2(msgWalk.X,msgWalk.Y);
                         msgWalk.TickCount = Environment.TickCount;
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
 
                         foreach (var (_, entity) in Collections.Players)
                         {
+                            if(entity.UniqueId == player.UniqueId)
+                            continue;
                             entity.Socket.Send(msgWalk);
                         }
 

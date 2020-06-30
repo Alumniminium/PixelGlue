@@ -17,7 +17,6 @@ namespace Pixel.Scenes
     {
         public override void Initialize()
         {
-            Camera = CreateEntity<Camera>();
             var player = CreateEntity<Player>();
             player.Add(new DrawableComponent(player.EntityId, "character.png", new Rectangle(0, 2, 16, 16)));
             player.Add(new VelocityComponent(player.EntityId, 64));
@@ -26,20 +25,19 @@ namespace Pixel.Scenes
             player.Add(new CameraFollowTagComponent(player.EntityId, 1));
 
             var redbox = CreateEntity<UIRectangle>();
-            redbox.Setup(0,0,Global.ScreenWidth,140,Color.IndianRed);
-
+            redbox.Setup(0,0,Global.ScreenWidth,74,Color.IndianRed);
 
             Systems.Add(new NetworkSystem());
             Systems.Add(new InputSystem());
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
-            Systems.Add(new ProceduralEntityRenderSystem(this));
-            Systems.Add(new NameTagRenderSystem(this));
+            Systems.Add(new ProceduralEntityRenderSystem());
+            Systems.Add(new NameTagRenderSystem());
             Systems.Add(new DialogSystem());
-            Systems.Add(new DbgBoundingBoxRenderSystem(this));
+            Systems.Add(new DbgBoundingBoxRenderSystem());
 
             Systems.Add(new UIRenderSystem());
-            Systems.Add(new SmartFramerate(this, 4));
+            Systems.Add(new SmartFramerate(4));
             Systems.Add(new GCMonitor());
             base.Initialize();
         }

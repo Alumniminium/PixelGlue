@@ -4,6 +4,7 @@ using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using Pixel.World;
 using PixelShared;
 using System.Collections.Generic;
@@ -16,11 +17,10 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Procedural Entity Rendering System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Scene { get; set; }
+        public Scene Scene => SceneManager.ActiveScene;
         public List<Entity> Entities;
-        public ProceduralEntityRenderSystem(Scene scene)
+        public ProceduralEntityRenderSystem()
         {
-            Scene = scene;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
         public void Update(float deltaTime) 

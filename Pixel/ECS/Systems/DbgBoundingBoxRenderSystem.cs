@@ -4,6 +4,7 @@ using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using PixelShared;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -15,12 +16,8 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Debug Boundingbox System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Scene { get; set; }
+        public Scene Scene => SceneManager.ActiveScene;
         public List<Entity> Entities { get; set; }
-        public DbgBoundingBoxRenderSystem(Scene scene)
-        {
-            Scene = scene;
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void Draw(SpriteBatch sb)

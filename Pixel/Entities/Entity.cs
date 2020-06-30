@@ -11,7 +11,7 @@ namespace Pixel.Entities
     {
         public Scene Scene;
         public int EntityId;
-        public int UniqueId => Has<NetworkComponent>() ? Get<NetworkComponent>().EntityId : -1;
+        public int UniqueId => Has<NetworkComponent>() ? Get<NetworkComponent>().UniqueId : -1;
         public Entity Parent;
         public List<Entity> Children;
 
@@ -21,11 +21,11 @@ namespace Pixel.Entities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add<T>(T component) where T : struct => GameComponents<T>.Items[EntityId] = component;
+        public void Add<T>(T component) where T : struct => ComponentArray<T>.Items[EntityId] = component;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Has<T>() where T : struct, IEntityComponent => GameComponents<T>.Items[EntityId].EntityId == EntityId;
+        public bool Has<T>() where T : struct, IEntityComponent => ComponentArray<T>.Items[EntityId].EntityId == EntityId;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Get<T>() where T : struct => ref GameComponents<T>.Items[EntityId];
+        public ref T Get<T>() where T : struct => ref ComponentArray<T>.Items[EntityId];
 
         public override string ToString()
         {

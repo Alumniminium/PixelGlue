@@ -23,7 +23,7 @@ namespace Pixel.ECS.Systems
 
                 if (pc.Destination != pc.Position)
                 {
-                    var dir = (pc.Destination - pc.Position);
+                    var dir = pc.Destination - pc.Position;
                     dir.Normalize();
 
                     vc.Velocity = dir * vc.Speed * vc.SpeedMulti * dt;
@@ -38,8 +38,8 @@ namespace Pixel.ECS.Systems
                         pc.Position = pc.Destination;
                         vc.Velocity = Vector2.Zero;
                     }
-                    if (entity.Has<NetworkComponent>() && entity is Player player)
-                        NetworkSystem.Send(MsgWalk.Create(player.UniqueId, pc.Position));
+                    if (entity.Has<NetworkComponent>())
+                        NetworkSystem.Send(MsgWalk.Create(entity.UniqueId, pc.Position));
                 }
 
             }
