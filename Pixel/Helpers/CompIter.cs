@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Pixel.ECS;
 using Pixel.Entities;
@@ -8,7 +9,7 @@ namespace Pixel.Helpers
 {
     public static class CompIter
     {
-        public static Dictionary<string, List<Entity>> Lists = new Dictionary<string, List<Entity>>();
+        public static Dictionary<Guid[], List<Entity>> Lists = new Dictionary<Guid[], List<Entity>>();
         internal static void Update()
         {
             //foreach (var kvp in Lists)
@@ -17,7 +18,7 @@ namespace Pixel.Helpers
         public static List<Entity> Get<T>()
         where T : struct, IEntityComponent
         {
-            var typeArray = typeof(T).Name;
+            var typeArray = new [] {typeof(T).GUID};
             if (!Lists.TryGetValue(typeArray, out var l))
             {
                 if (l == null)
@@ -33,7 +34,7 @@ namespace Pixel.Helpers
         public static List<Entity> Get<T, T2>()
         where T : struct, IEntityComponent where T2 : struct, IEntityComponent
         {
-            var typeArray = typeof(T).Name + typeof(T2).Name;
+            var typeArray = new [] {typeof(T).GUID, typeof(T2).GUID};
             if (!Lists.TryGetValue(typeArray, out var l))
             {
                 if (l == null)
@@ -50,7 +51,7 @@ namespace Pixel.Helpers
         where T : struct, IEntityComponent where T2 : struct, IEntityComponent
         where T3 : struct, IEntityComponent
         {
-            var typeArray = typeof(T).Name + typeof(T2).Name + typeof(T3).Name;
+            var typeArray = new [] {typeof(T).GUID, typeof(T2).GUID, typeof(T3).GUID};
             if (!Lists.TryGetValue(typeArray, out var l))
             {
                 if (l == null)
@@ -67,7 +68,7 @@ namespace Pixel.Helpers
         where T : struct, IEntityComponent where T2 : struct, IEntityComponent
         where T3 : struct, IEntityComponent where T4 : struct, IEntityComponent
         {
-            var typeArray = typeof(T).Name + typeof(T2).Name + typeof(T3).Name + typeof(T4).Name;
+            var typeArray = new [] {typeof(T).GUID, typeof(T2).GUID, typeof(T3).GUID, typeof(T4).GUID};
             if (!Lists.TryGetValue(typeArray, out var l))
             {
                 if (l == null)

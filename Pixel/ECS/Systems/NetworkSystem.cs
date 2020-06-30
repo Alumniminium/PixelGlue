@@ -8,12 +8,14 @@ using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
 using PixelShared.IO;
 using PixelShared;
+using System;
 
 namespace Pixel.ECS.Systems
 {
     public class NetworkSystem : IEntitySystem
     {
         public string Name { get; set; } = "Network System";
+        private static DateTime LastConnect;
         private static ClientSocket Socket { get; } = new ClientSocket(null);
         public static ConnectionState ConnectionState { get; set; }
         private static ConcurrentQueue<byte[]> PendingPackets { get; } = new ConcurrentQueue<byte[]>();
@@ -59,6 +61,9 @@ namespace Pixel.ECS.Systems
         {
             if (ConnectionState != ConnectionState.NotConnected)
                 return;
+            if(LastConnect.AddSeconds(5) > DateTime.UtcNow)
+                return;
+            LastConnect=DateTime.UtcNow;
             ConnectionState = ConnectionState.Connecting;
             FConsole.WriteLine("[NetworkSystem] Connecting to Server...");
             Socket.ConnectAsync(ip, port);

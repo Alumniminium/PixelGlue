@@ -13,20 +13,14 @@ namespace Pixel.Networking
             switch (packetId)
             {
                 case 1000:
-                    {
-                        Login.Handle(buffer);
-                        break;
-                    }
+                    Login.Handle(buffer);
+                    break;
                 case 1001:
-                    {
-                        Walk.Handle(buffer);
-                        break;
-                    }
+                    Walk.Handle(buffer);
+                    break;
                 case 1002:
-                    {
-                        Ping.Handle(buffer);
-                        break;
-                    }
+                    Ping.Handle(buffer);
+                    break;
             }
             ArrayPool<byte>.Shared.Return(buffer);
         }

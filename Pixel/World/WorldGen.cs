@@ -8,12 +8,12 @@ using System.Collections.Generic;
 using System;
 using PixelShared;
 
-namespace Pixel.ECS.Systems
+namespace Pixel.World
 {
     public static class WorldGen
     {
         public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*8];
+        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount*2];
         public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
@@ -98,7 +98,7 @@ namespace Pixel.ECS.Systems
                         LayerOne.TryAdd((x, y), tree);
 
                     TilesLoading.TryRemove((x, y), out _);
-                    Thread.Sleep(Global.Random.Next(0,100));
+                    Thread.Sleep(1);
                 }
                 Thread.Sleep(1);
             }
@@ -113,14 +113,6 @@ namespace Pixel.ECS.Systems
             var (terrain,decor) = GenerateBiome(x2, y2, dstRect);
             var river = GenerateRiver(x2, y2, dstRect);
             return (terrain,decor, river);
-        }
-
-        public static DrawableComponent? GenerateTrees(float x, float y, Rectangle dstRect)
-        {
-            var ground = GeneratePlains(x,y,dstRect);
-            //if(ground.HasValue&&ground.Value.TextureName =="trees")
-                    //return new DrawableComponent(0, "tree", srcRect, dstRect);
-                    return null;
         }
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
         {
@@ -252,16 +244,27 @@ namespace Pixel.ECS.Systems
         public static int last;
         internal static (DrawableComponent?,DrawableComponent?) GetTiles(int x, int y)
         {
-            if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))
+            ///if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))
+            ///{
+            ///    TilesLoading.TryAdd((x, y), false);
+            ///    Queue[last].Push((x, y));
+            ///    last++;
+            ///    if (last == Queue.Length)
+            ///        last = 0;
+            ///}
+            ///LayerOne.TryGetValue((x, y), out var decorTile);
+            ///LayerTwo.TryGetValue((x, y), out decorTile);
+
+            if (!LayerZero.TryGetValue((1, 1), out var terrainTile) && !TilesLoading.TryGetValue((1, 1), out _))
             {
-                TilesLoading.TryAdd((x, y), false);
-                Queue[last].Push((x, y));
+                TilesLoading.TryAdd((1, 1), false);
+                Queue[last].Push((1, 1));
                 last++;
                 if (last == Queue.Length)
                     last = 0;
             }
-            LayerOne.TryGetValue((x, y), out var decorTile);
-            LayerTwo.TryGetValue((x, y), out decorTile);
+            LayerOne.TryGetValue((1,1), out var decorTile);
+            LayerTwo.TryGetValue((1,1), out decorTile);
             return (terrainTile,decorTile);
         }
     }

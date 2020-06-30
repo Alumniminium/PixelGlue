@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Enums;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
@@ -20,7 +21,7 @@ namespace Pixel.ECS.Systems
 
         public void Draw(SpriteBatch sb)
         {
-            foreach (var (_, entity) in Scene.Entities)
+            foreach (var entity in CompIter.Get<TextComponent,PositionComponent>())
             {
                 foreach (var child in entity.Children)
                 {

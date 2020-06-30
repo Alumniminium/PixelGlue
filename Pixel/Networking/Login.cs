@@ -16,18 +16,12 @@ namespace Pixel.Networking.Handlers
         {
             var (user, pass) = packet.GetUserPass();
             var scene = SceneManager.ActiveScene;
-            var player = scene.CreateEntity<Player>(packet.UniqueId);
-            player.Scene= scene;
-            player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
-            player.Add(new VelocityComponent(player.EntityId,64));
-            player.Add(new PositionComponent(player.EntityId,0,0,0));
-            player.Add(new InputComponent(player.EntityId));
-            player.Add(new CameraFollowTagComponent(player.EntityId,1));
-            player.Add(new Networked(packet.UniqueId));
+
+            var player = scene.Find<Player>();
 
             FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
 
-            if (player.EntityId == 0)
+            if (!player.Has<Networked>())
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " failed to authenticate! (not implemented)");
                 scene.Destroy(player);
@@ -35,7 +29,7 @@ namespace Pixel.Networking.Handlers
             else
             {
                 FConsole.WriteLine("[Net][MsgLogin] " + user + " authenticated! (not implemented)");
-                //player.EntityId = packet.UniqueId;
+                player.Add(new Networked(scene,player.EntityId,packet.UniqueId));
                 NetworkSystem.ConnectionState = ConnectionState.Authenticated;
             }
         }

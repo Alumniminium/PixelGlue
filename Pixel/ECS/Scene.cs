@@ -89,9 +89,8 @@ namespace Pixel.ECS
             var entity = new T
             {
                 EntityId = LastEntityId,
+                Scene = this
             };
-            UniqueIdToEntityId.TryAdd(uniqueId,entity.EntityId);
-            EntityIdToUniqueId.TryAdd(entity.EntityId,uniqueId);
             Entities.TryAdd(entity.EntityId, entity);
             LastEntityId++;
             return entity;

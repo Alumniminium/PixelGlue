@@ -5,6 +5,7 @@ using Pixel.Enums;
 using Pixel.Helpers;
 using PixelShared;
 using System.Threading;
+using Pixel.World;
 
 namespace Pixel.ECS.Systems
 {

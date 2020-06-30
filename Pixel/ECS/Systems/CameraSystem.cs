@@ -24,7 +24,7 @@ namespace Pixel.ECS.Systems
                 ref readonly var loc = ref entity.Get<PositionComponent>();
                 ref readonly var follow = ref entity.Get<CameraFollowTagComponent>();
 
-                var camLoc = loc.Position + new Vector2(8, 8);
+                var camLoc = loc.Position + new Vector2(8);
                 var camX = (int)camLoc.X / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
                 var camY = (int)camLoc.Y / PixelShared.Pixel.TileSize * PixelShared.Pixel.TileSize;
 

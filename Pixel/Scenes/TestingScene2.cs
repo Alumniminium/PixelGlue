@@ -13,10 +13,6 @@ namespace Pixel.Scenes
 {
     public class TestingScene2 : Scene
     {
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
         public override void LoadContent(ContentManager cm)
         {
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");

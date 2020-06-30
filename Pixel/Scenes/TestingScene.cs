@@ -6,6 +6,8 @@ using Pixel.ECS.Systems;
 using Pixel.ECS.Systems.UI;
 using Pixel.Helpers;
 using PixelShared.Enums;
+using Pixel.ECS.Components;
+using Microsoft.Xna.Framework;
 
 namespace Pixel.Scenes
 {
@@ -31,17 +33,24 @@ namespace Pixel.Scenes
         public override void Initialize()
         {
             Camera = CreateEntity<Camera>(-1);
-            Systems.Add(new NetworkSystem());
-            Systems.Add(new InputSystem());
-            Systems.Add(new MoveSystem());
-            Systems.Add(new CameraSystem());
-            Systems.Add(new ProceduralEntityRenderSystem(this));
-            Systems.Add(new NameTagRenderSystem(this));
-            Systems.Add(new DialogSystem());
-            Systems.Add(new DbgBoundingBoxRenderSystem(this));
+            var player = CreateEntity<Player>(-1);
+            player.Add(new DrawableComponent(player.EntityId,"character.png", new Rectangle(0, 2, 16, 16)));
+            player.Add(new VelocityComponent(player.EntityId,64));
+            player.Add(new PositionComponent(player.EntityId,0,0,0));
+            player.Add(new InputComponent(player.EntityId));
+            player.Add(new CameraFollowTagComponent(player.EntityId,1));
 
-            Systems.Add(new UIRenderSystem(this));
-            Systems.Add(new SmartFramerate(this,4));
+            //Systems.Add(new NetworkSystem());
+            //Systems.Add(new InputSystem());
+            Systems.Add(new MoveSystem());
+            //Systems.Add(new CameraSystem());
+            //Systems.Add(new ProceduralEntityRenderSystem(this));
+            Systems.Add(new NameTagRenderSystem(this));
+            //Systems.Add(new DialogSystem());
+            //Systems.Add(new DbgBoundingBoxRenderSystem(this));
+
+            //Systems.Add(new UIRenderSystem(this));
+            //Systems.Add(new SmartFramerate(this,4));
             Systems.Add(new GCMonitor());
             base.Initialize();
         }
