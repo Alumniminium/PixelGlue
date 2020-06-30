@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
+using PixelShared;
 using PixelShared.Enums;
 using PixelShared.Noise;
 using System;
@@ -18,7 +19,7 @@ namespace Pixel.World
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerTwo = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, PixelShared.Pixel.TileSize, PixelShared.Pixel.TileSize);
+        public static Rectangle srcRect = new Rectangle(0, 0, Global.TileSize, Global.TileSize);
         static WorldGen()
         {
             BiomeNoise = new FastNoise(203414084);
@@ -104,7 +105,7 @@ namespace Pixel.World
         }
         public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? decor) Generate(int x, int y)
         {
-            var dstRect = new Rectangle(x, y, PixelShared.Pixel.TileSize, PixelShared.Pixel.TileSize);
+            var dstRect = new Rectangle(x, y, Global.TileSize, Global.TileSize);
             float x2, y2;
             x2 = x;
             y2 = y;

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using PixelShared;
 using PixelShared.Enums;
 using PixelShared.Extensions;
 using PixelShared.Maths;
@@ -46,10 +47,10 @@ namespace Pixel.Helpers
         {
             var pixels = None(w, h, color);
 
-            for (int i = 0; i < PixelShared.Pixel.Random.Next(6, 12); i++)
+            for (int i = 0; i < Global.Random.Next(6, 12); i++)
             {
-                var x = PixelShared.Pixel.Random.Next(0, w);
-                var y = PixelShared.Pixel.Random.Next(0, h);
+                var x = Global.Random.Next(0, w);
+                var y = Global.Random.Next(0, h);
 
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;
@@ -61,7 +62,7 @@ namespace Pixel.Helpers
                 || pixels[(y * w) + x] != color)
                     continue;
 
-                var flower = PixelShared.Pixel.Random.Next(0, 101);
+                var flower = Global.Random.Next(0, 101);
                 Color flowerColor;
                 if (flower >= 75)
                     flowerColor = "fee761".ToColor();
@@ -85,10 +86,10 @@ namespace Pixel.Helpers
         {
             var pixels = None(w, h, color);
 
-            for (int i = 0; i < PixelShared.Pixel.Random.Next(6, 12); i++)
+            for (int i = 0; i < Global.Random.Next(6, 12); i++)
             {
-                var x = PixelShared.Pixel.Random.Next(0, w);
-                var y = PixelShared.Pixel.Random.Next(0, h);
+                var x = Global.Random.Next(0, w);
+                var y = Global.Random.Next(0, h);
 
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
                     continue;

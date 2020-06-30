@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using PixelShared;
 using PixelShared.TerribleSockets.Packets;
 using PixelShared.TerribleSockets.Queues;
 using PixelShared.TerribleSockets.Server;
@@ -23,7 +24,7 @@ namespace Server
             var t = new Thread(() =>
             {
                 Console.WriteLine("Heartbeat Thread started.");
-                for (int i = 10; i < BotCount; i++)
+                for (int i = 0; i < BotCount; i++)
                     Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
                 Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
                 while (true)
@@ -34,19 +35,19 @@ namespace Server
                         if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
-                            npc.Location.X += Random.Next(-1, 2) * PixelShared.Pixel.TileSize;
-                            npc.Location.Y += Random.Next(-1, 2) * PixelShared.Pixel.TileSize;
+                            npc.Position.X += Random.Next(-1, 2) * Global.TileSize;
+                            npc.Position.Y += Random.Next(-1, 2) * Global.TileSize;
 
                             foreach (var kvp2 in Collections.Players)
                             {
                                 var player = kvp2.Value;
-                                var distance = Vector2.Distance(player.Location, npc.Location);
-
-                                if (distance < 100)
-                                {
-                                    Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Location.X},{(int)npc.Location.Y} to player {(int)kvp2.Value.Location.X}{(int)kvp2.Value.Location.Y}. Distance: {distance}`");
-                                    kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Location));
-                                }
+                                if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
+                                    continue;
+                                if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
+                                    continue;
+                                
+                                    //Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
+                                    kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
                             }
                         }
                     }
@@ -62,7 +63,7 @@ namespace Server
                         }
                     }
 
-                    Thread.Sleep(33);
+                    Thread.Sleep(100);
                 }
             });
             t.Start();

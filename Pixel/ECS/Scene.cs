@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
 using PixelShared;
@@ -67,7 +68,7 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            sb.Begin(transformMatrix: Camera.Transform, samplerState: SamplerState.PointClamp);
+            sb.Begin(transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
@@ -78,6 +79,8 @@ namespace Pixel.ECS
 
         public virtual void Destroy(Entity entity)
         {
+            foreach(var child in entity.Children)
+                Destroy(child);
             Entities.TryRemove(entity.EntityId, out _);
             EntityIdToUniqueId.TryRemove(entity.EntityId, out var uid);
             UniqueIdToEntityId.TryRemove(uid, out _);
@@ -85,6 +88,19 @@ namespace Pixel.ECS
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual T CreateEntity<T>(int uniqueId) where T : Entity, new()
+        {
+            var entity = new T
+            {
+                EntityId = LastEntityId,
+                Scene = this
+            };
+            entity.Add(new NetworkComponent(this,entity.EntityId,uniqueId));
+            Entities.TryAdd(entity.EntityId, entity);
+            LastEntityId++;
+            return entity;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public virtual T CreateEntity<T>() where T : Entity, new()
         {
             var entity = new T
             {

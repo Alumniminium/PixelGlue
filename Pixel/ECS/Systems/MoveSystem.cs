@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
+using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
+using PixelShared.TerribleSockets.Packets;
 
 namespace Pixel.ECS.Systems
 {
@@ -12,36 +14,34 @@ namespace Pixel.ECS.Systems
         public bool IsReady { get; set; }
 
         public void FixedUpdate(float _) { }
-        public void Update(float deltaTime)
+        public void Update(float dt)
         {
-            foreach (var entity in CompIter<VelocityComponent, PositionComponent>.Get(deltaTime))
+            foreach (var entity in CompIter<VelocityComponent, PositionComponent>.Get(dt))
             {
                 ref var vc = ref entity.Get<VelocityComponent>();
                 ref var pc = ref entity.Get<PositionComponent>();
 
-                MoveOneTile(deltaTime, ref vc, ref pc);
-            }
-        }
-
-        private static void MoveOneTile(float dt, ref VelocityComponent vc, ref PositionComponent pc)
-        {
-            if (pc.Destination != pc.Position)
-            {
-                var dir = (pc.Destination - pc.Position);
-                dir.Normalize();
-
-                vc.Velocity = dir * vc.Speed * vc.SpeedMulti * dt;
-
-                var distanceToDest = Vector2.Distance(pc.Position, pc.Destination);
-                var moveDistance = Vector2.Distance(pc.Position, pc.Position + vc.Velocity);
-
-                if (distanceToDest > moveDistance)
-                    pc.Position += vc.Velocity;
-                else
+                if (pc.Destination != pc.Position)
                 {
-                    pc.Position = pc.Destination;
-                    vc.Velocity = Vector2.Zero;
+                    var dir = (pc.Destination - pc.Position);
+                    dir.Normalize();
+
+                    vc.Velocity = dir * vc.Speed * vc.SpeedMulti * dt;
+
+                    var distanceToDest = Vector2.Distance(pc.Position, pc.Destination);
+                    var moveDistance = Vector2.Distance(pc.Position, pc.Position + vc.Velocity);
+
+                    if (distanceToDest > moveDistance)
+                        pc.Position += vc.Velocity;
+                    else
+                    {
+                        pc.Position = pc.Destination;
+                        vc.Velocity = Vector2.Zero;
+                    }
+                    if (entity.Has<NetworkComponent>() && entity is Player player)
+                        NetworkSystem.Send(MsgWalk.Create(player.UniqueId, pc.Position));
                 }
+
             }
         }
     }

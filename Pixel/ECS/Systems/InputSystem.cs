@@ -47,13 +47,13 @@ namespace Pixel.ECS.Systems
                 //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
                 //    moveComponent.Velocity /= 10;
                 if (KeyDown(ref ic, PixelGlueButtons.Up) && pc.Position == pc.Destination)
-                    destination.Y -= PixelShared.Pixel.TileSize;
+                    destination.Y -= Global.TileSize;
                 if (KeyDown(ref ic, PixelGlueButtons.Down) && pc.Position == pc.Destination)
-                    destination.Y += PixelShared.Pixel.TileSize;
+                    destination.Y += Global.TileSize;
                 if (KeyDown(ref ic, PixelGlueButtons.Left) && pc.Position == pc.Destination)
-                    destination.X -= PixelShared.Pixel.TileSize;
+                    destination.X -= Global.TileSize;
                 if (KeyDown(ref ic, PixelGlueButtons.Right) && pc.Position == pc.Destination)
-                    destination.X += PixelShared.Pixel.TileSize;
+                    destination.X += Global.TileSize;
 
                 if (Pressed(ref ic, PixelGlueButtons.EscapeMenu))
                     Environment.Exit(0);
@@ -67,6 +67,8 @@ namespace Pixel.ECS.Systems
                 {
                     var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                     system.IsActive = !system.IsActive;
+                    var system2 = scene.GetSystem<NameTagRenderSystem>();
+                    system2.IsActive = !system2.IsActive;
                 }
 
                 if (destination != pc.Position)
@@ -129,14 +131,7 @@ namespace Pixel.ECS.Systems
 
         private static void SwitchScene()
         {
-            var testScene2 = new TestingScene2
-            {
-                Id = 2
-            };
-            testScene2.Systems.Add(new MoveSystem());
-            testScene2.Systems.Add(new CameraSystem());
-            SceneManager.ActivateScene(testScene2);
-            //SceneManager.DeactivateScene<TestingScene>();
+            
         }
 
         private static void OpenDialog(Scene scene)

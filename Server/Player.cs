@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using PixelShared;
 using PixelShared.TerribleSockets.Client;
 using System;
 
@@ -6,9 +7,17 @@ namespace Server
 {
     public class Player
     {
+        private Rectangle _viewRect = new Rectangle(0,0,Global.VirtualScreenWidth *2,Global.VirtualScreenHeight *2);
+        private Vector2 _location;
         public string Name;
         public int UniqueId;
-        public Vector2 Location;
+        public Rectangle ViewBounds => _viewRect;
+        public Vector2 Location { get => _location; set {
+            _location = value;
+            value.Round();
+            _viewRect.X = (int)value.X - Global.VirtualScreenWidth;
+            _viewRect.Y = (int)value.Y - Global.VirtualScreenHeight;
+        }}
         public ClientSocket Socket;
         public string Username;
         public string Password;

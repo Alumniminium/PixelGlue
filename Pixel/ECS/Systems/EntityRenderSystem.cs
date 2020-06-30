@@ -32,9 +32,9 @@ namespace Pixel.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var overdraw = PixelShared.Pixel.TileSize * 2;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += PixelShared.Pixel.TileSize)
-                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += PixelShared.Pixel.TileSize)
+            var overdraw = Global.TileSize * 4;
+            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += Global.TileSize)
+                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += Global.TileSize)
                 {
                     var (terrainTile, riverTile) = WorldGen.GetTiles(x, y);
 
@@ -59,10 +59,10 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
 
-                if (pos.Position.X < Scene.Camera.ScreenRect.Left - overdraw || pos.Position.X > Scene.Camera.ScreenRect.Right + overdraw)
-                    continue;
-                if (pos.Position.Y < Scene.Camera.ScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ScreenRect.Bottom + overdraw)
-                    continue;
+                if (pos.Position.X < Scene.Camera.ServerScreenRect.Left - overdraw || pos.Position.X > Scene.Camera.ServerScreenRect.Right + overdraw)
+                    Scene.Destroy(entity);
+                if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom + overdraw)
+                    Scene.Destroy(entity);
 
                 sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;

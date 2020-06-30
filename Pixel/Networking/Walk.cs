@@ -23,7 +23,7 @@ namespace Pixel.Networking.Handlers
 
                 var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                 entity.Add(new DrawableComponent(entity.EntityId, srcEntity.TextureName, srcEntity.SrcRect));
-
+                entity.Add(new NetworkComponent(scene,entity.EntityId,uniqueId));
                 entity.Add(new PositionComponent(entity.EntityId, packet.X, packet.Y, 0));
                 entity.Add(new VelocityComponent(entity.EntityId, 32));
                 entity.Add(new DbgBoundingBoxComponent(entity.EntityId));

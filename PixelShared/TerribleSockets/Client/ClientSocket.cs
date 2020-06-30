@@ -83,22 +83,23 @@ namespace PixelShared.TerribleSockets.Client
 
         private void Received(object sender, SocketAsyncEventArgs e)
         {
-            if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
+            if (e.BytesTransferred <= 0 || e.SocketError != SocketError.Success)
             {
-                try
-                {
-                    ReceiveQueue.Add(e);
-                    ReceiveSync.WaitOne();
-                    if (!Socket.ReceiveAsync(e))
-                        Received(null, e);
-                }
-                catch
-                {
-                    Disconnect();
-                }
-            }
-            else
                 Disconnect();
+                return;
+            }
+
+            try
+            {
+                ReceiveQueue.Add(e);
+                ReceiveSync.WaitOne();
+                if (!Socket.ReceiveAsync(e))
+                    Received(null, e);
+            }
+            catch
+            {
+                Disconnect();
+            }
         }
         public void Send(byte[] packet)
         {

@@ -22,7 +22,7 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float deltaTime) { }
         public void Update(float deltaTime) 
         {
-            Entities = CompIter<TextComponent, PositionComponent>.Get(deltaTime);
+            Entities = CompIter<PositionComponent>.Get(deltaTime);
         }
 
         public void Draw(SpriteBatch sb)

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using PixelShared;
 using System;
 
 namespace Server
@@ -6,14 +7,14 @@ namespace Server
     public class Npc
     {
         public int UniqueId;
-        public Vector2 Location;
+        public Vector2 Position;
         public DateTime LastMove;
         public Npc(int uid)
         {
             UniqueId = uid;
-            var x = 256 + (PixelShared.Pixel.Random.Next(1, 10) * PixelShared.Pixel.TileSize);
-            var y = 256 + (PixelShared.Pixel.Random.Next(1, 10) * PixelShared.Pixel.TileSize);
-            Location = new Vector2(x, y);
+            var x = (Global.Random.Next(1, 3) * Global.TileSize);
+            var y = (Global.Random.Next(1, 3) * Global.TileSize);
+            Position = new Vector2(x, y);
         }
     }
 }

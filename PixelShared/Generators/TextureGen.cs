@@ -14,7 +14,7 @@ namespace Pixel.Helpers
             var pixels = new Color[w * h];
             for (int x = 0; x < w; x++)
                 for (int y = 0; y < h; y++)
-                    pixels[(y * w) + x - 1] = color;
+                    pixels[(y * w) + x] = color;
             _blankTexture.SetData(pixels);
             var pixels2 = new Color[w * h];
             _blankTexture.GetData(pixels2);
@@ -25,6 +25,21 @@ namespace Pixel.Helpers
             var color = hexcolor.ToColor();
             var texture = new Texture2D(Global.Device, w, h);
             var pixels = NoiseGen.Patterns[pattern].Invoke(w, h, color);
+            texture.SetData(pixels);
+            return texture;
+        }public static Texture2D Noise(string hexcolor, NoisePattern pattern)
+        {
+            var color = hexcolor.ToColor();
+            var texture = new Texture2D(Global.Device, 1, 1);
+            var pixels = NoiseGen.Patterns[pattern].Invoke(1,1, color);
+            texture.SetData(pixels);
+            return texture;
+        }
+        public static Texture2D Noise(int wh, string hexcolor, NoisePattern pattern)
+        {
+            var color = hexcolor.ToColor();
+            var texture = new Texture2D(Global.Device, wh,wh);
+            var pixels = NoiseGen.Patterns[pattern].Invoke(wh, wh, color);
             texture.SetData(pixels);
             return texture;
         }

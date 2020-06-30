@@ -53,8 +53,7 @@ namespace Server
                         var player = (Player)socket.StateObject;
                         if (player == null)
                             break;
-                        player.Location.X = msgWalk.X;
-                        player.Location.Y = msgWalk.Y;
+                        player.Location = new Microsoft.Xna.Framework.Vector2(msgWalk.X,msgWalk.Y);
                         msgWalk.TickCount = Environment.TickCount;
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
 
