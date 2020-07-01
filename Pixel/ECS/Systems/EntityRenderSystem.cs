@@ -23,7 +23,7 @@ namespace Pixel.ECS.Systems
             Scene = scene;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
-        public void Update(float deltaTime) 
+        public void Update(float deltaTime)
         {
             Entities = CompIter<DrawableComponent, PositionComponent>.Get(deltaTime);
         }
@@ -32,39 +32,38 @@ namespace Pixel.ECS.Systems
         {
             if (Scene.Camera == null)
                 return;
-            var overdraw = Global.TileSize * 4;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += Global.TileSize)
-                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += Global.TileSize)
+            for (int x = Scene.Camera.ServerScreenRect.Left; x < Scene.Camera.ServerScreenRect.Right; x += Global.TileSize)
+                for (int y = Scene.Camera.ServerScreenRect.Top ; y < Scene.Camera.ServerScreenRect.Bottom; y += Global.TileSize)
                 {
                     var (terrainTile, riverTile) = WorldGen.GetTiles(x, y);
 
                     if (terrainTile.HasValue)
                     {
-                        sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.9f);
+                        sb.Draw(terrainTile.Value.Texture, terrainTile.Value.DestRect, terrainTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.9f);
                         Global.DrawCalls++;
                     }
                     if (riverTile.HasValue && terrainTile.HasValue && !(terrainTile.Value.TextureName == "water" || terrainTile.Value.TextureName == "shallow_water" || terrainTile.Value.TextureName == "deep_water"))
                     {
-                        sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.8f);
+                        sb.Draw(riverTile.Value.Texture, riverTile.Value.DestRect, riverTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.8f);
                         Global.DrawCalls++;
                     }
                 }
-            RenderEntities(sb, overdraw);
+            RenderEntities(sb);
         }
-        private void RenderEntities(SpriteBatch sb, int overdraw)
+        private void RenderEntities(SpriteBatch sb)
         {
-            var origin = new Vector2(8, 8);
+            var origin = new Vector2(Global.TileSize/2);
             foreach (var entity in Entities)
             {
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
 
-                if (pos.Position.X < Scene.Camera.ServerScreenRect.Left - overdraw || pos.Position.X > Scene.Camera.ServerScreenRect.Right + overdraw)
+                if (pos.Position.X < Scene.Camera.ServerScreenRect.Left || pos.Position.X > Scene.Camera.ServerScreenRect.Right)
                     Scene.Destroy(entity);
-                if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom + overdraw)
+                if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom)
                     Scene.Destroy(entity);
 
-                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
+                sb.Draw(drawable.Texture, pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;
             }
         }

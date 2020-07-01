@@ -33,7 +33,7 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drw = ref entity.Get<DrawableComponent>();
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drw.SrcRect.Width, drw.SrcRect.Height);
-                sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
+                sb.Draw(DbgBoundingBoxComponent.Texture, destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
                 Global.DrawCalls++;
             }
         }

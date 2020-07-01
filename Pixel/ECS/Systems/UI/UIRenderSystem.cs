@@ -30,7 +30,7 @@ namespace Pixel.ECS.Systems.UI
                     continue;
 
                 ref readonly var drawable = ref child.Get<DrawableComponent>();
-                spriteBatch.Draw(AssetManager.GetTexture(drawable.TextureName), drawable.DestRect, drawable.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
+                spriteBatch.Draw(drawable.Texture, drawable.DestRect, drawable.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
                 Global.DrawCalls++;
 
                 if (child is Textblock)
@@ -58,7 +58,7 @@ namespace Pixel.ECS.Systems.UI
 
                         ref readonly var subDrawable = ref sub.Get<DrawableComponent>();
                         var dest = new Rectangle(drawable.DestRect.X + subDrawable.DestRect.X, drawable.DestRect.Y + subDrawable.DestRect.Y, subDrawable.DestRect.Width, subDrawable.DestRect.Height);
-                        spriteBatch.Draw(AssetManager.GetTexture(drawable.TextureName), dest, subDrawable.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(drawable.Texture, dest, subDrawable.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
                         Global.DrawCalls++;
                     }
                 }

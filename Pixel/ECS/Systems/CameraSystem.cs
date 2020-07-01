@@ -27,7 +27,7 @@ namespace Pixel.ECS.Systems
                 var camY = (int)(camLoc.Y / Global.TileSize) * Global.TileSize;
 
                 scene.Camera.ScreenRect = new Rectangle((int)(camX - (Global.HalfVirtualScreenWidth / fol.Zoom)), (int)(camY - (Global.HalfVirtualScreenHeight / fol.Zoom)), (int)(Global.VirtualScreenWidth / fol.Zoom), (int)(Global.VirtualScreenHeight / fol.Zoom));
-                scene.Camera.ServerScreenRect = new Rectangle((int)camX - Global.VirtualScreenWidth, (int)camY - Global.VirtualScreenHeight, (int)Global.VirtualScreenWidth*2, (int)Global.VirtualScreenHeight*2);
+                scene.Camera.ServerScreenRect = new Rectangle(camX - (Global.HalfVirtualScreenWidth + (Global.TileSize*4)), camY - (Global.HalfVirtualScreenHeight + (Global.TileSize*4)), Global.VirtualScreenWidth + (Global.TileSize*4), Global.VirtualScreenHeight + (Global.TileSize*4));
                 scene.Camera.Transform.ViewMatrix = Matrix.CreateTranslation(-camLoc.X, -camLoc.Y, 0)
                                                      * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
                                                      * Matrix.CreateScale(fol.Zoom)
