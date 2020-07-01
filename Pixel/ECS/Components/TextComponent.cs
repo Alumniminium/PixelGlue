@@ -8,7 +8,7 @@ namespace Pixel.ECS.Components
         public string Text;
         public string FontName;
 
-        public TextComponent(int ownerId, string text, string font = "profont")
+        public TextComponent(int ownerId, string text, string font = "profont_12")
         {
             EntityId = ownerId;
             Text = text;

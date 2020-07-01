@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Enums;
+using Pixel.Scenes;
 using PixelShared;
 
 namespace Pixel.ECS.Systems
@@ -16,12 +17,14 @@ namespace Pixel.ECS.Systems
         public double updateRate;
         private readonly double weight;
         private readonly int numerator;
-        public Scene Scene;
-        public SmartFramerate(Scene scene, int oldFrameWeight)
+        public Scene Scene => SceneManager.ActiveScene;
+        private readonly string[] lines = new string[2];
+        public SmartFramerate(int oldFrameWeight)
         {
-            Scene = scene;
             numerator = oldFrameWeight;
             weight = (double)oldFrameWeight / ((double)oldFrameWeight - 1d);
+            lines[0] = string.Empty;
+            lines[1] = string.Empty;
         }
         public void FixedUpdate(float _)
         {
@@ -29,12 +32,8 @@ namespace Pixel.ECS.Systems
             if (updateStringsCounter > 10)
             {
                 updateStringsCounter = 0;
-                   lines = new[]
-                {
-                    $"PixelGlue Engine (Entities: {Scene.Entities.Count}, Draw calls: {Global.DrawCalls})",
-                    "FPS: " + updateRate.ToString("##0.00"),
-                    $"Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms"
-                };
+                lines[0] = $"Pixel Engine (Entities: {Scene.Entities.Count}, Draw calls: {Global.DrawCalls})";
+                lines[1] = $"FPS: {updateRate:##0} (Total: {Global.DrawProfiler.Time + Global.UpdateProfiler.Time:##0.00}ms, Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms)";
             }
         }
         public void Update(float timeSinceLastFrame)
@@ -48,17 +47,11 @@ namespace Pixel.ECS.Systems
                 counter = 0;
             }
         }
-        string[] lines = new[]
-        {
-            $"PixelGlue Engine (Entities: 0, Draw calls: {Global.DrawCalls})",
-            "FPS:",
-            $"Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms"
-        };
+
         public void Draw(SpriteBatch sb)
         {
-            AssetManager.Fonts["profont"].Draw(lines[0], new Vector2(16, 16), sb);
-            AssetManager.Fonts["profont"].Draw(lines[1], new Vector2(16, 64), sb);
-            AssetManager.Fonts["profont"].Draw(lines[2], new Vector2(16, 96), sb);
+            for (int i = 0; i < lines.Length; i++)
+                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 32 * i, lines[i]);
         }
     }
 }

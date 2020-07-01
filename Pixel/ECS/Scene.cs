@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
+using Pixel.World;
 using PixelShared;
 using System;
 using System.Collections.Concurrent;
@@ -20,8 +21,8 @@ namespace Pixel.ECS
         public bool IsReady;
         public int LastEntityId = 1;
         public ConcurrentDictionary<int, Entity> Entities;
-        public List<IEntitySystem> Systems;
         public ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
+        public List<IEntitySystem> Systems;
         public Camera Camera;
 
         public Scene()
@@ -34,6 +35,7 @@ namespace Pixel.ECS
 
         public virtual void Initialize()
         {
+            Camera=CreateEntity<Camera>();
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
@@ -79,7 +81,7 @@ namespace Pixel.ECS
 
         public virtual void Destroy(Entity entity)
         {
-            foreach(var child in entity.Children)
+            foreach (var child in entity.Children)
                 Destroy(child);
             Entities.TryRemove(entity.EntityId, out _);
             EntityIdToUniqueId.TryRemove(entity.EntityId, out var uid);
@@ -91,14 +93,16 @@ namespace Pixel.ECS
         {
             var entity = new T
             {
-                EntityId = LastEntityId,
+                EntityId = LastEntityId++,
                 Scene = this
             };
-            entity.Add(new NetworkComponent(this,entity.EntityId,uniqueId));
+            ApplyArchetype(uniqueId, entity);
+
+            entity.Add(new NetworkComponent(this, entity.EntityId, uniqueId));
             Entities.TryAdd(entity.EntityId, entity);
-            LastEntityId++;
             return entity;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual T CreateEntity<T>() where T : Entity, new()
         {
@@ -128,6 +132,60 @@ namespace Pixel.ECS
                     return t;
             return null;
         }
+        
+        private void ApplyArchetype<T>(int uniqueId, T entity) where T : Entity, new()
+        {
+            switch (entity)
+            {
+                case Player _:
+                    entity.Add(new InputComponent(entity.EntityId));
+                    entity.Add(new CameraFollowTagComponent(entity.EntityId, 1));
+                    entity.Add(new DrawableComponent(entity.EntityId, "character.png", new Rectangle(0, 2, 16, 16)));
+                    entity.Add(new VelocityComponent(entity.EntityId, 64));
+                    entity.Add(new PositionComponent(entity.EntityId, 0, 0, 0));
+                    entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
+                    var nt = CreateEntity<NameTag>();
+                    nt.Add(new TextComponent(nt.EntityId, $"Name: waiting..", "profont_12"));
+                    nt.Add(new PositionComponent(nt.EntityId, -48, -48, 0));
+                    var nt2 = CreateEntity<NameTag>();
+                    nt2.Add(new TextComponent(nt2.EntityId, $"Id:   {entity.EntityId}", "profont_12"));
+                    nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
+                    var nt3 = CreateEntity<NameTag>();
+                    nt3.Add(new TextComponent(nt3.EntityId, $"UID:  {uniqueId}", "profont_12"));
+                    nt3.Add(new PositionComponent(nt3.EntityId, -48, -16, 0));
+                    nt.Parent = entity;
+                    nt2.Parent = entity;
+                    nt3.Parent = entity;
+                    entity.Children.Add(nt);
+                    entity.Children.Add(nt2);
+                    entity.Children.Add(nt3);
+                    break;
+                case Npc _:
+                    var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
+                    entity.Add(new DrawableComponent(entity.EntityId, srcEntity.TextureName, srcEntity.SrcRect));
+                    entity.Add(new PositionComponent(entity.EntityId, 0, 0, 0));
+                    entity.Add(new VelocityComponent(entity.EntityId, 32));
+                    entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
+                    var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
+                    nt = CreateEntity<NameTag>();
+                    nt.Add(new TextComponent(nt.EntityId, $"Name: {name}", "profont_12"));
+                    nt.Add(new PositionComponent(nt.EntityId, -48, -48, 0));
+                    nt2 = CreateEntity<NameTag>();
+                    nt2.Add(new TextComponent(nt2.EntityId, $"Id:  {entity.EntityId}", "profont_12"));
+                    nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
+                    nt3 = CreateEntity<NameTag>();
+                    nt3.Add(new TextComponent(nt3.EntityId, $"UID: {uniqueId}", "profont_12"));
+                    nt3.Add(new PositionComponent(nt3.EntityId, -48, -16, 0));
+                    nt.Parent = entity;
+                    nt2.Parent = entity;
+                    nt3.Parent = entity;
+                    entity.Children.Add(nt);
+                    entity.Children.Add(nt2);
+                    entity.Children.Add(nt3);
+                    break;
+            }
+        }
+
         public override int GetHashCode() => Id;
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }

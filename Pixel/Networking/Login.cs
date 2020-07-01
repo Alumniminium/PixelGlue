@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
 using Pixel.Entities;
@@ -12,24 +13,17 @@ namespace Pixel.Networking.Handlers
     {
         internal static void Handle(MsgLogin packet)
         {
-            var (user, pass) = packet.GetUserPass();
             var scene = SceneManager.ActiveScene;
-
             var player = scene.Find<Player>();
 
-            FConsole.WriteLine("[Net][MsgLogin] Login Packet for Player " + user + " using password: " + pass);
-
-            if (player.Has<NetworkComponent>())
-            {
-                FConsole.WriteLine("[Net][MsgLogin] " + user + " failed to authenticate! (not implemented)");
+            if (player != null)
                 scene.Destroy(player);
-            }
-            else
-            {
-                FConsole.WriteLine("[Net][MsgLogin] " + user + " authenticated! (not implemented)");
-                player.Add(new NetworkComponent(scene, player.EntityId, packet.UniqueId));
-                NetworkSystem.ConnectionState = ConnectionState.Authenticated;
-            }
+
+            player = scene.CreateEntity<Player>(packet.UniqueId);
+            player.NameTag.Text = $"Name: {packet.GetUsername()}";
+            FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
+            player.Add(new NetworkComponent(scene, player.EntityId, packet.UniqueId));
+            NetworkSystem.ConnectionState = ConnectionState.Authenticated;
         }
     }
 }

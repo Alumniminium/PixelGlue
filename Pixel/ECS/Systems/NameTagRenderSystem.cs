@@ -3,6 +3,7 @@ using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems
@@ -12,12 +13,8 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Name Tag Render System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public Scene Scene { get; set; }
+        public Scene Scene => SceneManager.ActiveScene;
         public List<Entity> Entities{ get; set; }
-        public NameTagRenderSystem(Scene scene)
-        {
-            Scene = scene;
-        }
 
         public void FixedUpdate(float deltaTime) { }
         public void Update(float deltaTime) 
@@ -31,13 +28,13 @@ namespace Pixel.ECS.Systems
             {
                 foreach (var child in entity.Children)
                 {
-                    if (!child.Has<TextComponent>() || !child.Has<PositionComponent>() || !entity.Has<PositionComponent>())
+                    if (!child.Has<TextComponent>() || !child.Has<PositionComponent>())
                         continue;
 
                     ref readonly var pos = ref entity.Get<PositionComponent>();
-                    if (pos.Position.X < Scene.Camera.ScreenRect.Left || pos.Position.X > Scene.Camera.ScreenRect.Right)
+                    if (pos.Position.X < Scene.Camera.ServerScreenRect.Left || pos.Position.X > Scene.Camera.ServerScreenRect.Right)
                         continue;
-                    if (pos.Position.Y < Scene.Camera.ScreenRect.Top || pos.Position.Y > Scene.Camera.ScreenRect.Bottom)
+                    if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom)
                         continue;
 
                     ref readonly var offset = ref child.Get<PositionComponent>();
