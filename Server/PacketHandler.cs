@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Threading;
+using Microsoft.Xna.Framework;
 using PixelShared.TerribleSockets.Client;
 using PixelShared.TerribleSockets.Packets;
 using System;
@@ -45,6 +46,7 @@ namespace Server
                             Console.WriteLine("Authentication failed.");
 
                         player.Socket.Send(msgLogin);
+                        Thread.Sleep(1000);
                         player.Socket.Send(MsgWalk.Create(player.UniqueId, player.Location));
                         break;
                     }
