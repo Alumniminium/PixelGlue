@@ -33,7 +33,7 @@ namespace Pixel.ECS.Systems
                 if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom + overdraw)
                     Scene.Destroy(entityId);
 
-                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
+                sb.Draw(drawable.Texture, pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;
             }
         }
