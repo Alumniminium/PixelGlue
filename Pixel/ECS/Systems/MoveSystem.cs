@@ -3,6 +3,7 @@ using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using PixelShared.TerribleSockets.Packets;
 
 namespace Pixel.ECS.Systems
@@ -38,10 +39,12 @@ namespace Pixel.ECS.Systems
                         pc.Position = pc.Destination;
                         vc.Velocity = Vector2.Zero;
                     }
-                    //if (entity.Has<NetworkComponent>())
-                    //    NetworkSystem.Send(MsgWalk.Create(entity.UniqueId, pc.Position));
+                    if (SceneManager.ActiveScene.Player.EntityId == entity)
+                    {
+                        ref readonly var net = ref ComponentArray<NetworkComponent>.Get(entity);
+                        NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pc.Position));
+                    }
                 }
-
             }
         }
     }

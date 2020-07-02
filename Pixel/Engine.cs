@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Scenes;
@@ -39,10 +40,10 @@ namespace Pixel
                 HardwareModeSwitch = false
             };
             _graphics.ApplyChanges();
-            Global.Device = _graphics.GraphicsDevice;
         }
         protected override void LoadContent()
         {
+            Global.Device = GraphicsDevice;
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
@@ -76,8 +77,9 @@ namespace Pixel
             if (SceneManager.ActiveScene.IsReady)
                 SceneManager.ActiveScene.Draw(_spriteBatch);
 
-            base.Draw(gameTime);
+            Global.Metrics = GraphicsDevice.Metrics;
             Global.DrawProfiler.StopMeasuring();
+            base.Draw(gameTime);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Pixel.Scenes
         public override void Initialize()
         {
             var redbox = CreateEntity<UIRectangle>();
-            redbox.Setup(0,0,Global.ScreenWidth,74,Color.IndianRed);
+            redbox.Setup(0,0,Global.ScreenWidth,104,Color.IndianRed);
 
             Systems.Add(new NetworkSystem());
             Systems.Add(new InputSystem());
