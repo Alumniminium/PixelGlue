@@ -50,6 +50,8 @@ namespace PixelShared.TerribleSockets.Queues
         }
         private static void AssemblePacket(SocketAsyncEventArgs e)
         {
+            try
+            {
             while (true)
             {
                 var connection = (ClientSocket)e.UserToken;
@@ -91,6 +93,8 @@ namespace PixelShared.TerribleSockets.Queues
                     continue;
                 break;
             }
+            }
+            catch{}
         }
         private static unsafe void Copy(SocketAsyncEventArgs e, ClientSocket connection, bool header = false)
         {
