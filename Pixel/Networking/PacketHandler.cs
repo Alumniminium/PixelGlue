@@ -1,4 +1,5 @@
 using Pixel.Networking.Handlers;
+using PixelShared.IO;
 using System;
 using System.Buffers;
 
@@ -9,6 +10,7 @@ namespace Pixel.Networking
         public static void Handle(byte[] buffer)
         {
             var packetId = BitConverter.ToUInt16(buffer, 4);
+            FConsole.WriteLine($"Got Packet {packetId}");
             switch (packetId)
             {
                 case 1000:
