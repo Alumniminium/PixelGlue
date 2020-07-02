@@ -7,7 +7,7 @@ namespace Pixel.Helpers
     public static class CompIter<T> where T : struct
     {
         private static float _lastUpdateFrame;
-        private static readonly List<int> _items = new List<int>(10000);
+        private static readonly List<int> _items = new List<int>(250);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Update()
         {    
@@ -30,7 +30,7 @@ namespace Pixel.Helpers
     public static class CompIter<T,TT> where T : struct where TT:struct
     {
         private static float _lastUpdateFrame;
-        private static readonly List<int> _items = new List<int>(10000);
+        private static readonly List<int> _items = new List<int>(250);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Update()
         {    
@@ -53,7 +53,7 @@ namespace Pixel.Helpers
     public static class CompIter<T,TT,TTT> where T : struct where TT:struct where TTT:struct
     {
         private static float _lastUpdateFrame;
-        private static readonly List<int> _items = new List<int>(10000);
+        private static readonly List<int> _items = new List<int>(250);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Update()
         {    
@@ -76,7 +76,7 @@ namespace Pixel.Helpers
     public static class CompIter<T,TT,TTT,TTTT> where T : struct where TT:struct where TTT:struct where TTTT : struct
     {
         private static float _lastUpdateFrame;
-        private static readonly List<int> _items = new List<int>(10000);
+        private static readonly List<int> _items = new List<int>(250);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Update()
         {    
@@ -88,6 +88,7 @@ namespace Pixel.Helpers
         {
             if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
+            var  x = (default(T), default(TT),default(TTT),default(TTTT));
 
             for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
                 if (ComponentArray<T>.HasFor(entityId)&&ComponentArray<TT>.HasFor(entityId)&&ComponentArray<TTT>.HasFor(entityId)&&ComponentArray<TTTT>.HasFor(entityId))

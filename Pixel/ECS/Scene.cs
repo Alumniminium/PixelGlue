@@ -7,9 +7,11 @@ using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.World;
 using PixelShared;
+using PixelShared.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -52,10 +54,18 @@ namespace Pixel.ECS
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Update(GameTime deltaTime)
         {
+            var stopwatch = Stopwatch.StartNew();
+            Console.Clear();
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
-                    Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+                    {
+                        Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+                        var elapsed = Math.Round(stopwatch.Elapsed.TotalMilliseconds,4);
+                        if(elapsed > 1)
+                            FConsole.WriteLine($"{elapsed}ms {Systems[i].Name}");
+                        stopwatch.Restart();
+                    }
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
