@@ -4,7 +4,7 @@ namespace Pixel.Enums
 {
     public interface IEntitySystem
     {
-        string Name { get; set; }
+        string Name { get; }
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public void Initialize()

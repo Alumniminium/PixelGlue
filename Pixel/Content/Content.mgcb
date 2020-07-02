@@ -10,8 +10,21 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:../../Build/Peon501.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin ../../Build/Content/character.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/character.png;character.png
 
 #begin ../../Build/Content/character.png
 /importer:TextureImporter
@@ -61,6 +74,26 @@
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/emoji_1.png;emoji_1.png
 
+#begin ../../Build/Content/height_mountain_mono.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/height_mountain_mono.png;height_mountain_mono.png
+
+#begin ../../Build/Content/MapRenderer.fx
+/importer:EffectImporter
+/processor:LocalEffectProcessor
+/processorParam:CompilerPath=/.wine/drive_c/Program Files (x86)/MSBuild/MonoGame/v3.0/Tools/2MGFX.exe
+/processorParam:WinePath=/opt/wine-staging/bin/wine64
+/processorParam:DebugMode=Auto
+/build:../../Build/Content/MapRenderer.fx;MapRenderer.fx
+
 #begin ../../Build/Content/profont_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -84,6 +117,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/profont_12_0.png;profont_12_0.png
+
+#begin ../../Build/Content/rivers.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Build/Content/rivers.png;rivers.png
 
 #begin ../../Build/Content/selectionrect3.png
 /importer:TextureImporter
