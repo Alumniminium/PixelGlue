@@ -85,13 +85,13 @@ namespace Pixel.ECS.Systems
         {
             if(inputComponent.Scroll == m.ScrollWheelValue)
                 return;
-            
-            inputComponent.Scroll = m.ScrollWheelValue;
-
+        
             if (m.ScrollWheelValue > inputComponent.Scroll)
                 camera.Zoom *= 2;
             else if (m.ScrollWheelValue < inputComponent.Scroll)
                 camera.Zoom /= 2;
+                
+            inputComponent.Scroll = m.ScrollWheelValue;
             
             WorldGen.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
         }

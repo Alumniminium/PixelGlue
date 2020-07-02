@@ -1,6 +1,5 @@
 using Pixel.ECS;
 using Pixel.ECS.Components;
-using Pixel.Enums;
 using Pixel.Helpers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -21,9 +20,11 @@ namespace Pixel.Entities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add<T>(T component) where T : struct => ComponentArray<T>.Add(EntityId,component);
+        public void Add<T>(T component) where T : struct => ComponentArray<T>.AddFor(this,component);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Has<T>() where T : struct, IEntityComponent => ComponentArray<T>.HasFrom(EntityId);
+        public void Add<T>() where T : struct => ComponentArray<T>.AddFor(this);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Has<T>() where T : struct => ComponentArray<T>.HasFor(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
 

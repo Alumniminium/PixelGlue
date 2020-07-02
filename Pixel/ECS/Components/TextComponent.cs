@@ -1,16 +1,12 @@
-﻿using Pixel.Enums;
-
-namespace Pixel.ECS.Components
+﻿namespace Pixel.ECS.Components
 {
-    public struct TextComponent : IEntityComponent
+    public struct TextComponent
     {
-        public int EntityId { get; set; }
         public string Text;
         public string FontName;
 
-        public TextComponent(int ownerId, string text, string font = "profont_12")
+        public TextComponent(string text, string font = "profont_12")
         {
-            EntityId = ownerId;
             Text = text;
             FontName = font;
         }

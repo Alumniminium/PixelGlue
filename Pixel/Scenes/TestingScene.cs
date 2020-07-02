@@ -43,32 +43,7 @@ namespace Pixel.Scenes
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont");
             AssetManager.LoadTexture("tree");
             AssetManager.LoadTexture("dawn");
-            AssetManager.LoadTexture("deep_water", TextureGen.Noise("#124E89", NoisePattern.None));
-            AssetManager.LoadTexture("water", TextureGen.Noise("#0099DB", NoisePattern.None));
-            AssetManager.LoadTexture("water1", TextureGen.Noise("#0099DB", NoisePattern.Waves));
-            AssetManager.LoadTexture("water2", TextureGen.Noise("#0099DB", NoisePattern.Waves));
-            AssetManager.LoadTexture("water3", TextureGen.Noise("#0099DB", NoisePattern.Waves));
-            AssetManager.LoadTexture("water4", TextureGen.Noise("#0099DB", NoisePattern.Waves));
-            AssetManager.LoadTexture("water5", TextureGen.Noise("#0099DB", NoisePattern.Waves));
-            AssetManager.LoadTexture("shallow_water", TextureGen.Noise("#4CB7E5", NoisePattern.None));
-            AssetManager.LoadTexture("sand", TextureGen.Noise("#EAD4AA", NoisePattern.Rough));
-            AssetManager.LoadTexture("sand2", TextureGen.Noise("#E8B796", NoisePattern.Rough));
-            AssetManager.LoadTexture("sand3", TextureGen.Noise("#E4A672", NoisePattern.Rough));
-            AssetManager.LoadTexture("dirt", TextureGen.Noise("#C28569", NoisePattern.Rough));
-            AssetManager.LoadTexture("plains", TextureGen.Noise("#63C74D", NoisePattern.Rough));
-            AssetManager.LoadTexture("plains1", TextureGen.Noise("#63C74D", NoisePattern.Flowers));
-            AssetManager.LoadTexture("plains2", TextureGen.Noise("#63C74D", NoisePattern.Flowers));
-            AssetManager.LoadTexture("plains3", TextureGen.Noise("#63C74D", NoisePattern.Flowers));
-            AssetManager.LoadTexture("plains4", TextureGen.Noise("#63C74D", NoisePattern.Flowers));
-            AssetManager.LoadTexture("plains5", TextureGen.Noise("#63C74D", NoisePattern.Flowers));
-            AssetManager.LoadTexture("grass", TextureGen.Noise("#3E8948", NoisePattern.None));
-            AssetManager.LoadTexture("grass2", TextureGen.Noise("#265c42", NoisePattern.None));
-            AssetManager.LoadTexture("grass3", TextureGen.Noise("#193c3e", NoisePattern.None));
-            AssetManager.LoadTexture("trees", TextureGen.Noise("#265C42", NoisePattern.None));
-            AssetManager.LoadTexture("rock", TextureGen.Noise("#B86F50", NoisePattern.Rough));
-            AssetManager.LoadTexture("rock2", TextureGen.Noise("#733e39", NoisePattern.Rough));
-            AssetManager.LoadTexture("rock3", TextureGen.Noise("#3e2731", NoisePattern.Rough));
-            AssetManager.LoadTexture("snow", TextureGen.Noise("#C0CBDC", NoisePattern.None));
+            AssetManager.LoadTexture("pixel",TextureGen.Pixel(Global.Device,"000000"));           
             base.LoadContent(cm);
         }
     }

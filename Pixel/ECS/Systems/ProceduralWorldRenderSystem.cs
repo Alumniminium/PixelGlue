@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Enums;
@@ -14,10 +15,13 @@ namespace Pixel.ECS.Systems
         public bool IsReady { get; set; }
         public Scene Scene => SceneManager.ActiveScene;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float deltaTime) 
         {
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float timeSinceLastFrame) { }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(SpriteBatch sb)
         {
             if (Scene.Camera == null)
@@ -30,12 +34,12 @@ namespace Pixel.ECS.Systems
 
                     if (terrainTile.HasValue)
                     {
-                        sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.9f);
+                        sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, terrainTile.Value.Color, 0, Vector2.Zero, SpriteEffects.None, 0.9f);
                         Global.DrawCalls++;
                     }
                     if (riverTile.HasValue && terrainTile.HasValue && !(terrainTile.Value.TextureName == "water" || terrainTile.Value.TextureName == "shallow_water" || terrainTile.Value.TextureName == "deep_water"))
                     {
-                        sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.8f);
+                        sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, riverTile.Value.Color, 0, Vector2.Zero, SpriteEffects.None, 0.8f);
                         Global.DrawCalls++;
                     }
                 }

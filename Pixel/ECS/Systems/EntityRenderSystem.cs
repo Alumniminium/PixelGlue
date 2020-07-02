@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
@@ -15,23 +16,27 @@ namespace Pixel.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public Scene Scene => SceneManager.ActiveScene;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float deltaTime) 
         {
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float timeSinceLastFrame) { }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(SpriteBatch sb)
         {
-            var overdraw = Global.TileSize * 4;
             var origin = new Vector2(8);
             foreach (var entityId in CompIter<DrawableComponent, PositionComponent>.Get())
             {
                 ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entityId);
                 ref readonly var drawable = ref ComponentArray<DrawableComponent>.Get(entityId);
 
-                if (pos.Position.X < Scene.Camera.ServerScreenRect.Left - overdraw || pos.Position.X > Scene.Camera.ServerScreenRect.Right + overdraw)
-                    Scene.Destroy(entityId);
-                if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top - overdraw || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom + overdraw)
-                    Scene.Destroy(entityId);
+                if (pos.Position.X < Scene.Camera.ServerScreenRect.Left || pos.Position.X > Scene.Camera.ServerScreenRect.Right
+                || pos.Position.Y < Scene.Camera.ServerScreenRect.Top || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom)
+                    {
+                        Scene.Destroy(entityId);
+                        continue;
+                    }
 
                 sb.Draw(drawable.Texture, pos.Position + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;

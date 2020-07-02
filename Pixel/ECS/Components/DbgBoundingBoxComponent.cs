@@ -4,7 +4,7 @@ using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {
-    public struct DbgBoundingBoxComponent : IEntityComponent
+    public struct DbgBoundingBoxComponent 
     {
         public int EntityId { get; set; }
         public const string TextureName = "selectionrect4";

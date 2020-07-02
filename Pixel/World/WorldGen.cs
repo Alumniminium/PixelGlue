@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using PixelShared;
 using PixelShared.Enums;
+using PixelShared.Extensions;
 using PixelShared.Noise;
 using System;
 using System.Collections.Concurrent;
@@ -119,11 +120,11 @@ namespace Pixel.World
             var val = RiverNoise.GetNoise(x, y);
 
             if (val >= 0.98f)
-                return new DrawableComponent(0, "water", srcRect, dstRect);
+                return new DrawableComponent("0099DB".ToColor(), dstRect);
             else if (val > 0.96f)
-                return new DrawableComponent(0, "shallow_water", srcRect, dstRect);
+                return new DrawableComponent("4CB7E5".ToColor(), dstRect);
             else if (val > 0.945f)
-                return new DrawableComponent(0, "dirt", srcRect, dstRect);
+                return new DrawableComponent("C28569".ToColor(), dstRect);
             else
                 return null;
         }
@@ -148,21 +149,21 @@ namespace Pixel.World
 
             DrawableComponent? ground;
             if (val > 0.9f)
-                ground = new DrawableComponent(0, "snow", srcRect, dstRect);
+                ground = new DrawableComponent("C0CBDC".ToColor(), dstRect);
             else if (val > 0.7f)
-                ground = new DrawableComponent(0, "rock3", srcRect, dstRect);
+                ground = new DrawableComponent("3e2731".ToColor(), dstRect);
             else if (val > 0.6f)
-                ground = new DrawableComponent(0, "rock2", srcRect, dstRect);
+                ground = new DrawableComponent("733e39".ToColor(), dstRect);
             else if (val > 0.5f)
-                ground = new DrawableComponent(0, "rock", srcRect, dstRect);
+                ground = new DrawableComponent("B86F50".ToColor(), dstRect);
             else if (val > 0.4f)
-                ground = new DrawableComponent(0, "dirt", srcRect, dstRect);
+                ground = new DrawableComponent("C28569".ToColor(), dstRect);
             else if (val > 0.3f)
-                ground = new DrawableComponent(0, "sand3", srcRect, dstRect);
+                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
             else if (val > -0.3)
-                ground = new DrawableComponent(0, "sand2", srcRect, dstRect);
+                ground = new DrawableComponent("E8B796".ToColor(), dstRect);
             else
-                ground = new DrawableComponent(0, "sand", srcRect, dstRect);
+                ground = new DrawableComponent("EAD4AA".ToColor(), dstRect);
 
             return (ground, decor);
         }
@@ -176,15 +177,15 @@ namespace Pixel.World
             //val += 0.75f * RiverNoise.GetNoise(x, y);
 
             if (val > 0.7f)
-                ground = new DrawableComponent(0, "rock", srcRect, dstRect);
+                ground = new DrawableComponent("B86F50".ToColor(), dstRect);
             else if (val > 0.4f)
-                ground = new DrawableComponent(0, "sand3", srcRect, dstRect);
+                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
             else if (val > 0f)
-                ground = new DrawableComponent(0, "sand2", srcRect, dstRect);
+                ground = new DrawableComponent("E8B796".ToColor(), dstRect);
             else if (val > -0.6)
-                ground = new DrawableComponent(0, "sand3", srcRect, dstRect);
+                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
             else
-                ground = new DrawableComponent(0, "dirt", srcRect, dstRect);
+                ground = new DrawableComponent("C28569".ToColor(), dstRect);
 
             return (ground, decor);
         }
@@ -199,15 +200,15 @@ namespace Pixel.World
             //val += 0.75f * RiverNoise.GetNoise(x, y);
 
             if (val > 0.6f)
-                ground = new DrawableComponent(0, "grass3", srcRect, dstRect);
+                ground = new DrawableComponent("193c3e".ToColor(), dstRect);
             else if (val > 0.4f)
-                ground = new DrawableComponent(0, "grass2", srcRect, dstRect);
+                ground = new DrawableComponent("265c42".ToColor(), dstRect);
             else if (val > -0.2f)
-                ground = new DrawableComponent(0, "grass", srcRect, dstRect);
+                ground = new DrawableComponent("3E8948".ToColor(), dstRect);
             else if (val > -0.4)
-                ground = new DrawableComponent(0, "shallow_water", srcRect, dstRect);
+                ground = new DrawableComponent("4CB7E5".ToColor(), dstRect);
             else
-                ground = new DrawableComponent(0, "water", srcRect, dstRect);
+                ground = new DrawableComponent("0099DB".ToColor(), srcRect);
             return (ground, decor);
         }
 
@@ -215,20 +216,20 @@ namespace Pixel.World
         {
             Dictionary<float, (DrawableComponent, DrawableComponent?)> heights = new Dictionary<float, (DrawableComponent, DrawableComponent?)>()
             {
-                [0.85f] = (new DrawableComponent(0, "snow", srcRect, dstRect), null),
-                [0.80f] = (new DrawableComponent(0, "rock2", srcRect, dstRect), null),
-                [0.75f] = (new DrawableComponent(0, "dawn", new Rectangle(480, 352, 16, 16), dstRect), null),
-                [0.70f] = (new DrawableComponent(0, "dawn", new Rectangle(96, 272, 16, 16), dstRect), null),
-                [0.62f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 4, 0, 16, 16), dstRect), null),
-                [0.60f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 5, 0, 16, 16), dstRect), null),
-                [0.42f] = (new DrawableComponent(0, "dawn", new Rectangle(32, 0, 16, 16), dstRect), new DrawableComponent(0, "dawn", new Rectangle(96 + 16, 0, 16, 16), dstRect)),
-                [0.40f] = (new DrawableComponent(0, "dawn", new Rectangle(16, 0, 16, 16), dstRect), new DrawableComponent(0, "dawn", new Rectangle(96 + 32, 0, 16, 16), dstRect)),
-                [0.35f] = (new DrawableComponent(0, "dawn", new Rectangle(96, 0, 16, 16), dstRect), null),
-                [0.30f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 3, 16, 16, 16), dstRect), null),
-                [0.20f] = (new DrawableComponent(0, "dawn", new Rectangle(16 * 2, 16, 16, 16), dstRect), null),
-                [-0.5f] = (new DrawableComponent(0, "dawn", new Rectangle(16, 0, 16, 16), dstRect), null),
-                [-0.6f] = (new DrawableComponent(0, "dawn", new Rectangle(144, 496, 16, 16), dstRect), null),
-                [-1f] = (new DrawableComponent(0, "dawn", new Rectangle(128, 496, 16, 16), dstRect), null),
+                [0.85f] = (new DrawableComponent("C0CBDC".ToColor(), dstRect), null),
+                [0.80f] = (new DrawableComponent("733e39".ToColor(), dstRect), null),
+                [0.75f] = (new DrawableComponent("dawn", new Rectangle(480, 352, 16, 16), dstRect), null),
+                [0.70f] = (new DrawableComponent("dawn", new Rectangle(96, 272, 16, 16), dstRect), null),
+                [0.62f] = (new DrawableComponent("dawn", new Rectangle(16 * 4, 0, 16, 16), dstRect), null),
+                [0.60f] = (new DrawableComponent("dawn", new Rectangle(16 * 5, 0, 16, 16), dstRect), null),
+                [0.42f] = (new DrawableComponent("dawn", new Rectangle(32, 0, 16, 16), dstRect), new DrawableComponent("dawn", new Rectangle(96 + 16, 0, 16, 16), dstRect)),
+                [0.40f] = (new DrawableComponent("dawn", new Rectangle(16, 0, 16, 16), dstRect), new DrawableComponent("dawn", new Rectangle(96 + 32, 0, 16, 16), dstRect)),
+                [0.35f] = (new DrawableComponent("dawn", new Rectangle(96, 0, 16, 16), dstRect), null),
+                [0.30f] = (new DrawableComponent("dawn", new Rectangle(16 * 3, 16, 16, 16), dstRect), null),
+                [0.20f] = (new DrawableComponent("dawn", new Rectangle(16 * 2, 16, 16, 16), dstRect), null),
+                [-0.5f] = (new DrawableComponent("dawn", new Rectangle(16, 0, 16, 16), dstRect), null),
+                [-0.6f] = (new DrawableComponent("dawn", new Rectangle(144, 496, 16, 16), dstRect), null),
+                [-1f] = (new DrawableComponent("dawn", new Rectangle(128, 496, 16, 16), dstRect), null),
             };
 
             var val = PlainNoise.GetNoise(x / 32, y / 32);

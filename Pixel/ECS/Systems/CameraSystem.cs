@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
@@ -16,7 +17,9 @@ namespace Pixel.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float _) { }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;

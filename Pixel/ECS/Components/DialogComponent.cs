@@ -2,7 +2,7 @@ using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {
-    public struct DialogComponent : IEntityComponent
+    public struct DialogComponent
     {
         public int EntityId { get; set; }
         public int Id;

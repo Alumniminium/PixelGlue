@@ -12,7 +12,7 @@ namespace Pixel.Entities.UI
         {
             var texture = TextureGen.Blank(Global.Device, 1, 1, color);
             AssetManager.LoadTexture(color.PackedValue.ToString(),texture);
-            Add(new DrawableComponent(EntityId, color.PackedValue.ToString(), new Rectangle(0, 0, 1, 1), new Rectangle(x, y, w, h)));
+            Add(new DrawableComponent(color.PackedValue.ToString(), new Rectangle(0, 0, 1, 1), new Rectangle(x, y, w, h)));
         }
     }
 }

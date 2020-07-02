@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Enums;
@@ -26,6 +27,7 @@ namespace Pixel.ECS.Systems
             lines[0] = string.Empty;
             lines[1] = string.Empty;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float _)
         {
             updateStringsCounter++;
@@ -36,6 +38,7 @@ namespace Pixel.ECS.Systems
                 lines[1] = $"FPS: {updateRate:##0} (Total: {Global.DrawProfiler.Time + Global.UpdateProfiler.Time:##0.00}ms, Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms)";
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float timeSinceLastFrame)
         {
             counter++;
@@ -48,6 +51,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(SpriteBatch sb)
         {
             for (int i = 0; i < lines.Length; i++)

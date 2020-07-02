@@ -1,83 +1,98 @@
-using Pixel.Enums;
 using PixelShared;
-using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.Helpers
 {
-    public static class CompIter<T, T2, T3, T4> where T : struct, IEntityComponent where T2 : struct, IEntityComponent where T3 : struct, IEntityComponent where T4 : struct, IEntityComponent
+    public static class CompIter<T> where T : struct
     {
-        private static readonly List<int> _items = new List<int>();
-        internal static void Update() => _items.Clear();
-        private static float _itemsFrame;
+        private static float _lastUpdateFrame;
+        private static readonly List<int> _items = new List<int>(10000);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Update()
+        {    
+            _lastUpdateFrame = Global.FrameCounter;
+             _items.Clear();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
-            if (_itemsFrame != Global.FrameCounter)
+            if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
-            _itemsFrame = Global.FrameCounter;
-            for (int i = 0; i < Scenes.SceneManager.ActiveScene.Entities.Count; i++)
-            {
-                if (!ComponentArray<T>.HasFrom(i) || !ComponentArray<T2>.HasFrom(i)|| !ComponentArray<T3>.HasFrom(i)|| !ComponentArray<T4>.HasFrom(i))
-                    continue;
-                _items.Add(i);
-            }
+
+            for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
+                if (ComponentArray<T>.HasFor(entityId))
+                    _items.Add(entityId);
+
             return _items;
         }
     }
-    public static class CompIter<T, T2, T3> where T : struct, IEntityComponent where T2 : struct, IEntityComponent where T3 : struct, IEntityComponent
+    public static class CompIter<T,TT> where T : struct where TT:struct
     {
-        private static readonly List<int> _items = new List<int>();
-        internal static void Update() => _items.Clear();
-        private static float _itemsFrame;
+        private static float _lastUpdateFrame;
+        private static readonly List<int> _items = new List<int>(10000);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Update()
+        {    
+            _lastUpdateFrame = Global.FrameCounter;
+             _items.Clear();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
-            if (_itemsFrame != Global.FrameCounter)
+            if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
-            _itemsFrame = Global.FrameCounter;
-            for (int i = 0; i < Scenes.SceneManager.ActiveScene.Entities.Count; i++)
-            {
-                if (!ComponentArray<T>.HasFrom(i) || !ComponentArray<T2>.HasFrom(i)|| !ComponentArray<T3>.HasFrom(i))
-                    continue;
-                _items.Add(i);
-            }
+
+            for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
+                if (ComponentArray<T>.HasFor(entityId)&&ComponentArray<TT>.HasFor(entityId))
+                    _items.Add(entityId);
+
             return _items;
         }
     }
-    public static class CompIter<T, T2> where T : struct, IEntityComponent where T2 : struct, IEntityComponent
+    public static class CompIter<T,TT,TTT> where T : struct where TT:struct where TTT:struct
     {
-        private static readonly List<int> _items = new List<int>();
-        internal static void Update() => _items.Clear();
-        private static float _itemsFrame;
+        private static float _lastUpdateFrame;
+        private static readonly List<int> _items = new List<int>(10000);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Update()
+        {    
+            _lastUpdateFrame = Global.FrameCounter;
+             _items.Clear();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
-            if (_itemsFrame != Global.FrameCounter)
+            if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
-            _itemsFrame = Global.FrameCounter;
-            for (int i = 0; i < Scenes.SceneManager.ActiveScene.Entities.Count; i++)
-            {
-                if (!ComponentArray<T>.HasFrom(i) || !ComponentArray<T2>.HasFrom(i) )
-                    continue;
-                _items.Add(i);
-            }
+
+            for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
+                if (ComponentArray<T>.HasFor(entityId)&&ComponentArray<TT>.HasFor(entityId)&&ComponentArray<TTT>.HasFor(entityId))
+                    _items.Add(entityId);
+
             return _items;
         }
     }
-    public static class CompIter<T> where T : struct, IEntityComponent
+    public static class CompIter<T,TT,TTT,TTTT> where T : struct where TT:struct where TTT:struct where TTTT : struct
     {
-        private static readonly List<int> _items = new List<int>();
-        internal static void Update() => _items.Clear();
-        private static float _itemsFrame;
+        private static float _lastUpdateFrame;
+        private static readonly List<int> _items = new List<int>(10000);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Update()
+        {    
+            _lastUpdateFrame = Global.FrameCounter;
+             _items.Clear();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
-            if (_itemsFrame != Global.FrameCounter)
+            if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
-            _itemsFrame = Global.FrameCounter;
-            for (int i = 0; i < Scenes.SceneManager.ActiveScene.Entities.Count; i++)
-            {
-                if (!ComponentArray<T>.HasFrom(i))
-                    continue;
-                _items.Add(i);
-            }
+
+            for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
+                if (ComponentArray<T>.HasFor(entityId)&&ComponentArray<TT>.HasFor(entityId)&&ComponentArray<TTT>.HasFor(entityId)&&ComponentArray<TTTT>.HasFor(entityId))
+                    _items.Add(entityId);
+
             return _items;
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Enums;
+using Pixel.Helpers;
 using Pixel.World;
 using PixelShared;
 using System;
@@ -148,21 +149,21 @@ namespace Pixel.ECS
             switch (entity)
             {
                 case Camera _:
-                    entity.Add(new TransformComponent(entity.EntityId));
+                    ComponentArray<TransformComponent>.AddFor(entity);
                     break;
                 case Player _:
-                    entity.Add(new InputComponent(entity.EntityId));
-                    entity.Add(new CameraFollowTagComponent(entity.EntityId, 1));
-                    entity.Add(new DrawableComponent(entity.EntityId, "character.png", new Rectangle(0, 2, 16, 16)));
-                    entity.Add(new VelocityComponent(entity.EntityId, 64));
-                    entity.Add(new PositionComponent(entity.EntityId, 0, 0, 0));
-                    entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
+                    ComponentArray<InputComponent>.AddFor(entity);
+                    ComponentArray<CameraFollowTagComponent>.AddFor(entity, new CameraFollowTagComponent(1));
+                    ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
+                    ComponentArray<VelocityComponent>.AddFor(entity,new VelocityComponent(64));
+                    ComponentArray<PositionComponent>.AddFor(entity);
+                    ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
-                    nt.Add(new TextComponent(nt.EntityId, "Name: waiting..", "profont_12"));
-                    nt.Add(new PositionComponent(nt.EntityId, -48, -48, 0));
+                    ComponentArray<TextComponent>.AddFor(nt,new TextComponent("Name: waiting..", "profont_12"));
+                    ComponentArray<PositionComponent>.AddFor(nt,new PositionComponent(-48, -48, 0));
                     var nt2 = CreateEntity<NameTag>();
-                    nt2.Add(new TextComponent(nt2.EntityId, $"Id:   {entity.EntityId}", "profont_12"));
-                    nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
+                    ComponentArray<TextComponent>.AddFor(nt2,new TextComponent($"Id:   {entity.EntityId}", "profont_12"));
+                    ComponentArray<PositionComponent>.AddFor(nt2,new PositionComponent(-48, -32, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
                     entity.Children.Add(nt);
@@ -170,17 +171,17 @@ namespace Pixel.ECS
                     break;
                 case Npc _:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-                    entity.Add(new DrawableComponent(entity.EntityId, srcEntity.TextureName, srcEntity.SrcRect));
-                    entity.Add(new PositionComponent(entity.EntityId, 0, 0, 0));
-                    entity.Add(new VelocityComponent(entity.EntityId, 32));
-                    entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
+                    entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
+                    entity.Add<PositionComponent>();
+                    entity.Add(new VelocityComponent(32));
+                    entity.Add<DbgBoundingBoxComponent>();
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
                     nt = CreateEntity<NameTag>();
-                    nt.Add(new TextComponent(nt.EntityId, $"Name: {name}", "profont_12"));
-                    nt.Add(new PositionComponent(nt.EntityId, -48, -48, 0));
+                    nt.Add(new TextComponent($"Name: {name}", "profont_12"));
+                    nt.Add(new PositionComponent(-48, -48, 0));
                     nt2 = CreateEntity<NameTag>();
-                    nt2.Add(new TextComponent(nt2.EntityId, $"Id:  {entity.EntityId}", "profont_12"));
-                    nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
+                    nt2.Add(new TextComponent($"Id:  {entity.EntityId}", "profont_12"));
+                    nt2.Add(new PositionComponent(-48, -32, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
                     entity.Children.Add(nt);
