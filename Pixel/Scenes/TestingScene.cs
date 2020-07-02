@@ -23,17 +23,17 @@ namespace Pixel.Scenes
 
             Systems.Add(new NetworkSystem());
             Systems.Add(new InputSystem());
-            Systems.Add(new MoveSystem());
-            Systems.Add(new CameraSystem());
+            //Systems.Add(new MoveSystem());
+            //Systems.Add(new CameraSystem());
             Systems.Add(new MapShaderRenderer());
             //Systems.Add(new ProceduralWorldRenderSystem());
-            Systems.Add(new EntityRenderSystem());
-            Systems.Add(new NameTagRenderSystem());
-            Systems.Add(new DialogSystem());
-            Systems.Add(new DbgBoundingBoxRenderSystem());
-
-            Systems.Add(new UIRenderSystem());
-            Systems.Add(new SmartFramerate(4));
+            //Systems.Add(new EntityRenderSystem());
+            //Systems.Add(new NameTagRenderSystem());
+            //Systems.Add(new DialogSystem());
+            //Systems.Add(new DbgBoundingBoxRenderSystem());
+//
+            //Systems.Add(new UIRenderSystem());
+            //Systems.Add(new SmartFramerate(4));
             Systems.Add(new GCMonitor());
             base.Initialize();
         }

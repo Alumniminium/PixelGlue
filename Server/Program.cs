@@ -46,7 +46,7 @@ namespace Server
                                 if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
                                     continue;
                                 
-                                    //Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
+                                    Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
                                     kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
                             }
                         }
@@ -57,7 +57,7 @@ namespace Server
 
                         if (DateTime.Now >= player.LastPing.AddSeconds(5))
                         {
-                            //Console.WriteLine($"Sending Ping to {player.Name}/{player.Username}.");
+                            Console.WriteLine($"Sending Ping to {player.Name}/{player.Username}.");
                             player.Socket.Send(MsgPing.Create(player.UniqueId));
                             player.LastPing = DateTime.Now;
                         }

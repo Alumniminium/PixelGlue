@@ -83,13 +83,13 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
+            //sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
                     Systems[i].Draw(sb);
             }
-            sb.End();
+            //sb.End();
         }
 
         public virtual void Destroy(Entity entity)
@@ -166,7 +166,7 @@ namespace Pixel.ECS
                     ComponentArray<CameraFollowTagComponent>.AddFor(entity, new CameraFollowTagComponent(1));
                     ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
                     ComponentArray<VelocityComponent>.AddFor(entity,new VelocityComponent(64));
-                    ComponentArray<PositionComponent>.AddFor(entity);
+                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(500,500,0));
                     ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
                     ComponentArray<TextComponent>.AddFor(nt,new TextComponent("Name: waiting..", "profont_12"));
