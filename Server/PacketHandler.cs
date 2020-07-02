@@ -46,7 +46,6 @@ namespace Server
                             Console.WriteLine("Authentication failed.");
 
                         player.Socket.Send(msgLogin);
-                        Thread.Sleep(1000);
                         player.Socket.Send(MsgWalk.Create(player.UniqueId, player.Location));
                         break;
                     }

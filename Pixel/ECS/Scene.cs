@@ -83,13 +83,13 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            //sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
+            sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
                     Systems[i].Draw(sb);
             }
-            //sb.End();
+            sb.End();
         }
 
         public virtual void Destroy(Entity entity)
