@@ -1,14 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Pixel.Enums;
+using Pixel.ECS.Components;
 
 namespace Pixel.Entities
 {
-    public struct TransformComponent : IEntityComponent
-    {
-        public Matrix ViewMatrix { get; set; }
-        public Matrix InverseTransform => Matrix.Invert(ViewMatrix);
-        public int EntityId { get; set; }
-    }
     public class Camera : Entity
     {
         public ref TransformComponent Transform => ref Get<TransformComponent>();

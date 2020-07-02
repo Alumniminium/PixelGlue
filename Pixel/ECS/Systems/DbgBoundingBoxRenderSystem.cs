@@ -17,7 +17,7 @@ namespace Pixel.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public Scene Scene => SceneManager.ActiveScene;
-        public List<Entity> Entities { get; set; }
+        public List<int> Entities { get; set; }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void Draw(SpriteBatch sb)
@@ -25,10 +25,10 @@ namespace Pixel.ECS.Systems
             if (Scene.Camera == null)
                 return;
             var origin = new Vector2(0, 0);
-            foreach (var entity in Entities)
+            foreach (var entity in CompIter<PositionComponent, DrawableComponent>.Get())
             {
-                ref readonly var pos = ref entity.Get<PositionComponent>();
-                ref readonly var drw = ref entity.Get<DrawableComponent>();
+                ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
+                ref readonly var drw = ref ComponentArray<DrawableComponent>.Get(entity);
                 var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drw.SrcRect.Width, drw.SrcRect.Height);
                 sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
                 Global.DrawCalls++;
@@ -41,7 +41,7 @@ namespace Pixel.ECS.Systems
 
         public void Update(float deltaTime)
         {
-            Entities = CompIter<PositionComponent, DrawableComponent>.Get(deltaTime);
+
         }
     }
 }

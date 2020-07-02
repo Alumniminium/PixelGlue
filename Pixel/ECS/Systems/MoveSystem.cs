@@ -16,10 +16,10 @@ namespace Pixel.ECS.Systems
         public void FixedUpdate(float _) { }
         public void Update(float dt)
         {
-            foreach (var entity in CompIter<VelocityComponent, PositionComponent>.Get(dt))
+            foreach (var entity in CompIter<VelocityComponent, PositionComponent>.Get())
             {
-                ref var vc = ref entity.Get<VelocityComponent>();
-                ref var pc = ref entity.Get<PositionComponent>();
+                ref var vc = ref ComponentArray<VelocityComponent>.Get(entity);
+                ref var pc = ref ComponentArray<PositionComponent>.Get(entity);
 
                 if (pc.Destination != pc.Position)
                 {
@@ -38,8 +38,8 @@ namespace Pixel.ECS.Systems
                         pc.Position = pc.Destination;
                         vc.Velocity = Vector2.Zero;
                     }
-                    if (entity.Has<NetworkComponent>())
-                        NetworkSystem.Send(MsgWalk.Create(entity.UniqueId, pc.Position));
+                    //if (entity.Has<NetworkComponent>())
+                    //    NetworkSystem.Send(MsgWalk.Create(entity.UniqueId, pc.Position));
                 }
 
             }

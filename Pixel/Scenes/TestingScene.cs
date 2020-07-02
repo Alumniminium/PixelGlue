@@ -17,13 +17,6 @@ namespace Pixel.Scenes
     {
         public override void Initialize()
         {
-            var player = CreateEntity<Player>();
-            player.Add(new DrawableComponent(player.EntityId, "character.png", new Rectangle(0, 2, 16, 16)));
-            player.Add(new VelocityComponent(player.EntityId, 64));
-            player.Add(new PositionComponent(player.EntityId, 0, 0, 0));
-            player.Add(new InputComponent(player.EntityId));
-            player.Add(new CameraFollowTagComponent(player.EntityId, 1));
-
             var redbox = CreateEntity<UIRectangle>();
             redbox.Setup(0,0,Global.ScreenWidth,74,Color.IndianRed);
 
@@ -31,7 +24,8 @@ namespace Pixel.Scenes
             Systems.Add(new InputSystem());
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
-            Systems.Add(new ProceduralEntityRenderSystem());
+            Systems.Add(new ProceduralWorldRenderSystem());
+            Systems.Add(new EntityRenderSystem());
             Systems.Add(new NameTagRenderSystem());
             Systems.Add(new DialogSystem());
             Systems.Add(new DbgBoundingBoxRenderSystem());

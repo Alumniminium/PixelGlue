@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using Pixel.Entities;
 using Pixel.Entities.UI;
 using Pixel.Enums;
 using Pixel.Helpers;
+using Pixel.Scenes;
 using PixelShared;
-using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems.UI
 {
@@ -15,17 +14,17 @@ namespace Pixel.ECS.Systems.UI
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public List<Entity> entities;
         public void Update(float deltaTime)
         {
-            entities = CompIter<DrawableComponent>.Get(deltaTime);
         }
         public void Draw(SpriteBatch spriteBatch) // this should be scene independent I think
         {
             spriteBatch.End();
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            foreach (var child in entities)
+            spriteBatch.Begin(SpriteSortMode.Deferred,samplerState: SamplerState.PointClamp);
+            foreach (var id in CompIter<DrawableComponent>.Get())
             {
+                if(!SceneManager.ActiveScene.Entities.TryGetValue(id,out var child))
+                    continue;
                 if (child.Parent != null)
                     continue;
 

@@ -22,7 +22,7 @@ namespace Pixel.ECS.Systems
         public SmartFramerate(int oldFrameWeight)
         {
             numerator = oldFrameWeight;
-            weight = (double)oldFrameWeight / ((double)oldFrameWeight - 1d);
+            weight = oldFrameWeight / (oldFrameWeight - 1d);
             lines[0] = string.Empty;
             lines[1] = string.Empty;
         }

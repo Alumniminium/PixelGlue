@@ -21,11 +21,11 @@ namespace Pixel.Entities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add<T>(T component) where T : struct => ComponentArray<T>.Items[EntityId] = component;
+        public void Add<T>(T component) where T : struct => ComponentArray<T>.Add(EntityId,component);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Has<T>() where T : struct, IEntityComponent => ComponentArray<T>.Items[EntityId].EntityId == EntityId;
+        public bool Has<T>() where T : struct, IEntityComponent => ComponentArray<T>.HasFrom(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Get<T>() where T : struct => ref ComponentArray<T>.Items[EntityId];
+        public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
 
         public override string ToString()
         {

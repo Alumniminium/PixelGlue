@@ -26,11 +26,11 @@ namespace Pixel.ECS.Systems
             var keyboard= Keyboard.GetState();
             var gamepad = GamePad.GetState(PlayerIndex.One);
 
-            foreach (var entity in CompIter<InputComponent, PositionComponent, CameraFollowTagComponent>.Get(deltaTime))
+            foreach (var entity in CompIter<InputComponent, PositionComponent, CameraFollowTagComponent>.Get())
             {
-                ref var ic = ref entity.Get<InputComponent>();
-                ref var pc = ref entity.Get<PositionComponent>();
-                ref var cf = ref entity.Get<CameraFollowTagComponent>();
+                ref var ic = ref ComponentArray<InputComponent>.Get(entity);
+                ref var pc = ref ComponentArray<PositionComponent>.Get(entity);
+                ref var cf = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
 
                 Scrolling(ref ic,ref mouse, ref cf);
                 Rotating(ref keyboard, ref pc);
@@ -38,10 +38,7 @@ namespace Pixel.ECS.Systems
                 var destination = pc.Position;
 
                 if (mouse.LeftButton == ButtonState.Pressed)
-                {
-                    if (entity.Scene != null)
-                        pc.Destination = entity.Scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
-                }
+                    pc.Destination = scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
                 //if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint))
                 //    moveComponent.Velocity *= 10;
                 //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))

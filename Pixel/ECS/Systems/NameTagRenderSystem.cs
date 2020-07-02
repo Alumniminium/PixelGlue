@@ -14,24 +14,25 @@ namespace Pixel.ECS.Systems
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
         public Scene Scene => SceneManager.ActiveScene;
-        public List<Entity> Entities{ get; set; }
 
         public void FixedUpdate(float deltaTime) { }
         public void Update(float deltaTime) 
         {
-            Entities = CompIter<PositionComponent>.Get(deltaTime);
         }
 
         public void Draw(SpriteBatch sb)
         {
-            foreach (var entity in Entities)
+            foreach (var entity in CompIter<PositionComponent>.Get())
             {
-                foreach (var child in entity.Children)
+                if(!Scene.Entities.TryGetValue(entity,out var sub))
+                    continue;
+                    
+                foreach (var child in sub.Children)
                 {
                     if (!child.Has<TextComponent>() || !child.Has<PositionComponent>())
                         continue;
 
-                    ref readonly var pos = ref entity.Get<PositionComponent>();
+                    ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
                     if (pos.Position.X < Scene.Camera.ServerScreenRect.Left || pos.Position.X > Scene.Camera.ServerScreenRect.Right)
                         continue;
                     if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom)

@@ -8,6 +8,7 @@ namespace Pixel.ECS.Components
         public int EntityId { get; set; }
         public string TextureName;
         public Rectangle SrcRect;
+        public Color Color;
         public Rectangle DestRect;
 
         public DrawableComponent(int ownerId, string textureName, Rectangle srcRect)
@@ -16,6 +17,7 @@ namespace Pixel.ECS.Components
             TextureName = textureName;
             SrcRect = srcRect;
             DestRect = Rectangle.Empty;
+            Color = Color.White;
         }
         public DrawableComponent(int ownerId, string textureName, Rectangle srcRect, Rectangle destRect)
         {
@@ -23,6 +25,7 @@ namespace Pixel.ECS.Components
             TextureName = textureName;
             SrcRect = srcRect;
             DestRect = destRect;
+            Color = Color.White;
         }
     }
 }

@@ -23,5 +23,6 @@ namespace PixelShared
         public static string[] Names { get; set; }
         public static ContentManager ContentManager { get; set; }
         public static int TileSize => 16;
+        public static long FrameCounter { get; set; }
     }
 }

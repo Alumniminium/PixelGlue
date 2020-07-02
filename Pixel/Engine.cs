@@ -7,7 +7,7 @@ namespace Pixel
 {
     public class Engine : Game
     {
-        private double _elapsedTime = 0;
+        private double _elapsedTime;
         private readonly double _updateTime = 1f / Global.FixedUpdateHz;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -33,7 +33,7 @@ namespace Pixel
             {
                 PreferredBackBufferWidth = Global.ScreenWidth,
                 PreferredBackBufferHeight = Global.ScreenHeight,
-                GraphicsProfile = GraphicsProfile.Reach,
+                GraphicsProfile = GraphicsProfile.HiDef,
                 SynchronizeWithVerticalRetrace = vsync,
                 PreferHalfPixelOffset = false,
                 HardwareModeSwitch = false
@@ -68,6 +68,7 @@ namespace Pixel
 
         protected override void Draw(GameTime gameTime)
         {
+            Global.FrameCounter++;
             Global.DrawCalls = 0;
             Global.DrawProfiler.StartMeasuring();
             _graphics.GraphicsDevice.Clear(Color.Black);

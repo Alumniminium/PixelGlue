@@ -14,15 +14,10 @@ namespace Pixel.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var scene = SceneManager.ActiveScene;
-            var player = scene.Find<Player>();
 
-            if (player != null)
-                scene.Destroy(player);
-
-            player = scene.CreateEntity<Player>(packet.UniqueId);
-            player.NameTag.Text = $"Name: {packet.GetUsername()}";
+            scene.Player.NameTag.Text = $"Name: {packet.GetUsername()}";
             FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
-            player.Add(new NetworkComponent(scene, player.EntityId, packet.UniqueId));
+            scene.Player.Add(new NetworkComponent(scene, scene.Player.EntityId, packet.UniqueId));
             NetworkSystem.ConnectionState = ConnectionState.Authenticated;
         }
     }

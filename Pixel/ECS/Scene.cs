@@ -24,6 +24,7 @@ namespace Pixel.ECS
         public ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
         public List<IEntitySystem> Systems;
         public Camera Camera;
+        public Player Player;
 
         public Scene()
         {
@@ -36,6 +37,7 @@ namespace Pixel.ECS
         public virtual void Initialize()
         {
             Camera=CreateEntity<Camera>();
+            Player=CreateEntity<Player>();
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
@@ -70,7 +72,7 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            sb.Begin(transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
+            sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
@@ -81,10 +83,19 @@ namespace Pixel.ECS
 
         public virtual void Destroy(Entity entity)
         {
-            foreach (var child in entity.Children)
-                Destroy(child);
             Entities.TryRemove(entity.EntityId, out _);
             EntityIdToUniqueId.TryRemove(entity.EntityId, out var uid);
+            UniqueIdToEntityId.TryRemove(uid, out _);
+        }
+        public virtual void Destroy(int entity)
+        {
+            Entities.TryRemove(entity, out var actualEntity);
+            if(actualEntity!=null)
+            {
+                foreach (var child in actualEntity?.Children)
+                    Destroy(child);
+            }
+            EntityIdToUniqueId.TryRemove(entity, out var uid);
             UniqueIdToEntityId.TryRemove(uid, out _);
         }
 
@@ -96,8 +107,7 @@ namespace Pixel.ECS
                 EntityId = LastEntityId++,
                 Scene = this
             };
-            ApplyArchetype(uniqueId, entity);
-
+            ApplyArchetype(entity);
             entity.Add(new NetworkComponent(this, entity.EntityId, uniqueId));
             Entities.TryAdd(entity.EntityId, entity);
             return entity;
@@ -108,11 +118,11 @@ namespace Pixel.ECS
         {
             var entity = new T
             {
-                EntityId = LastEntityId,
+                EntityId = LastEntityId++,
                 Scene = this
             };
+            ApplyArchetype(entity);
             Entities.TryAdd(entity.EntityId, entity);
-            LastEntityId++;
             return entity;
         }
 
@@ -133,10 +143,13 @@ namespace Pixel.ECS
             return null;
         }
         
-        private void ApplyArchetype<T>(int uniqueId, T entity) where T : Entity, new()
+        private void ApplyArchetype<T>(T entity) where T : Entity, new()
         {
             switch (entity)
             {
+                case Camera _:
+                    entity.Add(new TransformComponent(entity.EntityId));
+                    break;
                 case Player _:
                     entity.Add(new InputComponent(entity.EntityId));
                     entity.Add(new CameraFollowTagComponent(entity.EntityId, 1));
@@ -145,20 +158,15 @@ namespace Pixel.ECS
                     entity.Add(new PositionComponent(entity.EntityId, 0, 0, 0));
                     entity.Add(new DbgBoundingBoxComponent(entity.EntityId));
                     var nt = CreateEntity<NameTag>();
-                    nt.Add(new TextComponent(nt.EntityId, $"Name: waiting..", "profont_12"));
+                    nt.Add(new TextComponent(nt.EntityId, "Name: waiting..", "profont_12"));
                     nt.Add(new PositionComponent(nt.EntityId, -48, -48, 0));
                     var nt2 = CreateEntity<NameTag>();
                     nt2.Add(new TextComponent(nt2.EntityId, $"Id:   {entity.EntityId}", "profont_12"));
                     nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
-                    var nt3 = CreateEntity<NameTag>();
-                    nt3.Add(new TextComponent(nt3.EntityId, $"UID:  {uniqueId}", "profont_12"));
-                    nt3.Add(new PositionComponent(nt3.EntityId, -48, -16, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
-                    nt3.Parent = entity;
                     entity.Children.Add(nt);
                     entity.Children.Add(nt2);
-                    entity.Children.Add(nt3);
                     break;
                 case Npc _:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
@@ -173,15 +181,10 @@ namespace Pixel.ECS
                     nt2 = CreateEntity<NameTag>();
                     nt2.Add(new TextComponent(nt2.EntityId, $"Id:  {entity.EntityId}", "profont_12"));
                     nt2.Add(new PositionComponent(nt2.EntityId, -48, -32, 0));
-                    nt3 = CreateEntity<NameTag>();
-                    nt3.Add(new TextComponent(nt3.EntityId, $"UID: {uniqueId}", "profont_12"));
-                    nt3.Add(new PositionComponent(nt3.EntityId, -48, -16, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
-                    nt3.Parent = entity;
                     entity.Children.Add(nt);
                     entity.Children.Add(nt2);
-                    entity.Children.Add(nt3);
                     break;
             }
         }
