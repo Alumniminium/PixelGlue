@@ -28,7 +28,7 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
                 ref readonly var fol = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
 
-                var camLoc = pos.Position + fol.PositionOffset;
+                var camLoc = pos.Value + fol.PositionOffset;
                 var camX = (int)(camLoc.X / Global.TileSize) * Global.TileSize;
                 var camY = (int)(camLoc.Y / Global.TileSize) * Global.TileSize;
 

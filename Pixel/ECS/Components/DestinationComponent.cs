@@ -2,14 +2,12 @@ using Microsoft.Xna.Framework;
 
 namespace Pixel.ECS.Components
 {
-    public struct PositionComponent
+    public struct DestinationComponent
     {
         public Vector2 Value;
-        public float Rotation;
-        public PositionComponent(int x, int y, int rotation)
+        public DestinationComponent(int x, int y)
         {
             Value = new Vector2(x, y);
-            Rotation = rotation;
         }
     }
 }

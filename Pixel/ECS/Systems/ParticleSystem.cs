@@ -25,7 +25,7 @@ namespace Pixel.ECS.Systems
                 ref readonly var vel = ref ComponentArray<VelocityComponent>.Get(entity);
                 ref readonly var drw = ref ComponentArray<DrawableComponent>.Get(entity);
                 
-                pos.Position += vel.Velocity;
+                pos.Value += vel.Velocity;
             }
         }
     }

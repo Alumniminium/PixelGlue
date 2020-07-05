@@ -29,7 +29,7 @@ namespace Pixel.ECS.Systems
             {
                 ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
                 ref readonly var drw = ref ComponentArray<DrawableComponent>.Get(entity);
-                var destRect = new Rectangle((int)pos.Position.X, (int)pos.Position.Y, drw.SrcRect.Width, drw.SrcRect.Height);
+                var destRect = new Rectangle((int)pos.Value.X, (int)pos.Value.Y, drw.SrcRect.Width, drw.SrcRect.Height);
                 sb.Draw(DbgBoundingBoxComponent.Texture, destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
                 Global.DrawCalls++;
             }

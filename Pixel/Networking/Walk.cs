@@ -23,8 +23,8 @@ namespace Pixel.Networking.Handlers
             else
             {
                 var entity = scene.Entities[entityId];
-                ref var position = ref entity.Get<PositionComponent>();
-                position.Destination = location;
+                ref var dst = ref entity.Get<DestinationComponent>();
+                dst.Value = location;
             }
         }
     }

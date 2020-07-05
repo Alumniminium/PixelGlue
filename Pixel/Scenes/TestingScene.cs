@@ -19,6 +19,8 @@ namespace Pixel.Scenes
 
             //Systems.Add(new NetworkSystem());
             Systems.Add(new InputSystem());
+            Systems.Add(new PlayerMoveSystem());
+            Systems.Add(new VelocitySystem());
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             //Systems.Add(new MapShaderRenderer());

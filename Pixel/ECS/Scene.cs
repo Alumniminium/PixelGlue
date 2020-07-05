@@ -189,8 +189,10 @@ namespace Pixel.ECS
                     ComponentArray<InputComponent>.AddFor(entity);
                     ComponentArray<CameraFollowTagComponent>.AddFor(entity, new CameraFollowTagComponent(1));
                     ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-                    ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent(64));
+                    ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent());
+                    ComponentArray<SpeedComponent>.AddFor(entity, new SpeedComponent(64));
                     ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(500, 500, 0));
+                    ComponentArray<DestinationComponent>.AddFor(entity,new DestinationComponent(500,500));
                     ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
                     ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont"));
@@ -207,8 +209,10 @@ namespace Pixel.ECS
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
                     entity.Add<PositionComponent>();
-                    entity.Add(new VelocityComponent(32));
+                    entity.Add<DestinationComponent>();
+                    entity.Add<VelocityComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
+                    entity.Add(new SpeedComponent(32));
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
                     nt = CreateEntity<NameTag>();
                     nt.Add(new TextComponent($"Name: {name}", "profont_12"));

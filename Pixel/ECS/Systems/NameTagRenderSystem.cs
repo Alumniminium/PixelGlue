@@ -33,9 +33,9 @@ namespace Pixel.ECS.Systems
                         continue;
 
                     ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
-                    if (pos.Position.X < Scene.Camera.ServerScreenRect.Left || pos.Position.X > Scene.Camera.ServerScreenRect.Right)
+                    if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right)
                         continue;
-                    if (pos.Position.Y < Scene.Camera.ServerScreenRect.Top || pos.Position.Y > Scene.Camera.ServerScreenRect.Bottom)
+                    if (pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
                         continue;
 
                     ref readonly var offset = ref child.Get<PositionComponent>();
@@ -43,7 +43,7 @@ namespace Pixel.ECS.Systems
 
                     if (!string.IsNullOrEmpty(text.Text))
                     {
-                        var p = pos.Position + offset.Position;
+                        var p = pos.Value + offset.Value;
                         AssetManager.Fonts[text.FontName].DrawText(sb, (int)p.X, (int)p.Y, text.Text);
                     }
                 }

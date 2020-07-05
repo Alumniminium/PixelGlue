@@ -23,44 +23,55 @@ namespace Pixel.ECS.Systems
         {
             var scene = SceneManager.ActiveScene;
             var mouse = Mouse.GetState();
-            var keyboard= Keyboard.GetState();
+            var keyboard = Keyboard.GetState();
             var gamepad = GamePad.GetState(PlayerIndex.One);
 
-            foreach (var entity in CompIter<InputComponent, PositionComponent, CameraFollowTagComponent>.Get())
+            foreach (var entity in CompIter<InputComponent,  DestinationComponent>.Get())
             {
                 ref var ic = ref ComponentArray<InputComponent>.Get(entity);
-                ref var pc = ref ComponentArray<PositionComponent>.Get(entity);
-                ref var cf = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
+                ref var dc = ref ComponentArray<DestinationComponent>.Get(entity);
 
-                Scrolling(ref ic,ref mouse, ref cf);
-                Rotating(ref keyboard, ref pc);
+                if (ic.Buttons == null)
+                    ic.Buttons = new System.Collections.Generic.List<PixelGlueButtons>();
+                if (ic.OldButtons == null)
+                    ic.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
 
-                var destination = pc.Position;
-
+                //Scrolling(ref ic, ref mouse, ref cf);
+             
+                var axis = Vector2.Zero;
                 if (mouse.LeftButton == ButtonState.Pressed)
-                    pc.Destination = scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
-                //if (KeyDown(ref inputComponent, PixelGlueButtons.Sprint))
-                //    moveComponent.Velocity *= 10;
-                //if (KeyUp(ref inputComponent, PixelGlueButtons.Sprint))
-                //    moveComponent.Velocity /= 10;
-                if (KeyDown(ref keyboard, PixelGlueButtons.Up) && pc.Position == pc.Destination)
-                    destination.Y -= Global.TileSize;
-                if (KeyDown(ref keyboard, PixelGlueButtons.Down) && pc.Position == pc.Destination)
-                    destination.Y += Global.TileSize;
-                if (KeyDown(ref keyboard, PixelGlueButtons.Left) && pc.Position == pc.Destination)
-                    destination.X -= Global.TileSize;
-                if (KeyDown(ref keyboard, PixelGlueButtons.Right) && pc.Position == pc.Destination)
-                    destination.X += Global.TileSize;
+                {
+                    var point = scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
+                    var dir = point - scene.Player.Get<PositionComponent>().Value;
+                    dir.Normalize();
+                    axis = dir;
+                }
+                if (axis == Vector2.Zero)
+                {
+                    if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Up))
+                        axis.Y = -1;
+                    else if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Down))
+                        axis.Y = 1;
+                    if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Left))
+                        axis.X = -1;
+                    else if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Right))
+                        axis.X = 1;
+                }
 
-                if (Pressed(ref ic,ref keyboard, PixelGlueButtons.EscapeMenu))
-                    Environment.Exit(0);
-                if (Pressed(ref ic,ref keyboard, PixelGlueButtons.DbgProfiling))
-                    Global.Profiling = !Global.Profiling;
-                if (Pressed(ref ic,ref keyboard, PixelGlueButtons.DbgSwitchScene))
-                    SwitchScene();
-                if (Pressed(ref ic,ref keyboard, PixelGlueButtons.DbgProfiling))
-                    OpenDialog(scene);
-                if (Pressed(ref ic,ref keyboard, PixelGlueButtons.DbgBoundingBoxes))
+                ic.Axis = axis;
+
+                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.EscapeMenu))
+                    ic.Buttons.Add(PixelGlueButtons.EscapeMenu);
+                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgProfiling))
+                    ic.Buttons.Add(PixelGlueButtons.DbgProfiling);
+                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgSwitchScene))
+                    ic.Buttons.Add(PixelGlueButtons.DbgSwitchScene);
+                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgProfiling))
+                    ic.Buttons.Add(PixelGlueButtons.DbgProfiling);
+                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgBoundingBoxes))
+                    ic.Buttons.Add(PixelGlueButtons.DbgBoundingBoxes);
+
+                if(KeyboardHelper.IsPressed(ref ic, PixelGlueButtons.DbgBoundingBoxes))
                 {
                     var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                     system.IsActive = !system.IsActive;
@@ -68,69 +79,26 @@ namespace Pixel.ECS.Systems
                     system2.IsActive = !system2.IsActive;
                 }
 
-                if (destination != pc.Position)
-                    pc.Destination = destination;
+                ic.OldButtons.Clear();
+                ic.OldButtons.AddRange(ic.Buttons);
+                ic.Buttons.Clear();
             }
-        }
-
-        private static void Rotating(ref KeyboardState kb, ref PositionComponent positionComponent)
-        {
-            if (kb.IsKeyDown(Keys.Left))
-                positionComponent.Rotation -= 0.1f;
-            if (kb.IsKeyDown(Keys.Right))
-                positionComponent.Rotation += 0.1f;
         }
 
         private static void Scrolling(ref InputComponent inputComponent, ref MouseState m, ref CameraFollowTagComponent camera)
         {
-            if(inputComponent.Scroll == m.ScrollWheelValue)
+            if (inputComponent.Scroll == m.ScrollWheelValue)
                 return;
-        
+
             if (m.ScrollWheelValue > inputComponent.Scroll)
                 camera.Zoom *= 2;
             else if (m.ScrollWheelValue < inputComponent.Scroll)
                 camera.Zoom /= 2;
-                
+
             inputComponent.Scroll = m.ScrollWheelValue;
-            
-            WorldGen.TilesLoading=new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
-        }
-        public bool KeyDown(ref KeyboardState kb, PixelGlueButtons key)
-        {
-            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
-                return kb.IsKeyDown(realKey.defaultBind) || kb.IsKeyDown(realKey.userBind);
-            return false;
-        }
-        public bool KeyUp(ref KeyboardState kb, PixelGlueButtons key)
-        {
-            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
-                return kb.IsKeyUp(realKey.defaultBind) || kb.IsKeyUp(realKey.userBind);
-            return false;
-        }
-        public bool Pressed(ref InputComponent component,ref KeyboardState kb, PixelGlueButtons key)
-        {
-            if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
-            {
-                for (int i = 0; i < component.OldButtons?.Length; i++)
-                {
-                    if (component.OldButtons[i] == key)
-                        return false;
-                }
-                return kb.IsKeyDown(realKey.userBind) || kb.IsKeyDown(realKey.defaultBind);
-            }
-            return false;
-        }
 
-        private static void SwitchScene()
-        {
-            
+            WorldGen.TilesLoading = new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
         }
-
-        private static void OpenDialog(Scene scene)
-        {
-            var player = scene.Find<Player>();
-            player.Add(new DialogComponent(player.EntityId, 1, 0));
-            //scene.AddComponent(new DialogComponent(player.UniqueId, 1));
-        }
+        
     }
 }
