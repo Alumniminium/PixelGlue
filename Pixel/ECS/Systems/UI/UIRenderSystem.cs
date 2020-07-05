@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities.UI;
@@ -11,12 +12,10 @@ namespace Pixel.ECS.Systems.UI
 {
     public class UIRenderSystem : IEntitySystem
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "UI Render System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
-        public void Update(float deltaTime)
-        {
-        }
+        public void Update(float deltaTime){}
         public void Draw(SpriteBatch spriteBatch) // this should be scene independent I think
         {
             spriteBatch.End();

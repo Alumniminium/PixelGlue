@@ -7,16 +7,43 @@ using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.World;
 using PixelShared;
-using PixelShared.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS
 {
+    public static class Profiler
+    {
+        private static readonly Dictionary<string, List<float>> SystemUpdateTimes = new Dictionary<string, List<float>>();
+        private static readonly Dictionary<string, List<float>> SystemDrawTimes = new Dictionary<string, List<float>>();
+
+        public static void AddUpdate(string system, float time)
+        {
+            time = (float)Math.Round(time,3);
+            if (time < 1)
+                return;
+            if (!SystemUpdateTimes.TryGetValue(system, out var list))
+            {
+                list = new List<float>();
+                SystemUpdateTimes.Add(system, list);
+            }
+            list.Add(time);
+        }
+        public static void AddDraw(string system, float time)
+        {
+            if (time == 0)
+                return;
+            if (!SystemUpdateTimes.TryGetValue(system, out var list))
+            {
+                list = new List<float>();
+                SystemDrawTimes.Add(system, list);
+            }
+            list.Add(time);
+        }
+    }
     public class Scene
     {
         public int Id;
@@ -39,8 +66,8 @@ namespace Pixel.ECS
 
         public virtual void Initialize()
         {
-            Camera=CreateEntity<Camera>();
-            Player=CreateEntity<Player>();
+            Camera = CreateEntity<Camera>();
+            Player = CreateEntity<Player>();
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
@@ -54,18 +81,15 @@ namespace Pixel.ECS
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Update(GameTime deltaTime)
         {
-            var stopwatch = Stopwatch.StartNew();
-            Console.Clear();
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
-                    {
-                        Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
-                        var elapsed = Math.Round(stopwatch.Elapsed.TotalMilliseconds,4);
-                        if(elapsed > 1)
-                            FConsole.WriteLine($"{elapsed}ms {Systems[i].Name}");
-                        stopwatch.Restart();
-                    }
+                {
+                    var preUpdateTicks = DateTime.UtcNow.Ticks;
+                    Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+                    var postUpdateTicks = DateTime.UtcNow.Ticks;
+                    Profiler.AddUpdate(Systems[i].Name, (postUpdateTicks - preUpdateTicks) / 10000f);
+                }
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -83,7 +107,7 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            sb.Begin(SpriteSortMode.Deferred,transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
+            sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 if (Systems[i].IsActive && Systems[i].IsReady)
@@ -101,7 +125,7 @@ namespace Pixel.ECS
         public virtual void Destroy(int entity)
         {
             Entities.TryRemove(entity, out var actualEntity);
-            if(actualEntity!=null)
+            if (actualEntity != null)
             {
                 foreach (var child in actualEntity?.Children)
                     Destroy(child);
@@ -153,7 +177,7 @@ namespace Pixel.ECS
                     return t;
             return null;
         }
-        
+
         private void ApplyArchetype<T>(T entity) where T : Entity, new()
         {
             switch (entity)
@@ -165,15 +189,15 @@ namespace Pixel.ECS
                     ComponentArray<InputComponent>.AddFor(entity);
                     ComponentArray<CameraFollowTagComponent>.AddFor(entity, new CameraFollowTagComponent(1));
                     ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-                    ComponentArray<VelocityComponent>.AddFor(entity,new VelocityComponent(64));
-                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(500,500,0));
+                    ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent(64));
+                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(500, 500, 0));
                     ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt,new TextComponent("Name: waiting..", "profont_12"));
-                    ComponentArray<PositionComponent>.AddFor(nt,new PositionComponent(-48, -48, 0));
+                    ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont"));
+                    ComponentArray<PositionComponent>.AddFor(nt, new PositionComponent(-48, -48, 0));
                     var nt2 = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt2,new TextComponent($"Id:   {entity.EntityId}", "profont_12"));
-                    ComponentArray<PositionComponent>.AddFor(nt2,new PositionComponent(-48, -32, 0));
+                    ComponentArray<TextComponent>.AddFor(nt2, new TextComponent($"Id:   {entity.EntityId}", "profont"));
+                    ComponentArray<PositionComponent>.AddFor(nt2, new PositionComponent(-48, -32, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
                     entity.Children.Add(nt);

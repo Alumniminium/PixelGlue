@@ -37,7 +37,7 @@ namespace Pixel.Loaders
         {
             DrawText(_spriteBatch, (int)pos.X, (int)pos.Y, message);
         }
-        public void DrawText(SpriteBatch spriteBatch, int x, int y, string text)
+        public void DrawText(SpriteBatch spriteBatch, int x, int y, string text, float scale = 0.5f)
         {
             int dx = x;
             int dy = y;
@@ -45,10 +45,9 @@ namespace Pixel.Loaders
             {
                 if (_characterMap.TryGetValue(c, out var fc))
                 {
-                    var position = new Vector2(dx + fc.FontChar.XOffset, dy + fc.FontChar.YOffset);
-
-                    spriteBatch.Draw(fontTexture, position, fc.SrcRect, Color.White);
-                    dx += fc.FontChar.XAdvance;
+                    var dst = new Rectangle(dx + (int)(fc.FontChar.XOffset*scale),dy +(int)(fc.FontChar.YOffset*scale),(int)(fc.SrcRect.Width * scale), (int)(fc.SrcRect.Height * scale));
+                    spriteBatch.Draw(fontTexture, dst, fc.SrcRect, Color.White);
+                    dx += (int)(fc.FontChar.XAdvance*scale);
                     Global.DrawCalls++;
                 }
             }

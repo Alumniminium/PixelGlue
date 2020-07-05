@@ -41,6 +41,8 @@ namespace Pixel.ECS.Systems
                     }
                     if (SceneManager.ActiveScene.Player.EntityId == entity)
                     {
+                        if(!SceneManager.ActiveScene.Player.Has<NetworkComponent>())
+                            continue;
                         ref readonly var net = ref ComponentArray<NetworkComponent>.Get(entity);
                         NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pc.Position));
                     }

@@ -88,7 +88,6 @@ namespace Pixel.Helpers
         {
             if (_lastUpdateFrame != Global.FrameCounter)
                 Update();
-            var  x = (default(T), default(TT),default(TTT),default(TTTT));
 
             for (int entityId = 0; entityId < Scenes.SceneManager.ActiveScene.Entities.Count; entityId++)
                 if (ComponentArray<T>.HasFor(entityId)&&ComponentArray<TT>.HasFor(entityId)&&ComponentArray<TTT>.HasFor(entityId)&&ComponentArray<TTTT>.HasFor(entityId))

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Pixel.Enums
 {
@@ -6,7 +7,7 @@ namespace Pixel.Enums
     {
         string Name { get; }
         public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public bool IsReady { get; set; }   
         public void Initialize()
         {
             IsReady = true;

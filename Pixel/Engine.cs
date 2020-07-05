@@ -54,7 +54,7 @@ namespace Pixel
 
             while (SceneManager.QueuedTasks.TryDequeue(out var action))
                 action.Invoke();
-
+            
             SceneManager.ActiveScene.Update(gameTime);
 
             while (_elapsedTime >= _updateTime)
