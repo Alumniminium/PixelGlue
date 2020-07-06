@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using PixelShared.TerribleSockets.Client;
 using PixelShared.TerribleSockets.Packets;
 using System;
+using PixelShared;
+
 namespace Server
 {
     public static class PacketHandler
@@ -17,7 +19,7 @@ namespace Server
                         var msgLogin = (MsgLogin)buffer;
                         var user = msgLogin.GetUsername();
                         var pass = msgLogin.GetPassword();
-
+                        if(Global.Verbose)
                         Console.WriteLine($"Login request for {user} using password {pass}");
 
                         msgLogin.UniqueId = Core.Random.Next(1_000_000, 10_000_000);
@@ -46,7 +48,7 @@ namespace Server
                             Console.WriteLine("Authentication failed.");
 
                         player.Socket.Send(msgLogin);
-                        player.Socket.Send(MsgWalk.Create(player.UniqueId, player.Location));
+                        player.Socket.Send(MsgSpawn.Create(player.UniqueId, player.Location,3));
                         break;
                     }
                 case 1001:
@@ -55,8 +57,9 @@ namespace Server
                         var player = (Player)socket.StateObject;
                         if (player == null)
                             break;
-                        player.Location = new Vector2(msgWalk.X,msgWalk.Y);
+                        //player.Location = new Vector2(msgWalk.X,msgWalk.Y);
                         msgWalk.TickCount = Environment.TickCount;
+                        if(Global.Verbose)
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
 
                         foreach (var (_, entity) in Collections.Players)

@@ -11,7 +11,7 @@ namespace Server
     public static class Program
     {
         public static Random Random = new Random(1337);
-        public static int BotCount = 250;
+        public static int BotCount = 1;
         public static void Main(string[] args)
         {
             if (args.Length > 0)
@@ -35,19 +35,25 @@ namespace Server
                         if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
                         {
                             npc.LastMove = DateTime.Now;
-                            npc.Position.X += Random.Next(-1, 2) * Global.TileSize;
-                            npc.Position.Y += Random.Next(-1, 2) * Global.TileSize;
+                            var dir = Vector2.Zero;
 
+                            dir.X += Random.Next(-1, 2);
+                            dir.Y += Random.Next(-1, 2);
+
+                            npc.Position += dir * 16;
                             foreach (var kvp2 in Collections.Players)
                             {
                                 var player = kvp2.Value;
-                                if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
-                                    continue;
-                                if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
-                                    continue;
-                                
+
+                                //if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
+                                //    continue;
+                                //if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
+                                //    continue;
+
+                                if (Global.Verbose)
                                     Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
-                                    kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
+                                kvp2.Value.Socket.Send(MsgSpawn.Create(npc.UniqueId, (int)npc.Position.X, (int)npc.Position.Y, 1, "sup"));
+                                kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
                             }
                         }
                     }
@@ -57,7 +63,8 @@ namespace Server
 
                         if (DateTime.Now >= player.LastPing.AddSeconds(5))
                         {
-                            Console.WriteLine($"Sending Ping to {player.Name}/{player.Username}.");
+                            if (Global.Verbose)
+                                Console.WriteLine($"Sending Ping to {player.Name}/{player.Username}.");
                             player.Socket.Send(MsgPing.Create(player.UniqueId));
                             player.LastPing = DateTime.Now;
                         }
