@@ -1,5 +1,6 @@
 ﻿using PixelShared.TerribleSockets.Queues;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -17,20 +18,24 @@ namespace PixelShared.TerribleSockets.Client
         internal AutoResetEvent SendSync = new AutoResetEvent(true);
         internal AutoResetEvent ReceiveSync = new AutoResetEvent(false);
         internal SocketAsyncEventArgs ReceiveArgs;
-        internal SocketAsyncEventArgs SendArgs;
+        internal Stack<SocketAsyncEventArgs> SendArgsPool;
 
         public ClientSocket(object stateObject)
         {
             Buffer = new NeutralBuffer();
             StateObject = stateObject;
 
-            SendArgs = new SocketAsyncEventArgs();
-            SendArgs.Completed += Sent;
-
-            ReceiveArgs = new SocketAsyncEventArgs();
+            SendArgsPool = new Stack<SocketAsyncEventArgs>();
+            for(int i = 0;i<32;i++)
+            {
+                var sendAarg = new SocketAsyncEventArgs();
+                sendAarg.Completed += Sent;
+                SendArgsPool.Push(sendAarg);
+            }
+            ReceiveArgs  = new SocketAsyncEventArgs();
             ReceiveArgs.SetBuffer(Buffer.ReceiveBuffer, 0, Buffer.ReceiveBuffer.Length);
             ReceiveArgs.Completed += Received;
-            ReceiveArgs.UserToken = this;
+            ReceiveArgs.UserToken=this;
         }
 
 
@@ -103,13 +108,16 @@ namespace PixelShared.TerribleSockets.Client
         }
         public void Send(byte[] packet)
         {
-            SendSync.WaitOne();
-            SendArgs.SetBuffer(packet, 0, packet.Length);
+            if(SendArgsPool.Count ==0)
+                SendSync.WaitOne();
+
+            var sendArgs = SendArgsPool.Pop();
+            sendArgs.SetBuffer(packet, 0, packet.Length);
 
             try
             {
-                if (!Socket.SendAsync(SendArgs))
-                    Sent(null, SendArgs);
+                if (!Socket.SendAsync(sendArgs))
+                    Sent(null, sendArgs);
             }
             catch
             {
@@ -120,7 +128,10 @@ namespace PixelShared.TerribleSockets.Client
         private void Sent(object sender, SocketAsyncEventArgs e)
         {
             if (e.SocketError == SocketError.Success)
-                SendSync.Set();
+                {
+                    SendArgsPool.Push(e);
+                    SendSync.Set();
+                }
             else
                 Disconnect();
         }

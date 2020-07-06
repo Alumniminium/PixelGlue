@@ -9,7 +9,7 @@ namespace PixelShared.TerribleSockets.Packets
         public int Length;
         public ushort Id;
         public int UniqueId;
-        public int TickCount;
+        public long TickCount;
         public short Ping;
 
         public static MsgPing Create(int uniqueId)
@@ -17,7 +17,7 @@ namespace PixelShared.TerribleSockets.Packets
             var msg = stackalloc MsgPing[1];
             msg->Length = sizeof(MsgPing);
             msg->Id = 1002;
-            msg->TickCount = Environment.TickCount;
+            msg->TickCount = DateTime.UtcNow.Ticks;
             msg->UniqueId = uniqueId;
             return *msg;
         }

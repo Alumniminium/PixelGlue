@@ -23,10 +23,19 @@ namespace Pixel.ECS.Systems
         public void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;
-            foreach (var entity in CompIter<CameraFollowTagComponent, PositionComponent>.Get())
+            foreach (var entity in CompIter<CameraFollowTagComponent,InputComponent, PositionComponent>.Get())
             {
                 ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
-                ref readonly var fol = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
+                ref var fol = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
+
+                if(ComponentArray<InputComponent>.HasFor(entity))
+                {
+                    ref readonly var inp = ref ComponentArray<InputComponent>.Get(entity);
+                    if (inp.Scroll > inp.OldScroll)
+                        fol.Zoom *= 2;
+                    else if (inp.Scroll < inp.OldScroll)
+                        fol.Zoom /= 2;
+                }
 
                 var camLoc = pos.Value + fol.PositionOffset;
                 var camX = (int)(camLoc.X / Global.TileSize) * Global.TileSize;

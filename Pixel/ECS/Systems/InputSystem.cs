@@ -1,14 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Pixel.Configuration;
 using Pixel.ECS.Components;
-using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Pixel.World;
-using PixelShared;
 using System;
+using System.Collections.Concurrent;
 
 namespace Pixel.ECS.Systems
 {
@@ -17,6 +15,14 @@ namespace Pixel.ECS.Systems
         public string Name { get; set; } = "Input System";
         public bool IsActive { get; set; }
         public bool IsReady { get; set; }
+        private PixelGlueButtons[] _mappedButtons;
+
+        public void Initialize()
+        {
+            _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
+            IsReady = true;
+            IsActive = true;
+        }
 
         public void FixedUpdate(float _) { }
         public void Update(float deltaTime)
@@ -26,18 +32,20 @@ namespace Pixel.ECS.Systems
             var keyboard = Keyboard.GetState();
             var gamepad = GamePad.GetState(PlayerIndex.One);
 
-            foreach (var entity in CompIter<InputComponent,  DestinationComponent>.Get())
+            foreach (var entity in CompIter<InputComponent>.Get())
             {
-                ref var ic = ref ComponentArray<InputComponent>.Get(entity);
-                ref var dc = ref ComponentArray<DestinationComponent>.Get(entity);
+                ref var inp = ref ComponentArray<InputComponent>.Get(entity);
 
-                if (ic.Buttons == null)
-                    ic.Buttons = new System.Collections.Generic.List<PixelGlueButtons>();
-                if (ic.OldButtons == null)
-                    ic.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
+                if (inp.Buttons == null)
+                    inp.Buttons = new System.Collections.Generic.List<PixelGlueButtons>();
+                if (inp.OldButtons == null)
+                    inp.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
+                if (inp.Scroll != mouse.ScrollWheelValue)
+                    WorldGen.TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
 
-                //Scrolling(ref ic, ref mouse, ref cf);
-             
+                inp.OldScroll = inp.Scroll;
+                inp.Scroll = mouse.ScrollWheelValue;
+
                 var axis = Vector2.Zero;
                 if (mouse.LeftButton == ButtonState.Pressed)
                 {
@@ -46,32 +54,21 @@ namespace Pixel.ECS.Systems
                     dir.Normalize();
                     axis = dir;
                 }
-                if (axis == Vector2.Zero)
-                {
-                    if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Up))
-                        axis.Y = -1;
-                    else if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Down))
-                        axis.Y = 1;
-                    if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Left))
-                        axis.X = -1;
-                    else if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.Right))
-                        axis.X = 1;
-                }
 
-                ic.Axis = axis;
+                foreach (var mappedButton in _mappedButtons)
+                    if (KeyboardHelper.IsDown(ref keyboard, mappedButton))
+                        inp.Buttons.Add(mappedButton);
 
-                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.EscapeMenu))
-                    ic.Buttons.Add(PixelGlueButtons.EscapeMenu);
-                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgProfiling))
-                    ic.Buttons.Add(PixelGlueButtons.DbgProfiling);
-                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgSwitchScene))
-                    ic.Buttons.Add(PixelGlueButtons.DbgSwitchScene);
-                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgProfiling))
-                    ic.Buttons.Add(PixelGlueButtons.DbgProfiling);
-                if (KeyboardHelper.IsDown(ref keyboard, PixelGlueButtons.DbgBoundingBoxes))
-                    ic.Buttons.Add(PixelGlueButtons.DbgBoundingBoxes);
+                if (inp.Buttons.Contains(PixelGlueButtons.Up))
+                    axis.Y = -1;
+                else if (inp.Buttons.Contains(PixelGlueButtons.Down))
+                    axis.Y = 1;
+                if (inp.Buttons.Contains(PixelGlueButtons.Left))
+                    axis.X = -1;
+                else if (inp.Buttons.Contains(PixelGlueButtons.Right))
+                    axis.X = 1;
 
-                if(KeyboardHelper.IsPressed(ref ic, PixelGlueButtons.DbgBoundingBoxes))
+                if(KeyboardHelper.IsPressed(ref inp,PixelGlueButtons.DbgBoundingBoxes))
                 {
                     var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                     system.IsActive = !system.IsActive;
@@ -79,26 +76,11 @@ namespace Pixel.ECS.Systems
                     system2.IsActive = !system2.IsActive;
                 }
 
-                ic.OldButtons.Clear();
-                ic.OldButtons.AddRange(ic.Buttons);
-                ic.Buttons.Clear();
+                inp.Axis = axis;
+                inp.OldButtons.Clear();
+                inp.OldButtons.AddRange(inp.Buttons);
+                inp.Buttons.Clear();
             }
         }
-
-        private static void Scrolling(ref InputComponent inputComponent, ref MouseState m, ref CameraFollowTagComponent camera)
-        {
-            if (inputComponent.Scroll == m.ScrollWheelValue)
-                return;
-
-            if (m.ScrollWheelValue > inputComponent.Scroll)
-                camera.Zoom *= 2;
-            else if (m.ScrollWheelValue < inputComponent.Scroll)
-                camera.Zoom /= 2;
-
-            inputComponent.Scroll = m.ScrollWheelValue;
-
-            WorldGen.TilesLoading = new System.Collections.Concurrent.ConcurrentDictionary<(int x, int y), bool>();
-        }
-        
     }
 }

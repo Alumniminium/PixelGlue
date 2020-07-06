@@ -12,5 +12,6 @@ namespace Pixel.ECS.Components
         public List<PixelGlueButtons> Buttons;
         public List<PixelGlueButtons> OldButtons;
         public float Scroll;
+        public float OldScroll;
     }
 }

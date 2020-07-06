@@ -36,13 +36,6 @@ namespace Pixel.ECS.Systems
                         pc.Value = dc.Value;
                         vc.Velocity = Vector2.Zero;
                     }
-                    if (SceneManager.ActiveScene.Player.EntityId == entity)
-                    {
-                        if(!SceneManager.ActiveScene.Player.Has<NetworkComponent>())
-                            continue;
-                        ref readonly var net = ref ComponentArray<NetworkComponent>.Get(entity);
-                        NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pc.Value));
-                    }
                 }
             }
         }
@@ -73,6 +66,14 @@ namespace Pixel.ECS.Systems
                     dst.Value.Y = pos.Value.Y + Global.TileSize;
                 else if (inp.Axis.Y == -1)
                     dst.Value.Y = pos.Value.Y - Global.TileSize;
+
+                if (SceneManager.ActiveScene.Player.EntityId == entity)
+                {
+                    if(!SceneManager.ActiveScene.Player.Has<NetworkComponent>())
+                        continue;
+                    ref readonly var net = ref ComponentArray<NetworkComponent>.Get(entity);
+                    NetworkSystem.Send(MsgWalk.Create(net.UniqueId, dst.Value));
+                }
             }
         }
     }
