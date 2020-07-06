@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Input;
 using Pixel.Enums;
+using PixelShared.Enums;
 using System.Collections.Generic;
 
 namespace Pixel.Configuration

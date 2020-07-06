@@ -8,6 +8,7 @@
     <PublishTrimmed>false</PublishTrimmed>
     <TieredCompilation>false</TieredCompilation>
     <PublishSingleFile>false</PublishSingleFile>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup>

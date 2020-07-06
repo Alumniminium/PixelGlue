@@ -191,8 +191,8 @@ namespace Pixel.ECS
                     ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
                     ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent());
                     ComponentArray<SpeedComponent>.AddFor(entity, new SpeedComponent(64));
-                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(500, 500, 0));
-                    ComponentArray<DestinationComponent>.AddFor(entity,new DestinationComponent(500,500));
+                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(0, 0, 0));
+                    ComponentArray<DestinationComponent>.AddFor(entity,new DestinationComponent(0,0));
                     ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
                     ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont"));
@@ -208,6 +208,7 @@ namespace Pixel.ECS
                 case Npc _:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
+                    entity.Add<InputComponent>();
                     entity.Add<PositionComponent>();
                     entity.Add<DestinationComponent>();
                     entity.Add<VelocityComponent>();

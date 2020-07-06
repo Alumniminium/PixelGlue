@@ -1,9 +1,7 @@
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using Pixel.Entities;
 using Pixel.Scenes;
-using Pixel.World;
-using PixelShared;
 using PixelShared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
@@ -13,18 +11,13 @@ namespace Pixel.Networking.Handlers
         public static void Handle(MsgWalk packet)
         {
             var uniqueId = packet.UniqueId;
-            var location = new Vector2(packet.X, packet.Y);
             var tickCount = packet.TickCount;
             var scene = SceneManager.ActiveScene;
-            if (!scene.UniqueIdToEntityId.TryGetValue(uniqueId, out var entityId))
-            {
-                var entity = scene.CreateEntity<Npc>(uniqueId);
-            }
-            else
+            if (scene.UniqueIdToEntityId.TryGetValue(uniqueId, out var entityId))
             {
                 var entity = scene.Entities[entityId];
-                ref var dst = ref entity.Get<DestinationComponent>();
-                dst.Value = location;
+                ref var dst = ref entity.Get<DestinationComponent>();                
+                dst.Value = new Vector2(packet.X,packet.Y);
             }
         }
     }

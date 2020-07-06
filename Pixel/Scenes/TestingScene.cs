@@ -15,12 +15,10 @@ namespace Pixel.Scenes
         public override void Initialize()
         {
             var redbox = CreateEntity<UIRectangle>();
-            redbox.Setup(0,0,Global.ScreenWidth,104,Color.IndianRed);
+            redbox.Setup(0,0,Global.ScreenWidth,64,Color.IndianRed);
 
             Systems.Add(new NetworkSystem());
-            Systems.Add(new InputSystem());
-            Systems.Add(new PlayerMoveSystem());
-            Systems.Add(new VelocitySystem());
+            Systems.Add(new PlayerInputSystem());
             Systems.Add(new MoveSystem());
             Systems.Add(new CameraSystem());
             //Systems.Add(new MapShaderRenderer());

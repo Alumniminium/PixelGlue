@@ -31,12 +31,12 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entityId);
                 ref readonly var drawable = ref ComponentArray<DrawableComponent>.Get(entityId);
 
-                if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right
-                || pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
-                    {
-                        Scene.Destroy(entityId);
-                        continue;
-                    }
+                //if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right
+                //|| pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
+                //    {
+                //        Scene.Destroy(entityId);
+                //        continue;
+                //    }
 
                 sb.Draw(drawable.Texture, pos.Value + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;

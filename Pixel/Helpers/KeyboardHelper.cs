@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework.Input;
 using Pixel.Configuration;
 using Pixel.ECS.Components;
-using Pixel.Enums;
+using PixelShared.Enums;
 
 namespace Pixel.ECS
 {

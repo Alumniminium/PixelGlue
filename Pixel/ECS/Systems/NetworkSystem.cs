@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Pixel.Enums;
 using Pixel.Networking;
 using PixelShared;
@@ -51,8 +52,10 @@ namespace Pixel.ECS.Systems
             while (PendingPackets.TryDequeue(out var packet))
                 PacketHandler.Handle(packet);
 
+            Task.Run( ()=>{
             while (PendingSends.TryDequeue(out var packet))
                 Socket.Send(packet);
+            }).ConfigureAwait(false);
         }
 
         private void Connect(string ip, ushort port)

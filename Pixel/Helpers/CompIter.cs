@@ -14,7 +14,7 @@ namespace Pixel.Helpers
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -37,7 +37,7 @@ namespace Pixel.Helpers
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -60,7 +60,7 @@ namespace Pixel.Helpers
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -83,7 +83,7 @@ namespace Pixel.Helpers
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)

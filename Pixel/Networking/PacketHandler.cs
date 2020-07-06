@@ -1,4 +1,5 @@
 using Pixel.Networking.Handlers;
+using PixelShared;
 using PixelShared.IO;
 using System;
 using System.Buffers;
@@ -10,7 +11,8 @@ namespace Pixel.Networking
         public static void Handle(byte[] buffer)
         {
             var packetId = BitConverter.ToUInt16(buffer, 4);
-            FConsole.WriteLine($"Got Packet {packetId}");
+            if (Global.Verbose)
+                FConsole.WriteLine($"Got Packet {packetId}");
             switch (packetId)
             {
                 case 1000:
@@ -21,6 +23,9 @@ namespace Pixel.Networking
                     break;
                 case 1002:
                     Ping.Handle(buffer);
+                    break;
+                case 1003:
+                    Spawn.Handle(buffer);
                     break;
             }
             ArrayPool<byte>.Shared.Return(buffer);

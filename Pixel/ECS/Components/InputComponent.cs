@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
+﻿using PixelShared.Enums;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {
@@ -13,5 +11,9 @@ namespace Pixel.ECS.Components
         public List<PixelGlueButtons> OldButtons;
         public float Scroll;
         public float OldScroll;
+
+        public bool IsPressed(PixelGlueButtons btn) => Buttons.Contains(btn) && !OldButtons.Contains(btn);
+        public bool IsDown(PixelGlueButtons btn) => Buttons.Contains(btn);
+        public bool IsUp(PixelGlueButtons btn) => !Buttons.Contains(btn);
     }
 }

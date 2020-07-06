@@ -1,6 +1,6 @@
-namespace Pixel.Enums
+namespace PixelShared.Enums
 {
-    public enum PixelGlueButtons
+    public enum PixelGlueButtons : int
     {
         Up,
         Down,
@@ -20,4 +20,5 @@ namespace Pixel.Enums
         ScalePlus,
         ScaleMinus,
     }
+
 }

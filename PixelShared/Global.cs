@@ -25,5 +25,6 @@ namespace PixelShared
         public static int TileSize => 16;
         public static long FrameCounter { get; set; }
         public static GraphicsMetrics Metrics { get; set; }
+        public static bool Verbose { get; set; }
     }
 }

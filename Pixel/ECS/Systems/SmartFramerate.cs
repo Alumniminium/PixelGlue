@@ -29,9 +29,9 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float _)
         {
-            lines[0] = $" Pixel Engine | Entities: {Scene.Entities.Count}, Sprites: {Global.Metrics.SpriteCount}, Primitives: {Global.Metrics.PrimitiveCount}";
-            lines[1] = $"    v 0.1     | Draw calls: {Global.Metrics.DrawCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
-            lines[2] = $"  7/20/2020   | FPS: {updateRate:##0} (Total: {Global.DrawProfiler.Time + Global.UpdateProfiler.Time:##0.00}ms, Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms)";
+            lines[0] = $" Pixel Engine | Entities: {Scene.Entities.Count}, Sprites: {Global.Metrics.SpriteCount}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
+            lines[1] = $"   v 0.02     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.DrawCalls})";
+            lines[2] = $"  07/06/2020  | FPS: {updateRate:##0} (Total: {Global.DrawProfiler.Time + Global.UpdateProfiler.Time:##0.00}ms, Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms)";
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float timeSinceLastFrame)
@@ -50,7 +50,7 @@ namespace Pixel.ECS.Systems
         public void Draw(SpriteBatch sb)
         {
             for (int i = 0; i < lines.Length; i++)
-                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 32 * i, lines[i]);
+                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 16 * i, lines[i]);
         }
     }
 }
