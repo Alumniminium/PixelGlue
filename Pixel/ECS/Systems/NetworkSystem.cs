@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Pixel.Enums;
 using Pixel.Networking;
-using PixelShared;
-using PixelShared.IO;
-using PixelShared.TerribleSockets.Client;
-using PixelShared.TerribleSockets.Packets;
-using PixelShared.TerribleSockets.Queues;
+using Shared;
+using Shared.IO;
+using Shared.TerribleSockets.Client;
+using Shared.TerribleSockets.Packets;
+using Shared.TerribleSockets.Queues;
 using System;
 using System.Collections.Concurrent;
 

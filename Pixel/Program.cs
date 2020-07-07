@@ -1,7 +1,7 @@
 ﻿using Pixel.Scenes;
 using Pixel.zero;
-using PixelShared;
-using PixelShared.IO;
+using Shared;
+using Shared.IO;
 using System;
 using System.Threading;
 

@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-using PixelShared;
+using Shared;
 using System;
 
 namespace Server

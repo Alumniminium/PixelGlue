@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using PixelShared;
-using PixelShared.TerribleSockets.Packets;
-using PixelShared.TerribleSockets.Queues;
-using PixelShared.TerribleSockets.Server;
+using Shared;
+using Shared.TerribleSockets.Packets;
+using Shared.TerribleSockets.Queues;
+using Shared.TerribleSockets.Server;
 using System;
 using System.Threading;
 

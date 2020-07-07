@@ -4,8 +4,8 @@ using Pixel.ECS.Systems;
 using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Scenes;
-using PixelShared.IO;
-using PixelShared.TerribleSockets.Packets;
+using Shared.IO;
+using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
 {

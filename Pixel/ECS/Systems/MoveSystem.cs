@@ -20,8 +20,10 @@ namespace Pixel.ECS.Systems
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 Blocks[i] = new AutoResetEvent(false);
-                Threads[i] = new Thread(WorkLoop);
-                Threads[i].IsBackground = true;
+                Threads[i] = new Thread(WorkLoop)
+                {
+                    IsBackground = true
+                };
                 Threads[i].Start(i);
             }
         }

@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
-using PixelShared;
-using PixelShared.TerribleSockets.Client;
+using Shared;
+using Shared.TerribleSockets.Client;
 using System;
 
 namespace Server

@@ -1,6 +1,6 @@
 using Pixel.ECS.Systems;
-using PixelShared.IO;
-using PixelShared.TerribleSockets.Packets;
+using Shared.IO;
+using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
 {

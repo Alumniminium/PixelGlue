@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Scenes;
-using PixelShared;
+using Shared;
 
 namespace Pixel.ECS.Systems
 {

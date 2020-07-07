@@ -6,7 +6,7 @@ using Pixel.ECS.Systems.UI;
 using Pixel.Entities.UI;
 using Pixel.Helpers;
 using Pixel.World;
-using PixelShared;
+using Shared;
 
 namespace Pixel.Scenes
 {

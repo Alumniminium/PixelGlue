@@ -1,4 +1,4 @@
-﻿using PixelShared.Enums;
+﻿using Shared.Enums;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 

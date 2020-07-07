@@ -8,8 +8,8 @@ using Pixel.Scenes;
 using Pixel.World;
 using System;
 using System.Collections.Concurrent;
-using PixelShared.Enums;
-using PixelShared;
+using Shared.Enums;
+using Shared;
 using Pixel.Entities;
 
 namespace Pixel.ECS.Systems

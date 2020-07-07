@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Scenes;
-using PixelShared;
+using Shared;
 
 namespace Pixel.ECS.Systems
 {

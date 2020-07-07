@@ -5,7 +5,7 @@ using Pixel.ECS.Components;
 using Pixel.Entities;
 using Pixel.Helpers;
 using Pixel.World;
-using PixelShared;
+using Shared;
 using Pixel.ECS;
 using System;
 using System.Collections.Concurrent;

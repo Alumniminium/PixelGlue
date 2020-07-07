@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using PixelShared;
-using PixelShared.Enums;
-using PixelShared.Extensions;
-using PixelShared.Noise;
+using Shared;
+using Shared.Enums;
+using Shared.Extensions;
+using Shared.Noise;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

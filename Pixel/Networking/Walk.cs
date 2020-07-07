@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Scenes;
-using PixelShared.TerribleSockets.Packets;
+using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
 {

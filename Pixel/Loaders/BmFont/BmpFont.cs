@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Loaders.BmFont.Models;
-using PixelShared;
+using Shared;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;

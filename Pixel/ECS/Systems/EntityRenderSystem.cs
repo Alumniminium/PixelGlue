@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using PixelShared;
+using Shared;
 using Pixel.Entities;
 
 namespace Pixel.ECS.Systems

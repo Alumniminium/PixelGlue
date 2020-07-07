@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities.UI;
 using Pixel.Entities;
-using PixelShared;
+using Shared;
 
 namespace Pixel.ECS.Systems.UI
 {
@@ -29,7 +29,7 @@ namespace Pixel.ECS.Systems.UI
             //}
         }
 
-        private static void Draw(SpriteBatch spriteBatch, Entities.Entity entity)
+        private static void Draw(SpriteBatch spriteBatch, Entity entity)
         {
             if (entity is Textblock)
             {

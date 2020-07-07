@@ -2,7 +2,7 @@ using System.Globalization;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using PixelShared;
+using Shared;
 
 namespace Pixel.ECS
 {

@@ -10,7 +10,7 @@
         "dependencies": {
           "MonoGame.Content.Builder": "3.7.0.9",
           "MonoGame.Framework.DesktopGL.Core": "3.8.0.13",
-          "PixelShared": "1.0.0"
+          "Shared": "1.0.0"
         },
         "runtime": {
           "Pixel.dll": {}
@@ -67,12 +67,12 @@
           }
         }
       },
-      "PixelShared/1.0.0": {
+      "Shared/1.0.0": {
         "dependencies": {
           "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
         },
         "runtime": {
-          "PixelShared.dll": {}
+          "Shared.dll": {}
         }
       }
     }
@@ -97,7 +97,7 @@
       "path": "monogame.framework.desktopgl.core/3.8.0.13",
       "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
     },
-    "PixelShared/1.0.0": {
+    "Shared/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

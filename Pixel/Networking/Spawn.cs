@@ -1,7 +1,7 @@
 using Pixel.Entities;
 using Pixel.Scenes;
 using Pixel.World;
-using PixelShared.TerribleSockets.Packets;
+using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking
 {

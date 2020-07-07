@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS;
 using Pixel.Scenes;
 using Pixel.World;
-using PixelShared;
+using Shared;
 
 namespace Pixel.zero
 {
