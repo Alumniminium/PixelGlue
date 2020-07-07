@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using PixelShared;
+using Pixel.Entities;
 
 namespace Pixel.ECS.Systems
 {
@@ -10,7 +11,7 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Entity Rendering System";
 
-        public override void AddEntity(Entities.Entity entity)
+        public override void AddEntity(Entity entity)
         {
             if (entity.Has<PositionComponent>() && entity.Has<DrawableComponent>())
                 base.AddEntity(entity);

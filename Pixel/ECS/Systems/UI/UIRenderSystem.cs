@@ -1,12 +1,8 @@
-﻿using System.Data;
-using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities.UI;
-using Pixel.Enums;
-using Pixel.Helpers;
-using Pixel.Scenes;
+using Pixel.Entities;
 using PixelShared;
 
 namespace Pixel.ECS.Systems.UI
@@ -15,7 +11,7 @@ namespace Pixel.ECS.Systems.UI
     {
         public override string Name { get; set; } = "UI Render System";
 
-        public override void AddEntity(Entities.Entity entity)
+        public override void AddEntity(Entity entity)
         {
             if (entity.Has<DrawableComponent>() && entity.Has<PositionComponent>())
                 base.AddEntity(entity);

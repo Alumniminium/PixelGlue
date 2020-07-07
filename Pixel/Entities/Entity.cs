@@ -1,6 +1,5 @@
 using Pixel.ECS.Components;
 using Pixel.Helpers;
-using PixelShared;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 

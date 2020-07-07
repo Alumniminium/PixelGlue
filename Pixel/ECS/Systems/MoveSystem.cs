@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
+using Pixel.Entities;
 
 namespace Pixel.ECS.Systems
 {
@@ -63,7 +64,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        public override void AddEntity(Entities.Entity entity)
+        public override void AddEntity(Entity entity)
         {
             if (entity.Has<PositionComponent>() && entity.Has<VelocityComponent>()
              && entity.Has<DestinationComponent>() && entity.Has<SpeedComponent>())
