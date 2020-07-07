@@ -10,32 +10,32 @@ using System;
 using System.Collections.Concurrent;
 using PixelShared.Enums;
 using PixelShared;
+using Pixel.Entities;
 
 namespace Pixel.ECS.Systems
 {
-    public class PlayerInputSystem : IEntitySystem
+    public class PlayerInputSystem : PixelSystem
     {
-        public string Name { get; set; } = "Input System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public override string Name { get; set; } = "Input System";
         private PixelGlueButtons[] _mappedButtons;
 
-        public void Initialize()
+        public override void Initialize()
         {
             _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
-            IsReady = true;
             IsActive = true;
         }
-
-        public void FixedUpdate(float _) { }
-        public void Update(float deltaTime)
+        public override void AddEntity(Entity entity)
         {
-
-            foreach (var entity in CompIter<InputComponent, DestinationComponent, PositionComponent>.Get())
+            if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>()&& entity.Has<PositionComponent>())
+                base.AddEntity(entity);
+        }
+        public override void Update(float deltaTime)
+        {
+            foreach (var entity in Entities)
             {
-                ref var inp = ref ComponentArray<InputComponent>.Get(entity);
-                ref var dst = ref ComponentArray<DestinationComponent>.Get(entity);
-                ref var pos = ref ComponentArray<PositionComponent>.Get(entity);
+                ref var inp = ref entity.Get<InputComponent>();
+                ref var dst = ref entity.Get<DestinationComponent>();
+                ref var pos = ref entity.Get<PositionComponent>();
                 EnsureReady(ref inp);
 
                 var mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
@@ -58,7 +58,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static void Mouse(ref MouseState mouse, ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;
@@ -77,7 +77,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void EnsureReady(ref InputComponent inp)
         {
             if (inp.Buttons == null)
@@ -86,7 +86,7 @@ namespace Pixel.ECS.Systems
                 inp.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Keyboard(ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;

@@ -12,6 +12,7 @@ namespace PixelShared.TerribleSockets.Packets
         public int TickCount;
         public int UniqueId;
         public int X, Y;
+        public Vector2 Position => new Vector2(X,Y);
 
         public static MsgWalk Create(int uniqueId, int x, int y)
         {

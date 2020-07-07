@@ -1,45 +1,83 @@
+using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using Pixel.Enums;
-using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
-    public class MoveSystem : IEntitySystem
+    public class MoveSystem : PixelSystem
     {
-        public string Name { get; set; } = "Move System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public override string Name { get; set; } = "Move System";
 
-        public void FixedUpdate(float _) { }
-        public void Update(float deltaTime)
+        public const int NUM_THREADS = 1;
+        public Thread[] Threads = new Thread[NUM_THREADS];
+        public AutoResetEvent[] Blocks = new AutoResetEvent[NUM_THREADS];
+        private float deltaTime;
+
+        public override void Initialize()
         {
-            foreach (var entity in CompIter<VelocityComponent, DestinationComponent,SpeedComponent, PositionComponent>.Get())
+            for (int i = 0; i < NUM_THREADS; i++)
             {
-                ref var vc = ref ComponentArray<VelocityComponent>.Get(entity);
-                ref var pc = ref ComponentArray<PositionComponent>.Get(entity);
-                ref var dc = ref ComponentArray<DestinationComponent>.Get(entity);
-                ref var sp = ref ComponentArray<SpeedComponent>.Get(entity);
-                
-                if (pc.Value != dc.Value)
+                Blocks[i] = new AutoResetEvent(false);
+                Threads[i] = new Thread(WorkLoop);
+                Threads[i].IsBackground = true;
+                Threads[i].Start(i);
+            }
+        }
+        private void WorkLoop(object idxObj)
+        {
+            int i = (int)idxObj;
+            while (true)
+            {
+                Blocks[i].WaitOne();
+                var chunkSize = Entities.Count / NUM_THREADS;
+                var start = chunkSize*i;
+                var end = start + chunkSize;
+                for(int ei =start; ei < end; ei++)
                 {
-                    var dir = dc.Value - pc.Value;
-                    dir.Normalize();
+                    var entity = Entities[ei];
+                    ref var vc = ref entity.Get<VelocityComponent>();
+                    ref var pc = ref entity.Get<PositionComponent>();
+                    ref var dc = ref entity.Get<DestinationComponent>();
+                    ref var sp = ref entity.Get<SpeedComponent>();
 
-                    vc.Velocity = dir * sp.Speed * sp.SpeedMulti * deltaTime;
-
-                    var distanceToDest = Vector2.Distance(pc.Value, dc.Value);
-                    var moveDistance = Vector2.Distance(pc.Value, pc.Value + vc.Velocity);
-
-                    if (distanceToDest > moveDistance)
-                        pc.Value += vc.Velocity;
-                    else
+                    if (pc.Value != dc.Value)
                     {
-                        pc.Value = dc.Value;
-                        vc.Velocity = Vector2.Zero;
+                        var dir = dc.Value - pc.Value;
+                        dir.Normalize();
+
+                        vc.Velocity = dir * sp.Speed * sp.SpeedMulti * deltaTime;
+
+                        var distanceToDest = Vector2.Distance(pc.Value, dc.Value);
+                        var moveDistance = Vector2.Distance(pc.Value, pc.Value + vc.Velocity);
+
+                        if (distanceToDest > moveDistance)
+                            pc.Value += vc.Velocity;
+                        else
+                        {
+                            pc.Value = dc.Value;
+                            vc.Velocity = Vector2.Zero;
+                        }
                     }
                 }
             }
+        }
+
+        public override void AddEntity(Entities.Entity entity)
+        {
+            if (entity.Has<PositionComponent>() && entity.Has<VelocityComponent>()
+             && entity.Has<DestinationComponent>() && entity.Has<SpeedComponent>())
+                base.AddEntity(entity);
+        }
+
+        public override void Update(float deltaTime)
+        {
+            this.deltaTime=deltaTime;
+            for (int i = 0; i < NUM_THREADS; i++)
+            {
+                Blocks[i].Set();
+            }
+
         }
     }
 }

@@ -1,41 +1,43 @@
-using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+using System;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.Enums;
 using Pixel.Scenes;
 using PixelShared;
 
 namespace Pixel.ECS.Systems
 {
-    public class SmartFramerate : IEntitySystem
+    public class SmartFramerate : PixelSystem
     {
-        public string Name { get; set; } = "Update Rate Monitoring System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public override string Name { get; set; } = "Metrics UI Overlay System";
         private double currentFrametimes;
         private int counter;
         public double updateRate;
-        private readonly double weight;
-        private readonly int numerator;
-        public Scene Scene => SceneManager.ActiveScene;
-        private readonly string[] lines = new string[3];
-        public SmartFramerate(int oldFrameWeight)
+        private double weight;
+        private int numerator;
+
+        private readonly string[] lines = new string[64];
+
+        public override void Update(float timeSinceLastFrame)
         {
-            numerator = oldFrameWeight;
-            weight = oldFrameWeight / (oldFrameWeight - 1d);
-            for (int i = 0; i < lines.Length; i++)
-                lines[i] = string.Empty;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void FixedUpdate(float _)
-        {
-            lines[0] = $" Pixel Engine | Entities: {Scene.Entities.Count}, Sprites: {Global.Metrics.SpriteCount}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
-            lines[1] = $"   v 0.02     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.DrawCalls})";
-            lines[2] = $"  07/06/2020  | FPS: {updateRate:##0} (Total: {Global.DrawProfiler.Time + Global.UpdateProfiler.Time:##0.00}ms, Draw: {Global.DrawProfiler.Time:##0.00}ms, Update: {Global.UpdateProfiler.Time:##0.00}ms)";
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Update(float timeSinceLastFrame)
-        {
+            lines[0] = $"| Pixel Engine | Entities: {Scene.Entities.Count}, Sprites: {Global.Metrics.SpriteCount}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
+            lines[1] = $"|   v {Global.Major}.{Global.Minor:00}     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.DrawCalls})";
+            lines[2] = $"|  {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:0000}  | FPS: {updateRate:##0} (Total: {Global.DrawTime + Global.UpdateTime:##0.00}ms, Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms)";
+            lines[4] =  "Legend:  last, 30s avg, 30s max";
+            int lastLine = 5;
+            for (int i = 0; i < SceneManager.ActiveScene.Systems.Count; i++)
+            {
+                var system = Scene.Systems[i];
+                var draw =   "Draw:   00.00, 00.00, 00.00";
+                var update = "Update: 00.00, 00.00, 00.00";
+                if (Profiler.SystemDrawTimes.ContainsKey(system.Name) && Profiler.SystemDrawTimes[system.Name].Sum != 0)
+                    draw = $"Draw:   {Profiler.SystemDrawTimes[system.Name].Values[^1].ToString("00.00")}, {Profiler.SystemDrawTimes[system.Name].Avg:00.00}, {Profiler.SystemDrawTimes[system.Name].Max:00.00}";
+                if (Profiler.SystemUpdateTimes.ContainsKey(system.Name) && Profiler.SystemUpdateTimes[system.Name].Sum != 0)
+                    update = $"Update: {Profiler.SystemUpdateTimes[system.Name].Values[^1].ToString("00.00")}, {Profiler.SystemUpdateTimes[system.Name].Avg:00.00}, {Profiler.SystemUpdateTimes[system.Name].Max:00.00}";
+                lines[lastLine] = string.Empty;
+                lines[lastLine+1] = $"{system.Name}";
+                lines[lastLine+2] = $"{update}";
+                lines[lastLine+3] = $"{draw}";
+                lastLine += 4;
+            }
             counter++;
             currentFrametimes /= weight;
             currentFrametimes += timeSinceLastFrame;
@@ -46,11 +48,19 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             for (int i = 0; i < lines.Length; i++)
-                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 16 * i, lines[i]);
+                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 18 * i, lines[i], 0.72f);
+        }
+
+        public override void Initialize()
+        {
+            numerator = 3;
+            weight = 3 / (3 - 1d);
+            for (int i = 0; i < lines.Length; i++)
+                lines[i] = string.Empty;
+            IsActive = true;
         }
     }
 }

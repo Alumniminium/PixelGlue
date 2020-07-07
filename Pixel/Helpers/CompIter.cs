@@ -8,13 +8,13 @@ namespace Pixel.Helpers
     {
         private static float _lastUpdateFrame;
         private static readonly List<int> _items = new List<int>(250);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Update()
         {    
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -31,13 +31,13 @@ namespace Pixel.Helpers
     {
         private static float _lastUpdateFrame;
         private static readonly List<int> _items = new List<int>(250);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Update()
         {    
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -54,13 +54,13 @@ namespace Pixel.Helpers
     {
         private static float _lastUpdateFrame;
         private static readonly List<int> _items = new List<int>(250);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Update()
         {    
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)
@@ -77,13 +77,13 @@ namespace Pixel.Helpers
     {
         private static float _lastUpdateFrame;
         private static readonly List<int> _items = new List<int>(250);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void Update()
         {    
             _lastUpdateFrame = Global.FrameCounter;
              _items.Clear();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static List<int> Get()
         {
             if (_lastUpdateFrame != Global.FrameCounter)

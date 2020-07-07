@@ -1,47 +1,42 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using Pixel.Entities;
-using Pixel.Enums;
-using Pixel.Helpers;
-using Pixel.Scenes;
 using PixelShared;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS.Systems
 {
-    public class DbgBoundingBoxRenderSystem : IEntitySystem
+    public class DbgBoundingBoxRenderSystem : PixelSystem
     {
-        public string Name { get; set; } = "Debug Boundingbox System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
-        public Scene Scene => SceneManager.ActiveScene;
-        public List<int> Entities { get; set; }
+        public override string Name { get; set; } = "Debug Boundingbox System";
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public void Draw(SpriteBatch sb)
+        public override void AddEntity(Entities.Entity entity)
+        {
+            if (entity.Has<DbgBoundingBoxComponent>())
+                base.AddEntity(entity);
+        }
+        public override void Draw(SpriteBatch sb)
         {
             if (Scene.Camera == null)
                 return;
             var origin = new Vector2(0, 0);
-            foreach (var entity in CompIter<PositionComponent, DrawableComponent>.Get())
+            foreach (var entity in Entities)
             {
-                ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
-                ref readonly var drw = ref ComponentArray<DrawableComponent>.Get(entity);
-                var destRect = new Rectangle((int)pos.Value.X, (int)pos.Value.Y, drw.SrcRect.Width, drw.SrcRect.Height);
-                sb.Draw(DbgBoundingBoxComponent.Texture, destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
-                Global.DrawCalls++;
+                if(entity.Has<DestinationComponent>())
+                {
+                    ref readonly var dst = ref entity.Get<DestinationComponent>();
+                    var destRect = new Rectangle((int)dst.Value.X, (int)dst.Value.Y, Global.TileSize, Global.TileSize);
+                    sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Blue, 0, origin, SpriteEffects.None, 0);
+                    Global.DrawCalls++;
+                }
+                if(entity.Has<DrawableComponent>() && entity.Has<PositionComponent>())
+                {
+                    ref readonly var pos = ref entity.Get<PositionComponent>();
+                    ref readonly var drw = ref entity.Get<DrawableComponent>();
+                    var destRect = new Rectangle((int)pos.Value.X, (int)pos.Value.Y, drw.SrcRect.Width, drw.SrcRect.Height);
+                    sb.Draw(AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName), destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, origin, SpriteEffects.None, 0);
+                    Global.DrawCalls++;
+                }
             }
-        }
-
-        public void FixedUpdate(float deltaTime)
-        {
-        }
-
-        public void Update(float deltaTime)
-        {
-
         }
     }
 }

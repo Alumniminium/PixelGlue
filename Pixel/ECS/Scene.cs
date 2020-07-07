@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
-using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.World;
 using PixelShared;
@@ -15,35 +14,6 @@ using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS
 {
-    public static class Profiler
-    {
-        private static readonly Dictionary<string, List<float>> SystemUpdateTimes = new Dictionary<string, List<float>>();
-        private static readonly Dictionary<string, List<float>> SystemDrawTimes = new Dictionary<string, List<float>>();
-
-        public static void AddUpdate(string system, float time)
-        {
-            time = (float)Math.Round(time,3);
-            if (time < 1)
-                return;
-            if (!SystemUpdateTimes.TryGetValue(system, out var list))
-            {
-                list = new List<float>();
-                SystemUpdateTimes.Add(system, list);
-            }
-            list.Add(time);
-        }
-        public static void AddDraw(string system, float time)
-        {
-            if (time == 0)
-                return;
-            if (!SystemUpdateTimes.TryGetValue(system, out var list))
-            {
-                list = new List<float>();
-                SystemDrawTimes.Add(system, list);
-            }
-            list.Add(time);
-        }
-    }
     public class Scene
     {
         public int Id;
@@ -52,16 +22,18 @@ namespace Pixel.ECS
         public int LastEntityId = 1;
         public ConcurrentDictionary<int, Entity> Entities;
         public ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
-        public List<IEntitySystem> Systems;
+        public List<PixelSystem> Systems;
         public Camera Camera;
         public Player Player;
+
+        public Queue<Action> PostUpdateQueue = new Queue<Action>(8);
 
         public Scene()
         {
             Entities = new ConcurrentDictionary<int, Entity>();
             UniqueIdToEntityId = new ConcurrentDictionary<int, int>();
             EntityIdToUniqueId = new ConcurrentDictionary<int, int>();
-            Systems = new List<IEntitySystem>();
+            Systems = new List<PixelSystem>();
         }
 
         public virtual void Initialize()
@@ -83,21 +55,21 @@ namespace Pixel.ECS
         {
             for (int i = 0; i < Systems.Count; i++)
             {
-                if (Systems[i].IsActive && Systems[i].IsReady)
-                {
-                    var preUpdateTicks = DateTime.UtcNow.Ticks;
+                var preUpdateTicks = DateTime.UtcNow.Ticks;
+                if (Systems[i].IsActive)
                     Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
-                    var postUpdateTicks = DateTime.UtcNow.Ticks;
-                    Profiler.AddUpdate(Systems[i].Name, (postUpdateTicks - preUpdateTicks) / 10000f);
-                }
+                var postUpdateTicks = DateTime.UtcNow.Ticks;
+                Profiler.AddUpdate(Systems[i].Name, (postUpdateTicks - preUpdateTicks) / 10000f);
             }
+            while (PostUpdateQueue.Count > 0)
+                PostUpdateQueue.Dequeue().Invoke();
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
             {
-                if (Systems[i].IsActive && Systems[i].IsReady)
+                if (Systems[i].IsActive)
                     Systems[i].FixedUpdate(deltaTime);
             }
         }
@@ -110,8 +82,11 @@ namespace Pixel.ECS
             sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
-                if (Systems[i].IsActive && Systems[i].IsReady)
+                var preDrawTicks = DateTime.UtcNow.Ticks;
+                if (Systems[i].IsActive)
                     Systems[i].Draw(sb);
+                var postDrawTicks = DateTime.UtcNow.Ticks;
+                Profiler.AddDraw(Systems[i].Name, (postDrawTicks - preDrawTicks) / 10000f);
             }
             sb.End();
         }
@@ -125,13 +100,21 @@ namespace Pixel.ECS
         public virtual void Destroy(int entity)
         {
             Entities.TryRemove(entity, out var actualEntity);
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].RemoveEntity(actualEntity);
+
             if (actualEntity != null)
             {
+                actualEntity.DestroyComponents();
                 foreach (var child in actualEntity?.Children)
-                    Destroy(child);
+                {
+                    child.DestroyComponents();
+                    Destroy(child.EntityId);
+                }
             }
             EntityIdToUniqueId.TryRemove(entity, out var uid);
             UniqueIdToEntityId.TryRemove(uid, out _);
+
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -140,11 +123,15 @@ namespace Pixel.ECS
             var entity = new T
             {
                 EntityId = LastEntityId++,
-                Scene = this
             };
             ApplyArchetype(entity);
-            entity.Add(new NetworkComponent(this, entity.EntityId, uniqueId));
+            entity.Add(new NetworkComponent(uniqueId));
+            UniqueIdToEntityId.TryAdd(uniqueId, entity.EntityId);
+            EntityIdToUniqueId.TryAdd(entity.EntityId, uniqueId);
             Entities.TryAdd(entity.EntityId, entity);
+
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].AddEntity(entity);
             return entity;
         }
 
@@ -154,13 +141,15 @@ namespace Pixel.ECS
             var entity = new T
             {
                 EntityId = LastEntityId++,
-                Scene = this
             };
             ApplyArchetype(entity);
             Entities.TryAdd(entity.EntityId, entity);
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].AddEntity(entity);
             return entity;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual T GetSystem<T>()
         {
             foreach (var sys in Systems)
@@ -177,7 +166,7 @@ namespace Pixel.ECS
                     return t;
             return null;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private void ApplyArchetype<T>(T entity) where T : Entity, new()
         {
             switch (entity)
@@ -192,13 +181,13 @@ namespace Pixel.ECS
                     ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent());
                     ComponentArray<SpeedComponent>.AddFor(entity, new SpeedComponent(64));
                     ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(0, 0, 0));
-                    ComponentArray<DestinationComponent>.AddFor(entity,new DestinationComponent(0,0));
+                    ComponentArray<DestinationComponent>.AddFor(entity, new DestinationComponent(0, 0));
                     ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
                     var nt = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont"));
+                    ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont_12"));
                     ComponentArray<PositionComponent>.AddFor(nt, new PositionComponent(-48, -48, 0));
                     var nt2 = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt2, new TextComponent($"Id:   {entity.EntityId}", "profont"));
+                    ComponentArray<TextComponent>.AddFor(nt2, new TextComponent($"Id:   {entity.EntityId}", "profont_12"));
                     ComponentArray<PositionComponent>.AddFor(nt2, new PositionComponent(-48, -32, 0));
                     nt.Parent = entity;
                     nt2.Parent = entity;
@@ -208,7 +197,6 @@ namespace Pixel.ECS
                 case Npc _:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
-                    entity.Add<InputComponent>();
                     entity.Add<PositionComponent>();
                     entity.Add<DestinationComponent>();
                     entity.Add<VelocityComponent>();
@@ -228,8 +216,9 @@ namespace Pixel.ECS
                     break;
             }
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public override int GetHashCode() => Id;
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }
 }

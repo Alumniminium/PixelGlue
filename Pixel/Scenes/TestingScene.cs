@@ -29,7 +29,7 @@ namespace Pixel.Scenes
             Systems.Add(new DbgBoundingBoxRenderSystem());
 
             Systems.Add(new UIRenderSystem());
-            Systems.Add(new SmartFramerate(4));
+            Systems.Add(new SmartFramerate());
             Systems.Add(new GCMonitor());
             base.Initialize();
         }

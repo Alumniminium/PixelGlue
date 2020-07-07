@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {
@@ -10,7 +8,6 @@ namespace Pixel.ECS.Components
         public Rectangle SrcRect;
         public Color Color;
         public Rectangle DestRect;
-        public Texture2D Texture => AssetManager.GetTexture(TextureName);
 
         public DrawableComponent(string textureName, Rectangle srcRect)
         {

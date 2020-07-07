@@ -49,7 +49,7 @@ namespace Pixel
 
         protected override void Update(GameTime gameTime)
         {
-            Global.UpdateProfiler.StartMeasuring();
+            Global.UpdateTime=0;
             _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             while (SceneManager.QueuedTasks.TryDequeue(out var action))
@@ -64,21 +64,19 @@ namespace Pixel
             }
 
             base.Update(gameTime);
-            Global.UpdateProfiler.StopMeasuring();
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            Global.DrawTime=0;
             Global.FrameCounter++;
             Global.DrawCalls = 0;
-            Global.DrawProfiler.StartMeasuring();
             _graphics.GraphicsDevice.Clear(Color.Black);
 
             if (SceneManager.ActiveScene.IsReady)
                 SceneManager.ActiveScene.Draw(_spriteBatch);
 
             Global.Metrics = GraphicsDevice.Metrics;
-            Global.DrawProfiler.StopMeasuring();
             base.Draw(gameTime);
         }
     }

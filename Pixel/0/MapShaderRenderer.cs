@@ -1,22 +1,17 @@
-using System.Globalization;
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Pixel.ECS;
-using Pixel.Enums;
 using Pixel.Scenes;
 using Pixel.World;
 using PixelShared;
 
 namespace Pixel.zero
 {
-    public class MapShaderRenderer : IEntitySystem
+    public class MapShaderRenderer : PixelSystem
     {
-        public string Name => "Map Shader Renderer";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public MapShaderRenderer() => Name = "Map Shader Renderer";
         public DateTime LastUpdate{get;set;}
 
         public const int VERTICES_PER_QUAD = 6;
@@ -28,7 +23,7 @@ namespace Pixel.zero
         public List<Texture2D> layerTextures = new List<Texture2D>();
         private VertexBuffer vertexBuffer;
 
-        public void Initialize()
+        public override void Initialize()
         {         
             var Projection = Matrix.CreateScale(1, -1, 1) * Matrix.CreateOrthographicOffCenter(0, Global.ScreenWidth,Global.ScreenHeight, 0, 0, 1) * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f);
             
@@ -47,22 +42,16 @@ namespace Pixel.zero
             effect.Parameters["World"].SetValue(Matrix.Identity);
             
             IsActive=true;
-            IsReady=true;
         }
 
-        public void FixedUpdate(float deltaTime)
-        {
-            
-        }
-
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             LastUpdate=DateTime.Now;
             var camera = SceneManager.ActiveScene.Camera;
             effect.Parameters["View"].SetValue(camera.Transform.ViewMatrix);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {            
             Global.Device.Clear(Color.CornflowerBlue);
             Global.Device.BlendState = BlendState.AlphaBlend; // AlphaBlend Opaque NonPremultiplied

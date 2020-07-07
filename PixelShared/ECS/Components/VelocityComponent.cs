@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Pixel.Enums;
 
 namespace Pixel.ECS.Components
 {

@@ -1,36 +1,31 @@
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
-using Pixel.Enums;
-using Pixel.Helpers;
 using Pixel.Scenes;
 using PixelShared;
 
 namespace Pixel.ECS.Systems
 {
-    public class CameraSystem : IEntitySystem
+    public class CameraSystem : PixelSystem
     {
-        public string Name { get; set; } = "Camera System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void FixedUpdate(float _) { }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Update(float deltaTime)
+        public override string Name { get; set; } = "Camera System";
+        
+        public override void AddEntity(Entity entity)
+        {
+            if (entity.Has<CameraFollowTagComponent>() && entity.Has<PositionComponent>())
+                base.AddEntity(entity);
+        }
+        public override void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;
-            foreach (var entity in CompIter<CameraFollowTagComponent,InputComponent, PositionComponent>.Get())
+            foreach (var entity in Entities)
             {
-                ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
-                ref var fol = ref ComponentArray<CameraFollowTagComponent>.Get(entity);
+                ref readonly var pos = ref entity.Get<PositionComponent>();
+                ref var fol = ref entity.Get<CameraFollowTagComponent>();
 
-                if(ComponentArray<InputComponent>.HasFor(entity))
+                if(entity.Has<InputComponent>())
                 {
-                    ref readonly var inp = ref ComponentArray<InputComponent>.Get(entity);
+                    ref readonly var inp = ref entity.Get<InputComponent>();
                     if (inp.Scroll > inp.OldScroll)
                         fol.Zoom *= 2;
                     else if (inp.Scroll < inp.OldScroll)

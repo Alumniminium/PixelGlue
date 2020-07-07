@@ -1,23 +1,22 @@
-using System.Collections.Generic;
 using Pixel.ECS.Components;
-using Pixel.Enums;
-using Pixel.Helpers;
+using Pixel.Entities;
 
 namespace Pixel.ECS.Systems
 {
-    public class ParticleEmitterSystem : IEntitySystem
+    public class ParticleEmitterSystem : PixelSystem
     {
-        public string Name { get; set; } = "Particle System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
-
-        public void FixedUpdate(float _) { }
-        public void Update(float deltaTime)
+        public override string Name { get; set; } = "Particle System";
+        public override void AddEntity(Entity entity)
         {
-            foreach(var i in CompIter<PositionComponent, ParticleEmitterComponent>.Get())
+            if (entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>()&& entity.Has<ParticleComponent>())
+                base.AddEntity(entity);
+        }
+        public override void Update(float deltaTime)
+        {
+            foreach(var entity in Entities)
             {
-                ref var pos = ref ComponentArray<PositionComponent>.Get(i);
-                ref var pem = ref ComponentArray<ParticleEmitterComponent>.Get(i);
+                ref var pos = ref entity.Get<PositionComponent>();
+                ref var pem = ref entity.Get<ParticleEmitterComponent>();
 
             }
         }

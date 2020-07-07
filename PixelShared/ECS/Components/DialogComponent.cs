@@ -1,5 +1,3 @@
-using Pixel.Enums;
-
 namespace Pixel.ECS.Components
 {
     public struct DialogComponent

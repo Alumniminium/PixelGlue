@@ -1,28 +1,15 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.Enums;
-using Pixel.Scenes;
 using Pixel.World;
 using PixelShared;
 
 namespace Pixel.ECS.Systems
 {
-    public class ProceduralWorldRenderSystem : IEntitySystem
+    public class ProceduralWorldRenderSystem : PixelSystem
     {
-        public string Name { get; set; } = "Procedural World Rendering System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
-        public Scene Scene => SceneManager.ActiveScene;
+        public override string Name { get; set; } = "World Rendering System";
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Update(float deltaTime) 
-        {
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void FixedUpdate(float timeSinceLastFrame) { }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             if (Scene.Camera == null)
                 return;

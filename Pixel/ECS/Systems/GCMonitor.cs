@@ -1,23 +1,19 @@
-using Pixel.Enums;
 using PixelShared.IO;
 using System;
 
 namespace Pixel.ECS.Systems
 {
-    public class GCMonitor : IEntitySystem
+    public class GCMonitor : PixelSystem
     {
-        public string Name { get; set; } = "GC Monitoring System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
+        public override string Name { get; set; } = "GC Monitoring System";
         public int[] GenCollections;
 
-        public void Initialize()
+        public override void Initialize()
         {
             GenCollections = new int[3];
-            IsReady = true;
             IsActive = true;
         }
-        public void FixedUpdate(float gameTime)
+        public override void FixedUpdate(float gameTime)
         {
             for (int i = 0; i < GenCollections.Length; i++)
             {
@@ -31,7 +27,5 @@ namespace Pixel.ECS.Systems
                 }
             }
         }
-
-        public void Update(float deltaTime) { }
     }
 }

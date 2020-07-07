@@ -17,7 +17,9 @@ namespace Pixel.Networking.Handlers
 
             scene.Player.NameTag.Text = $"Name: {packet.GetUsername()}";
             FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
-            scene.Player.Add(new NetworkComponent(scene, scene.Player.EntityId, packet.UniqueId));
+            scene.Player.Add(new NetworkComponent(packet.UniqueId));
+            scene.UniqueIdToEntityId.TryAdd(packet.UniqueId, scene.Player.EntityId);
+            scene.EntityIdToUniqueId.TryAdd(scene.Player.EntityId, packet.UniqueId);
             NetworkSystem.ConnectionState = ConnectionState.Authenticated;
         }
     }

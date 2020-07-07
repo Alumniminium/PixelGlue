@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using PixelShared.Diagnostics;
 using System;
+using System.Collections.Concurrent;
 
 namespace PixelShared
 {
@@ -17,8 +18,6 @@ namespace PixelShared
         public const int HalfVirtualScreenHeight = VirtualScreenHeight / 2;
         public static bool Profiling { get; set; }
         public static GraphicsDevice Device { get; set; }
-        public static Profiler UpdateProfiler { get; set; } = new Profiler();
-        public static Profiler DrawProfiler { get; set; } = new Profiler();
         public static int DrawCalls { get; set; }
         public static string[] Names { get; set; }
         public static ContentManager ContentManager { get; set; }
@@ -26,5 +25,9 @@ namespace PixelShared
         public static long FrameCounter { get; set; }
         public static GraphicsMetrics Metrics { get; set; }
         public static bool Verbose { get; set; }
+        public static float DrawTime { get; set; }
+        public static float UpdateTime { get; set; }
+        public static int Major { get; set; } = 0;
+        public static int Minor { get; set; } = 03;
     }
 }

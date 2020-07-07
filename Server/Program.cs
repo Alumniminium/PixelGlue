@@ -32,12 +32,13 @@ namespace Server
                     foreach (var kvp in Collections.Npcs)
                     {
                         var npc = kvp.Value;
-                        if (DateTime.Now >= npc.LastMove.AddMilliseconds(550))
+                        if (DateTime.Now >= npc.LastMove.AddMilliseconds(850))
                         {
                             npc.LastMove = DateTime.Now;
                             var dir = Vector2.Zero;
 
                             dir.X += Random.Next(-1, 2);
+                            if(dir.X==0)
                             dir.Y += Random.Next(-1, 2);
 
                             npc.Position += dir * 16;

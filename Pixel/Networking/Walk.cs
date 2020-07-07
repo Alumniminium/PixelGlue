@@ -17,7 +17,7 @@ namespace Pixel.Networking.Handlers
             {
                 var entity = scene.Entities[entityId];
                 ref var dst = ref entity.Get<DestinationComponent>();                
-                dst.Value = new Vector2(packet.X,packet.Y);
+                dst.Value = packet.Position;
             }
         }
     }

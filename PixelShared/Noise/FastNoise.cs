@@ -6,7 +6,7 @@ namespace PixelShared.Noise
 {
     public class FastNoise
     {
-        private const Int16 FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveInlining;
+        private const Int16 FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveOptimization;
         private const int FN_CELLULAR_INDEX_MAX = 3;
         private int m_seed = 1337;
         private float m_frequency = (float)0.01;

@@ -11,16 +11,14 @@ using System.Collections.Concurrent;
 
 namespace Pixel.ECS.Systems
 {
-    public class NetworkSystem : IEntitySystem
+    public class NetworkSystem : PixelSystem
     {
-        public string Name { get; set; } = "Network System";
+        public override string Name { get; set; } = "Network System";
         private static DateTime LastConnect;
         private static ClientSocket Socket { get; } = new ClientSocket(null);
         public static ConnectionState ConnectionState { get; set; }
         private static ConcurrentQueue<byte[]> PendingPackets { get; } = new ConcurrentQueue<byte[]>();
         private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
 
         public NetworkSystem()
         {
@@ -28,8 +26,7 @@ namespace Pixel.ECS.Systems
             Socket.OnDisconnect += Disconnected;
             Socket.OnConnected += Connected;
         }
-        public void FixedUpdate(float _) { }
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             switch (ConnectionState)
             {

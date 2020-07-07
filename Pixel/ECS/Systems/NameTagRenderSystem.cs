@@ -1,38 +1,35 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
-using Pixel.Enums;
-using Pixel.Helpers;
-using Pixel.Scenes;
-using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems
 {
-    public class NameTagRenderSystem : IEntitySystem
+    public class NameTagRenderSystem : PixelSystem
     {
-        public string Name { get; set; } = "Name Tag Render System";
-        public bool IsActive { get; set; }
-        public bool IsReady { get; set; }
-        public Scene Scene => SceneManager.ActiveScene;
-
-        public void FixedUpdate(float deltaTime) { }
-        public void Update(float deltaTime) 
+        public override string Name { get; set; } = "Name Tag Render System";
+        public override void AddEntity(Entity entity)
         {
-        }
-
-        public void Draw(SpriteBatch sb)
-        {
-            foreach (var entity in CompIter<PositionComponent>.Get())
+            if(!entity.Has<PositionComponent>())
+                return;
+            foreach(var child in entity.Children)
             {
-                if(!Scene.Entities.TryGetValue(entity,out var sub))
-                    continue;
-                    
-                foreach (var child in sub.Children)
+                if (child.Has<TextComponent>() || child.Has<PositionComponent>())
+                {
+                    base.AddEntity(entity);
+                    break;
+                }
+            }
+        }
+        public override void Draw(SpriteBatch sb)
+        {
+            foreach (var entity in Entities)
+            {                    
+                foreach (var child in entity.Children)
                 {
                     if (!child.Has<TextComponent>() || !child.Has<PositionComponent>())
                         continue;
 
-                    ref readonly var pos = ref ComponentArray<PositionComponent>.Get(entity);
+                    ref readonly var pos = ref entity.Get<PositionComponent>();
                     if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right)
                         continue;
                     if (pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
@@ -44,7 +41,7 @@ namespace Pixel.ECS.Systems
                     if (!string.IsNullOrEmpty(text.Text))
                     {
                         var p = pos.Value + offset.Value;
-                        AssetManager.Fonts[text.FontName].DrawText(sb, (int)p.X, (int)p.Y, text.Text);
+                        AssetManager.Fonts[text.FontName].DrawText(sb, (int)p.X, (int)p.Y, text.Text,1f);
                     }
                 }
             }
