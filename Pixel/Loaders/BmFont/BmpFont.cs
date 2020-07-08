@@ -37,10 +37,10 @@ namespace Pixel.Loaders
         {
             DrawText(_spriteBatch, (int)pos.X, (int)pos.Y, message);
         }
-        public void DrawText(SpriteBatch spriteBatch, int x, int y, string text, float scale = 0.5f)
+        public void DrawText(SpriteBatch spriteBatch, float x, float y, string text, float scale = 0.5f)
         {
-            int dx = x;
-            int dy = y;
+            int dx = (int)x;
+            int dy = (int)y;
             foreach (char c in text)
             {
                 if (_characterMap.TryGetValue(c, out var fc))

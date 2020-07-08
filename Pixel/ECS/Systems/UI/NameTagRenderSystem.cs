@@ -11,8 +11,9 @@ namespace Pixel.ECS.Systems
         {
             if(!entity.Has<PositionComponent>())
                 return;
-            foreach(var child in entity.Children)
+            foreach(var id in entity.Children)
             {
+                var child = Scene.Entities[id];
                 if (child.Has<TextComponent>() || child.Has<PositionComponent>())
                 {
                     base.AddEntity(entity);
@@ -24,8 +25,9 @@ namespace Pixel.ECS.Systems
         {
             foreach (var entity in Entities)
             {                    
-                foreach (var child in entity.Children)
+                foreach (var id in entity.Children)
                 {
+                    var child = Scene.Entities[id];
                     if (!child.Has<TextComponent>() || !child.Has<PositionComponent>())
                         continue;
 
@@ -38,10 +40,10 @@ namespace Pixel.ECS.Systems
                     ref readonly var offset = ref child.Get<PositionComponent>();
                     ref readonly var text = ref child.Get<TextComponent>();
 
-                    if (!string.IsNullOrEmpty(text.Text))
+                    if (!string.IsNullOrEmpty(text.Value))
                     {
                         var p = pos.Value + offset.Value;
-                        AssetManager.Fonts[text.FontName].DrawText(sb, (int)p.X, (int)p.Y, text.Text,1f);
+                        AssetManager.Fonts[text.FontName].DrawText(sb, p.X, p.Y, text.Value,0.2f);
                     }
                 }
             }

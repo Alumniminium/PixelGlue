@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS;
+using Pixel.ECS.Components;
 using Pixel.Scenes;
 using Pixel.World;
 using Shared;
@@ -48,7 +49,7 @@ namespace Pixel.zero
         {
             LastUpdate=DateTime.Now;
             var camera = SceneManager.ActiveScene.Camera;
-            effect.Parameters["View"].SetValue(camera.Transform.ViewMatrix);
+            effect.Parameters["View"].SetValue(camera.ViewMatrix);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -61,13 +62,13 @@ namespace Pixel.zero
             Vector3 cameraUp = Vector3.TransformNormal(new Vector3(0, -1, 0), Matrix.CreateRotationZ(0)) * 10f;
             Matrix World = Matrix.Identity;
             var player = SceneManager.ActiveScene.Player;
-            Matrix View = Matrix.CreateLookAt(new Vector3(player.PositionComponent.Value, -1), new Vector3(0, 0, 0), cameraUp);
+            Matrix View = Matrix.CreateLookAt(new Vector3(player.Get<PositionComponent>().Value, -1), new Vector3(0, 0, 0), cameraUp);
 
             effect.Parameters["World"].SetValue(World);
             effect.Parameters["View"].SetValue(View);
 
             Global.Device.SetVertexBuffer(vertexBuffer);
-            var playerPos = player.PositionComponent.Value;
+            var playerPos = player.Get<PositionComponent>().Value;
             var x = (int)playerPos.X;
             var y = (int)playerPos.Y;
             DrawTileMap(new Rectangle(x,y,1000,1000), 0, 3);

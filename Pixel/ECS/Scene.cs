@@ -12,6 +12,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using Pixel.Enums;
 
 namespace Pixel.ECS
 {
@@ -25,7 +27,7 @@ namespace Pixel.ECS
         public ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
         public List<PixelSystem> Systems;
         public Camera Camera;
-        public Player Player;
+        public Entity Player;
 
         public Queue<Action> PostUpdateQueue = new Queue<Action>(8);
 
@@ -39,8 +41,8 @@ namespace Pixel.ECS
 
         public virtual void Initialize()
         {
-            Camera = CreateEntity<Camera>();
-            Player = CreateEntity<Player>();
+            Camera = new Camera();
+            Player = CreateEntity(EntityType.Player);
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
             IsReady = true;
@@ -69,10 +71,8 @@ namespace Pixel.ECS
         public virtual void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
-            {
                 if (Systems[i].IsActive)
                     Systems[i].FixedUpdate(deltaTime);
-            }
         }
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public virtual void Draw(SpriteBatch sb)
@@ -80,7 +80,7 @@ namespace Pixel.ECS
             if (Camera == null)
                 return;
 
-            sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.Transform.ViewMatrix, samplerState: SamplerState.PointClamp);
+            sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
                 var preDrawTicks = DateTime.UtcNow.Ticks;
@@ -104,11 +104,12 @@ namespace Pixel.ECS
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].RemoveEntity(actualEntity);
 
-            if (actualEntity != null)
+            if (actualEntity.EntityId != -1)
             {
                 actualEntity.DestroyComponents();
-                foreach (var child in actualEntity?.Children)
+                foreach (var id in actualEntity.Children)
                 {
+                    var child = Entities[id];
                     child.DestroyComponents();
                     Destroy(child.EntityId);
                 }
@@ -119,13 +120,13 @@ namespace Pixel.ECS
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual T CreateEntity<T>(int uniqueId) where T : Entity, new()
+        public virtual Entity CreateEntity(int uniqueId, EntityType et = EntityType.Default)
         {
-            var entity = new T
+            var entity = new Entity
             {
                 EntityId = LastEntityId++,
             };
-            ApplyArchetype(entity);
+            ApplyArchetype(ref entity, et);
             entity.Add(new NetworkComponent(uniqueId));
             UniqueIdToEntityId.TryAdd(uniqueId, entity.EntityId);
             EntityIdToUniqueId.TryAdd(entity.EntityId, uniqueId);
@@ -137,13 +138,14 @@ namespace Pixel.ECS
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual T CreateEntity<T>() where T : Entity, new()
+        public virtual Entity CreateEntity(EntityType et)
         {
-            var entity = new T
+            var entity = new Entity
             {
                 EntityId = LastEntityId++,
+                Valid=true
             };
-            ApplyArchetype(entity);
+            ApplyArchetype(ref entity, et);
             Entities.TryAdd(entity.EntityId, entity);
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].AddEntity(entity);
@@ -158,44 +160,33 @@ namespace Pixel.ECS
                     return t;
             return default;
         }
-
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public virtual T Find<T>() where T : Entity
+        public void ApplyArchetype(ref Entity entity, EntityType et)
         {
-            foreach (var (_, entity) in Entities)
-                if (entity is T t)
-                    return t;
-            return null;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        private void ApplyArchetype<T>(T entity) where T : Entity, new()
-        {
-            switch (entity)
+            switch (et)
             {
-                case Camera _:
-                    ComponentArray<TransformComponent>.AddFor(entity);
+                case EntityType.Camera:
+                    entity.Add<TransformComponent>();
+                    entity.Add<DbgBoundingBoxComponent>();
                     break;
-                case Player _:
-                    ComponentArray<InputComponent>.AddFor(entity);
-                    ComponentArray<CameraFollowTagComponent>.AddFor(entity, new CameraFollowTagComponent(1));
-                    ComponentArray<DrawableComponent>.AddFor(entity, new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-                    ComponentArray<VelocityComponent>.AddFor(entity, new VelocityComponent());
-                    ComponentArray<SpeedComponent>.AddFor(entity, new SpeedComponent(64));
-                    ComponentArray<PositionComponent>.AddFor(entity, new PositionComponent(0, 0, 0));
-                    ComponentArray<DestinationComponent>.AddFor(entity, new DestinationComponent(0, 0));
-                    ComponentArray<DbgBoundingBoxComponent>.AddFor(entity);
-                    var nt = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt, new TextComponent("Name: waiting..", "profont_12"));
-                    ComponentArray<PositionComponent>.AddFor(nt, new PositionComponent(-48, -48, 0));
-                    var nt2 = CreateEntity<NameTag>();
-                    ComponentArray<TextComponent>.AddFor(nt2, new TextComponent($"Id:   {entity.EntityId}", "profont_12"));
-                    ComponentArray<PositionComponent>.AddFor(nt2, new PositionComponent(-48, -32, 0));
-                    nt.Parent = entity;
-                    nt2.Parent = entity;
-                    entity.Children.Add(nt);
-                    entity.Children.Add(nt2);
+                case EntityType.Player:
+                    entity.Add<InputComponent>();
+                    entity.Add<PositionComponent>();
+                    entity.Add<DestinationComponent>();
+                    entity.Add<DbgBoundingBoxComponent>();
+                    entity.Add(new CameraFollowTagComponent(1));
+                    entity.Add<VelocityComponent>();
+
+                    entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
+                    entity.Add(new SpeedComponent(64));
+
+                    var nt = CreateEntity(EntityType.Default);
+                    nt.Add(new TextComponent($"{entity.EntityId}: {entity}", "profont"));
+                    nt.Add(new PositionComponent(-16, -16, 0));
+                    nt.Parent = entity.EntityId;
+                    entity.Children = new List<int> { nt.EntityId };
                     break;
-                case Npc _:
+                case EntityType.Npc:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
                     entity.Add<PositionComponent>();
@@ -204,16 +195,11 @@ namespace Pixel.ECS
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
-                    nt = CreateEntity<NameTag>();
-                    nt.Add(new TextComponent($"Name: {name}", "profont_12"));
-                    nt.Add(new PositionComponent(-48, -48, 0));
-                    nt2 = CreateEntity<NameTag>();
-                    nt2.Add(new TextComponent($"Id:  {entity.EntityId}", "profont_12"));
-                    nt2.Add(new PositionComponent(-48, -32, 0));
-                    nt.Parent = entity;
-                    nt2.Parent = entity;
-                    entity.Children.Add(nt);
-                    entity.Children.Add(nt2);
+                    nt = CreateEntity(EntityType.Default);
+                    nt.Add(new TextComponent($"{entity.EntityId}: {name}", "profont"));
+                    nt.Add(new PositionComponent(-16, -16, 0));
+                    nt.Parent = entity.EntityId;
+                    entity.Children = new List<int> { nt.EntityId };
                     break;
             }
         }

@@ -10,7 +10,7 @@ namespace Pixel.World
         public static Dictionary<int, BaseEntity> Entities = new Dictionary<int, BaseEntity>();
         public static void Load(string path)
         {
-            FConsole.WriteLine("Loading " + Environment.CurrentDirectory + path);
+            FConsole.WriteLine("Loading " + Environment.CurrentDirectory +"/"+ path);
             var iniFile = new IniFile(path);
             iniFile.Load();
             var contents = iniFile.GetDictionary();

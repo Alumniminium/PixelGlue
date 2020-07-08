@@ -2,12 +2,12 @@
 {
     public struct TextComponent
     {
-        public string Text;
+        public string Value;
         public string FontName;
 
         public TextComponent(string text, string font = "profont")
         {
-            Text = text;
+            Value = text;
             FontName = font;
         }
 

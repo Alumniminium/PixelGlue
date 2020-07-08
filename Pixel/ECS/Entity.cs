@@ -1,21 +1,17 @@
 using Pixel.ECS.Components;
 using Pixel.Helpers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Pixel.Entities
 {
-    public class Entity
+    public struct Entity
     {
+        public bool Valid;
         public int EntityId;
-        public int UniqueId => Has<NetworkComponent>() ? Get<NetworkComponent>().UniqueId : -1;
-        public Entity Parent;
-        public List<Entity> Children;
-
-        public Entity()
-        {
-            Children = new List<Entity>();
-        }
+        public int Parent;
+        public List<int> Children;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void Add<T>(T component) where T : struct => ComponentArray<T>.AddFor(this,component);

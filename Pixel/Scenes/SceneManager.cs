@@ -21,13 +21,13 @@ namespace Pixel.Scenes
         {
             QueuedTasks.Enqueue(() =>
             {
+                ActiveScene = scene;
                 if (!LoadedScenes.Contains(scene))
                 {
                     scene.LoadContent(_content);
                     scene.Initialize();
                     LoadedScenes.Add(scene);
                 }
-                ActiveScene = scene;
                 scene.IsActive = true;
             });
         }

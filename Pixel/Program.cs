@@ -1,4 +1,5 @@
-﻿using Pixel.Scenes;
+﻿using System.Diagnostics;
+using Pixel.Scenes;
 using Pixel.zero;
 using Shared;
 using Shared.IO;
@@ -11,6 +12,7 @@ namespace Pixel
     {
         public static void Main()
         {
+            FConsole.WriteLine("PID: "+Process.GetCurrentProcess().Id);
             FConsole.WriteLine("Current Root: " + Environment.CurrentDirectory);
             FConsole.LogToFile = false;
             FConsole.WriteLine("Setting Thread Priority to highest...");
@@ -22,7 +24,6 @@ namespace Pixel
                 IsFixedTimeStep = false
             };
 
-            Global.Profiling = true;
             FConsole.WriteLine("Initializing the scene...");
 
             var testScene = new TestingScene

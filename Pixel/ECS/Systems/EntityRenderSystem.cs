@@ -33,10 +33,18 @@ namespace Pixel.ECS.Systems
             {
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
-                
+
+                if (OutOfRange(pos))
+                    continue;
+
                 sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Value + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
                 Global.DrawCalls++;
             }
+        }
+
+        private bool OutOfRange(PositionComponent pos)
+        {
+            return pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right || pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom;
         }
     }
 }

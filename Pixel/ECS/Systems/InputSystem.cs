@@ -2,8 +2,6 @@ using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pixel.ECS.Components;
-using Pixel.Enums;
-using Pixel.Helpers;
 using Pixel.Scenes;
 using Pixel.World;
 using System;
@@ -105,8 +103,8 @@ namespace Pixel.ECS.Systems
             {
                 var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
                 system.IsActive = !system.IsActive;
-                var system2 = scene.GetSystem<NameTagRenderSystem>();
-                system2.IsActive = !system2.IsActive;
+                //ar system2 = scene.GetSystem<NameTagRenderSystem>();
+                //ystem2.IsActive = !system2.IsActive;
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))
                 Environment.Exit(0);

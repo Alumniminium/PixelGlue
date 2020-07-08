@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Entities;
+using Shared.TerribleSockets.Packets;
 
 namespace Pixel.ECS.Systems
 {
@@ -10,7 +11,7 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Move System";
 
-        public const int NUM_THREADS = 1;
+        public const int NUM_THREADS = 2;
         public Thread[] Threads = new Thread[NUM_THREADS];
         public AutoResetEvent[] Blocks = new AutoResetEvent[NUM_THREADS];
         private float deltaTime;
@@ -60,6 +61,11 @@ namespace Pixel.ECS.Systems
                         {
                             pc.Value = dc.Value;
                             vc.Velocity = Vector2.Zero;
+                            if(entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
+                            {
+                                ref readonly var net = ref entity.Get<NetworkComponent>();
+                                NetworkSystem.Send(MsgWalk.Create(net.UniqueId,pc.Value));
+                            }
                         }
                     }
                 }
@@ -80,7 +86,6 @@ namespace Pixel.ECS.Systems
             {
                 Blocks[i].Set();
             }
-
         }
     }
 }

@@ -7,5 +7,5 @@ namespace Pixel.Enums
         Connected,
         Authenticating,
         Authenticated
-    }
+    }    
 }

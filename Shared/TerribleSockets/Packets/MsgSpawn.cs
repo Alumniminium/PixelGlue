@@ -26,18 +26,7 @@ namespace Shared.TerribleSockets.Packets
             msg->Direction = Direction.North;
             return *msg;
         }
-        public static MsgSpawn Create(int uniqueId, Vector2 pos, int model)
-        {
-            var msg = stackalloc MsgSpawn[1];
-            msg->Length = sizeof(MsgSpawn);
-            msg->Id = 1003;
-            msg->Model = model;
-            msg->UniqueId = uniqueId;
-            msg->X = (int)pos.X;
-            msg->Y = (int)pos.Y;
-            msg->Direction = Direction.North;
-            return *msg;
-        }
+        public static MsgSpawn Create(int uniqueId, Vector2 pos, int model,string name) => Create(uniqueId,(int)pos.X,(int)pos.Y,model,name);
         public static implicit operator byte[](MsgSpawn msg)
         {
             var buffer = new byte[sizeof(MsgSpawn)];

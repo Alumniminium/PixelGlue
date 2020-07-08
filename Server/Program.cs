@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Data;
+using Microsoft.Xna.Framework;
 using Shared;
 using Shared.TerribleSockets.Packets;
 using Shared.TerribleSockets.Queues;
@@ -46,14 +47,14 @@ namespace Server
                             {
                                 var player = kvp2.Value;
 
-                                //if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
-                                //    continue;
-                                //if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
-                                //    continue;
+                                if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
+                                    continue;
+                                if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
+                                    continue;
 
                                 if (Global.Verbose)
                                     Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
-                                kvp2.Value.Socket.Send(MsgSpawn.Create(npc.UniqueId, (int)npc.Position.X, (int)npc.Position.Y, 1, "sup"));
+                                kvp2.Value.Socket.Send(MsgSpawn.Create(npc.UniqueId, (int)npc.Position.X, (int)npc.Position.Y, Global.Random.Next(0,12), "sup"));
                                 kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
                             }
                         }

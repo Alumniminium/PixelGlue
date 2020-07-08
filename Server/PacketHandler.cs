@@ -48,7 +48,7 @@ namespace Server
                             Console.WriteLine("Authentication failed.");
 
                         player.Socket.Send(msgLogin);
-                        player.Socket.Send(MsgSpawn.Create(player.UniqueId, player.Location,3));
+                        player.Socket.Send(MsgSpawn.Create(player.UniqueId, player.Location,3,player.Name));
                         break;
                     }
                 case 1001:
@@ -57,7 +57,7 @@ namespace Server
                         var player = (Player)socket.StateObject;
                         if (player == null)
                             break;
-                        //player.Location = new Vector2(msgWalk.X,msgWalk.Y);
+                        player.Location = new Vector2(msgWalk.X,msgWalk.Y);
                         msgWalk.TickCount = Environment.TickCount;
                         if(Global.Verbose)
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
