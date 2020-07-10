@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Concurrent;
 
 namespace Shared
 {
@@ -29,6 +27,6 @@ namespace Shared
         public static float DrawTime { get; set; }
         public static float UpdateTime { get; set; }
         public static int Major { get; set; } = 0;
-        public static int Minor { get; set; } = 03;
+        public static int Minor { get; set; } = 04;
     }
 }

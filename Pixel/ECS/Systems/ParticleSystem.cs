@@ -14,8 +14,9 @@ namespace Pixel.ECS.Systems
         }
         public override void Update(float deltaTime)
         {
-            foreach(var entity in Entities)
+            for(int i = 0; i< Entities.Count; i++)
             {
+                var entity = Entities[i];
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref readonly var vel = ref entity.Get<VelocityComponent>();
                 ref readonly var drw = ref entity.Get<DrawableComponent>();

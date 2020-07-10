@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.Loaders;
 using Shared;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS
 {

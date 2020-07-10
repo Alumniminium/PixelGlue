@@ -1,5 +1,3 @@
-using System.Net.Sockets;
-using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Scenes;
 using Shared.TerribleSockets.Packets;

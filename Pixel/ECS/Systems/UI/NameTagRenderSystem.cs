@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
@@ -9,9 +10,9 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Name Tag Render System";
         public override void AddEntity(Entity entity)
         {
-            if(!entity.Has<PositionComponent>())
+            if (!entity.Has<PositionComponent>())
                 return;
-            foreach(var id in entity.Children)
+            foreach (var id in entity.Children)
             {
                 var child = Scene.Entities[id];
                 if (child.Has<TextComponent>() || child.Has<PositionComponent>())
@@ -24,7 +25,7 @@ namespace Pixel.ECS.Systems
         public override void Draw(SpriteBatch sb)
         {
             foreach (var entity in Entities)
-            {                    
+            {
                 foreach (var id in entity.Children)
                 {
                     var child = Scene.Entities[id];
@@ -32,9 +33,10 @@ namespace Pixel.ECS.Systems
                         continue;
 
                     ref readonly var pos = ref entity.Get<PositionComponent>();
-                    if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right)
+
+                    if (pos.Value.X <= Scene.Camera.SimulationRect.Left || pos.Value.X >= Scene.Camera.SimulationRect.Right)
                         continue;
-                    if (pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
+                    if (pos.Value.Y <= Scene.Camera.SimulationRect.Top || pos.Value.Y >= Scene.Camera.SimulationRect.Bottom)
                         continue;
 
                     ref readonly var offset = ref child.Get<PositionComponent>();
@@ -43,7 +45,7 @@ namespace Pixel.ECS.Systems
                     if (!string.IsNullOrEmpty(text.Value))
                     {
                         var p = pos.Value + offset.Value;
-                        AssetManager.Fonts[text.FontName].DrawText(sb, p.X, p.Y, text.Value,0.2f);
+                        AssetManager.Fonts[text.FontName].DrawText(sb, p.X, p.Y, text.Value, Color.Blue, 0.2f);
                     }
                 }
             }

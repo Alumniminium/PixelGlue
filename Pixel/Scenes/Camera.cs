@@ -3,12 +3,13 @@ using Pixel.ECS.Components;
 
 namespace Pixel.Entities
 {
-    public class Camera
+    public struct Camera
     {
         public Matrix ViewMatrix { get; set; }
-        public Matrix InverseTransform => Matrix.Invert(ViewMatrix);
-        public Rectangle ScreenRect { get; set; }
-        public Rectangle ServerScreenRect { get; set; }
-        public Vector2 ScreenToWorld(Vector2 point) => Vector2.Transform(point, InverseTransform);
+        public Rectangle DrawRect { get; set; }
+        public Rectangle DrawRectZoomed { get; set; }
+        public Rectangle SimulationRect { get; set; }
+        public Vector2 ScreenToWorld(Vector2 point) => Vector2.Transform(point, Matrix.Invert(ViewMatrix));
+        public Vector2 WorldToScreen(Vector2 point) => Vector2.Transform(point, ViewMatrix);
     }
 }

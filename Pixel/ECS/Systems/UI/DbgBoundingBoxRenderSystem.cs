@@ -19,10 +19,18 @@ namespace Pixel.ECS.Systems
         {
             var origin = new Vector2(0, 0);
             var camera = Scene.Camera;
-            var rectangle = camera.ServerScreenRect;
+            var rectangle = camera.SimulationRect;
             int lineWidth = 1;
             Color color = Color.LightGreen;
 
+            sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);
+            sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y, rectangle.Width + lineWidth, lineWidth), color);
+            sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);
+            sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width + lineWidth, lineWidth), color);
+            Global.DrawCalls += 4;
+
+            rectangle = camera.DrawRect;
+            
             sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);
             sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y, rectangle.Width + lineWidth, lineWidth), color);
             sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X + rectangle.Width, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);

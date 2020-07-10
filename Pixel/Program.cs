@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using Pixel.Scenes;
-using Pixel.zero;
-using Shared;
 using Shared.IO;
 using System;
 using System.Threading;
@@ -12,9 +10,9 @@ namespace Pixel
     {
         public static void Main()
         {
+            FConsole.LogToFile = false;
             FConsole.WriteLine("PID: "+Process.GetCurrentProcess().Id);
             FConsole.WriteLine("Current Root: " + Environment.CurrentDirectory);
-            FConsole.LogToFile = false;
             FConsole.WriteLine("Setting Thread Priority to highest...");
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             FConsole.WriteLine("Initializing the engine...");

@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
@@ -11,7 +10,7 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Move System";
 
-        public const int NUM_THREADS = 2;
+        public const int NUM_THREADS = 4;
         public Thread[] Threads = new Thread[NUM_THREADS];
         public AutoResetEvent[] Blocks = new AutoResetEvent[NUM_THREADS];
         private float deltaTime;
@@ -40,31 +39,31 @@ namespace Pixel.ECS.Systems
                 for(int ei =start; ei < end; ei++)
                 {
                     var entity = Entities[ei];
-                    ref var vc = ref entity.Get<VelocityComponent>();
-                    ref var pc = ref entity.Get<PositionComponent>();
-                    ref var dc = ref entity.Get<DestinationComponent>();
-                    ref var sp = ref entity.Get<SpeedComponent>();
+                    ref var vel = ref entity.Get<VelocityComponent>();
+                    ref var pos = ref entity.Get<PositionComponent>();
+                    ref var dst = ref entity.Get<DestinationComponent>();
+                    ref var spd = ref entity.Get<SpeedComponent>();
 
-                    if (pc.Value != dc.Value)
+                    if (pos.Value != dst.Value)
                     {
-                        var dir = dc.Value - pc.Value;
+                        var dir = dst.Value - pos.Value;
                         dir.Normalize();
 
-                        vc.Velocity = dir * sp.Speed * sp.SpeedMulti * deltaTime;
+                        vel.Velocity = dir * spd.Speed * spd.SpeedMulti * deltaTime;
 
-                        var distanceToDest = Vector2.Distance(pc.Value, dc.Value);
-                        var moveDistance = Vector2.Distance(pc.Value, pc.Value + vc.Velocity);
+                        var distanceToDest = Vector2.Distance(pos.Value, dst.Value);
+                        var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Velocity);
 
                         if (distanceToDest > moveDistance)
-                            pc.Value += vc.Velocity;
+                            pos.Value += vel.Velocity;
                         else
                         {
-                            pc.Value = dc.Value;
-                            vc.Velocity = Vector2.Zero;
+                            pos.Value = dst.Value;
+                            vel.Velocity = Vector2.Zero;
                             if(entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
                             {
                                 ref readonly var net = ref entity.Get<NetworkComponent>();
-                                NetworkSystem.Send(MsgWalk.Create(net.UniqueId,pc.Value));
+                                NetworkSystem.Send(MsgWalk.Create(net.UniqueId,pos.Value));
                             }
                         }
                     }

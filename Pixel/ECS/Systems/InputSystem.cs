@@ -29,8 +29,9 @@ namespace Pixel.ECS.Systems
         }
         public override void Update(float deltaTime)
         {
-            foreach (var entity in Entities)
+            for(int i = 0; i< Entities.Count; i++)
             {
+                var entity = Entities[i];
                 ref var inp = ref entity.Get<InputComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
@@ -56,7 +57,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Mouse(ref MouseState mouse, ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;
@@ -75,7 +76,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EnsureReady(ref InputComponent inp)
         {
             if (inp.Buttons == null)
@@ -84,7 +85,7 @@ namespace Pixel.ECS.Systems
                 inp.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Keyboard(ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;

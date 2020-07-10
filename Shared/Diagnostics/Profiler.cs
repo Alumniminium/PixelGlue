@@ -1,17 +1,15 @@
-using System.Globalization;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Shared;
 
-namespace Pixel.ECS
+namespace Shared.Diagnostics
 {
     public static class Profiler
     {
         public static readonly Dictionary<string, Metrics> SystemUpdateTimes = new Dictionary<string, Metrics>();
         public static readonly Dictionary<string, Metrics> SystemDrawTimes = new Dictionary<string, Metrics>();
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AddUpdate(string system, float time)
         {
             time = (float)Math.Round(time, 2);
@@ -30,7 +28,7 @@ namespace Pixel.ECS
             }
             list.AddValue(time);
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AddDraw(string system, float time)
         {
             time = (float)Math.Round(time, 2);

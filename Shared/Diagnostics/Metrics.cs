@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Pixel.ECS
+namespace Shared.Diagnostics
 {
     public class Metrics
     {
@@ -13,7 +13,7 @@ namespace Pixel.ECS
         public float Avg => (float)(Sum / Values.Count);
 
         public Metrics() => Created = DateTime.UtcNow;
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddValue(float val)
         {
             Values.Add(val);

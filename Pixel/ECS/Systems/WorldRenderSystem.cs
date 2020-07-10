@@ -12,8 +12,9 @@ namespace Pixel.ECS.Systems
         public override void Draw(SpriteBatch sb)
         {
             var overdraw = Global.TileSize * 4;
-            for (int x = Scene.Camera.ScreenRect.Left - overdraw; x < Scene.Camera.ScreenRect.Right + overdraw; x += Global.TileSize)
-                for (int y = Scene.Camera.ScreenRect.Top - overdraw; y < Scene.Camera.ScreenRect.Bottom + overdraw; y += Global.TileSize)
+
+            for (int x = Scene.Camera.DrawRectZoomed.Left - overdraw; x < Scene.Camera.DrawRectZoomed.Right + overdraw; x += Global.TileSize)
+                for (int y = Scene.Camera.DrawRectZoomed.Top - overdraw; y < Scene.Camera.DrawRectZoomed.Bottom + overdraw; y += Global.TileSize)
                 {
                     var (terrainTile, riverTile) = WorldGen.GetTiles(x, y);
 

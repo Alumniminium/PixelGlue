@@ -9,7 +9,7 @@ namespace Shared.TerribleSockets.Client
     public class ClientSocket
     {
         public Socket Socket;
-        internal NeutralBuffer Buffer;
+        internal TerribleBuffer Buffer;
         public object StateObject;
         public Action OnConnected, OnDisconnect;
         public bool IsConnected;
@@ -21,7 +21,7 @@ namespace Shared.TerribleSockets.Client
 
         public ClientSocket(object stateObject)
         {
-            Buffer = new NeutralBuffer();
+            Buffer = new TerribleBuffer();
             StateObject = stateObject;
 
             SendArgs = new SocketAsyncEventArgs();

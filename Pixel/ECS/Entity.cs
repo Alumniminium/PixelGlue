@@ -1,7 +1,6 @@
 using Pixel.ECS.Components;
 using Pixel.Helpers;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Pixel.Entities
@@ -13,13 +12,13 @@ namespace Pixel.Entities
         public int Parent;
         public List<int> Children;
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add<T>(T component) where T : struct => ComponentArray<T>.AddFor(this,component);
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add<T>() where T : struct => ComponentArray<T>.AddFor(this);
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct => ComponentArray<T>.HasFor(EntityId);
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
 
         public void DestroyComponents()

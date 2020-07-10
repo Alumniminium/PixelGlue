@@ -35,9 +35,8 @@ namespace Shared.TerribleSockets.Queues
                 {
                     var connection = (ClientSocket)e.UserToken;
 
-                    connection.Socket.SendAsync(e);
-
-                    connection.SendSync.Set();
+                    if(connection.Socket.SendAsync(e))
+                        connection.SendSync.Set();
                 }
             }
         }

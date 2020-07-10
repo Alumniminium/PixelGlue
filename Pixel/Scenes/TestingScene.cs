@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Pixel.ECS;
 using Pixel.ECS.Systems;
-using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.World;
 using Shared;

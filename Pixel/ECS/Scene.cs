@@ -3,17 +3,15 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Entities;
-using Pixel.Helpers;
 using Pixel.World;
 using Shared;
-using Pixel.ECS;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
 using Pixel.Enums;
+using Shared.Diagnostics;
 
 namespace Pixel.ECS
 {
@@ -53,7 +51,7 @@ namespace Pixel.ECS
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont");
             Global.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Update(GameTime deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
@@ -67,19 +65,16 @@ namespace Pixel.ECS
             while (PostUpdateQueue.Count > 0)
                 PostUpdateQueue.Dequeue().Invoke();
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < Systems.Count; i++)
                 if (Systems[i].IsActive)
                     Systems[i].FixedUpdate(deltaTime);
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Draw(SpriteBatch sb)
         {
-            if (Camera == null)
-                return;
-
             sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.ViewMatrix, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < Systems.Count; i++)
             {
@@ -92,12 +87,7 @@ namespace Pixel.ECS
             sb.End();
         }
 
-        public virtual void Destroy(Entity entity)
-        {
-            Entities.TryRemove(entity.EntityId, out _);
-            EntityIdToUniqueId.TryRemove(entity.EntityId, out var uid);
-            UniqueIdToEntityId.TryRemove(uid, out _);
-        }
+        public virtual void Destroy(Entity entity) => Destroy(entity.EntityId);
         public virtual void Destroy(int entity)
         {
             Entities.TryRemove(entity, out var actualEntity);
@@ -107,11 +97,14 @@ namespace Pixel.ECS
             if (actualEntity.EntityId != -1)
             {
                 actualEntity.DestroyComponents();
-                foreach (var id in actualEntity.Children)
+                if (actualEntity.Children != null)
                 {
-                    var child = Entities[id];
-                    child.DestroyComponents();
-                    Destroy(child.EntityId);
+                    foreach (var id in actualEntity.Children)
+                    {
+                        var child = Entities[id];
+                        child.DestroyComponents();
+                        Destroy(child.EntityId);
+                    }
                 }
             }
             EntityIdToUniqueId.TryRemove(entity, out var uid);
@@ -119,7 +112,7 @@ namespace Pixel.ECS
 
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Entity CreateEntity(int uniqueId, EntityType et = EntityType.Default)
         {
             var entity = new Entity
@@ -137,13 +130,13 @@ namespace Pixel.ECS
             return entity;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Entity CreateEntity(EntityType et)
         {
             var entity = new Entity
             {
                 EntityId = LastEntityId++,
-                Valid=true
+                Valid = true
             };
             ApplyArchetype(ref entity, et);
             Entities.TryAdd(entity.EntityId, entity);
@@ -152,7 +145,7 @@ namespace Pixel.ECS
             return entity;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T GetSystem<T>()
         {
             foreach (var sys in Systems)
@@ -160,7 +153,7 @@ namespace Pixel.ECS
                     return t;
             return default;
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ApplyArchetype(ref Entity entity, EntityType et)
         {
             switch (et)
@@ -203,9 +196,9 @@ namespace Pixel.ECS
                     break;
             }
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => Id;
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj) => (obj as Scene)?.Id == Id;
     }
 }

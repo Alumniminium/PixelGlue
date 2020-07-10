@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.ECS;
 using Pixel.Entities;
 using Pixel.Scenes;
 
@@ -15,15 +13,15 @@ namespace Pixel.ECS
         public List<Entity> Entities { get; set; } = new List<Entity>();
         public Scene Scene => SceneManager.ActiveScene;
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Initialize() { }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Update(float deltaTime) { }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void FixedUpdate(float deltaTime) { }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Draw(SpriteBatch spriteBatch) { }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void AddEntity(Entity entity)
         {
             if (Scene != null)
@@ -31,7 +29,7 @@ namespace Pixel.ECS
             else
                 Entities.Add(entity);
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void RemoveEntity(Entity entity)
         {
             if (Scene != null)

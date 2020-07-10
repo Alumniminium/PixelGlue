@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Input;
-using Pixel.Enums;
 using Shared.Enums;
 using System.Collections.Generic;
 

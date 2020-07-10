@@ -7,17 +7,23 @@ namespace Server
 {
     public class Player
     {
-        private Rectangle _viewRect = new Rectangle(0,0,Global.VirtualScreenWidth + (Global.TileSize*3),Global.VirtualScreenHeight + (Global.TileSize*3));
+        private Rectangle _viewRect = new Rectangle(0, 0, Global.VirtualScreenWidth + (Global.TileSize * 4), Global.VirtualScreenHeight + (Global.TileSize * 4));
         private Vector2 _location;
         public string Name;
         public int UniqueId;
         public Rectangle ViewBounds => _viewRect;
-        public Vector2 Location { get => _location; set {
-            _location = value;
-            value.Round();
-            _viewRect.X = (int)value.X - (Global.HalfVirtualScreenWidth + (Global.TileSize*3));
-            _viewRect.Y = (int)value.Y - (Global.HalfVirtualScreenHeight + (Global.TileSize*3));
-        }}
+        public Vector2 Location
+        {
+            get => _location; set
+            {
+                _location = value;
+                value.Round();
+                var simRectX = (int)value.X - (Global.HalfVirtualScreenWidth + (Global.TileSize * 3));
+                var simRectY = (int)value.Y - (Global.HalfVirtualScreenHeight + (Global.TileSize * 3));
+                _viewRect.X = simRectX;
+                _viewRect.Y = simRectY;
+            }
+        }
         public ClientSocket Socket;
         public string Username;
         public string Password;

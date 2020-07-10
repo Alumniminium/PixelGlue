@@ -13,17 +13,17 @@ namespace Pixel.Helpers
         public static ConcurrentDictionary<int, int> EntityIdToArrayOffset = new ConcurrentDictionary<int, int>();
         private readonly static T[] array = new T[AMOUNT];
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Get(int owner)
         {
             if (EntityIdToArrayOffset.TryGetValue(owner, out var index))
                 return ref array[index];
             throw new KeyNotFoundException($"{nameof(array)} is {array.Length} long, index for entity#{owner} not found.");
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AddFor(Entity owner, T component)
         {
             if (AvailableIndicies.TryPop(out int offset))
@@ -34,7 +34,7 @@ namespace Pixel.Helpers
             else
                 throw new System.Exception("AHHHHH");
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AddFor(Entity owner)
         {
             if (AvailableIndicies.TryPop(out int offset))
@@ -45,7 +45,7 @@ namespace Pixel.Helpers
             else
                 throw new System.Exception("AHHHHH");
         }
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Remove(int owner)
         {
             if (EntityIdToArrayOffset.TryRemove(owner, out int offset))
