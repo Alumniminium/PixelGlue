@@ -32,9 +32,9 @@ namespace Pixel.ECS.Systems
                 {
                     ref readonly var inp = ref entity.Get<InputComponent>();
                     if (inp.Scroll > inp.OldScroll)
-                        fol.Zoom *= 2f;
+                        fol.Zoom += 0.01f;
                     else if (inp.Scroll < inp.OldScroll)
-                        fol.Zoom /= 2f;
+                        fol.Zoom -= 0.01f;
                 }
                 var scaleX = Global.ScreenWidth / Global.VirtualScreenWidth;
                 var scaleY = Global.ScreenHeight / Global.VirtualScreenHeight;
@@ -48,17 +48,10 @@ namespace Pixel.ECS.Systems
                 var simRectW = Global.VirtualScreenWidth + (Global.TileSize * 4);
                 var simRectH = Global.VirtualScreenHeight + (Global.TileSize * 4);
 
-                var screenRectX = (int)Math.Floor(camX+fol.PositionOffset.X) - Global.HalfVirtualScreenWidth;
-                var screenRectY = (int)Math.Floor(camY+fol.PositionOffset.Y) - Global.HalfVirtualScreenHeight;
-                var screenRectW = Global.VirtualScreenWidth;
-                var screenRectH = Global.VirtualScreenHeight;
-
-                scene.Camera.DrawRect = new Rectangle(screenRectX, screenRectY, screenRectW, screenRectH);
-
-                screenRectX = (int)(camX - (Global.HalfVirtualScreenWidth / fol.Zoom));
-                screenRectY = (int)(camY - (Global.HalfVirtualScreenHeight / fol.Zoom));
-                screenRectW = (int)(Global.VirtualScreenWidth / fol.Zoom);
-                screenRectH = (int)(Global.VirtualScreenHeight / fol.Zoom);
+                var screenRectX = (int)(camX - (Global.HalfVirtualScreenWidth / fol.Zoom));
+                var screenRectY = (int)(camY - (Global.HalfVirtualScreenHeight / fol.Zoom));
+                var screenRectW = (int)(Global.VirtualScreenWidth / fol.Zoom);
+                var screenRectH = (int)(Global.VirtualScreenHeight / fol.Zoom);
                 
                 scene.Camera.DrawRectZoomed = new Rectangle(screenRectX, screenRectY, screenRectW, screenRectH);
                 scene.Camera.SimulationRect = new Rectangle(simRectX, simRectY, simRectW, simRectH);

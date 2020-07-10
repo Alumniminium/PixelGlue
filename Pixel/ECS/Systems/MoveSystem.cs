@@ -1,9 +1,12 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Entities;
+using Shared.Enums;
 using Shared.TerribleSockets.Packets;
+using Shared;
 
 namespace Pixel.ECS.Systems
 {
@@ -11,27 +14,16 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Move System";
 
-        private const int THREADS = 4;
-        private float deltaTime;
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void Initialize()
+        public override void Update(float deltaTime)
         {
-            StartWorkerThreads(THREADS, true, ThreadPriority.Lowest);
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AsyncUpdate(int threadId)
-        {
-            var chunkSize = Entities.Count / THREADS;
-            var start = chunkSize * threadId;
-            var end = start + chunkSize;
-            for (int ei = start; ei < end; ei++)
+            for (int ei = 0; ei < Entities.Count; ei++)
             {
                 var entity = Entities[ei];
                 ref var vel = ref entity.Get<VelocityComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
-                ref var spd = ref entity.Get<SpeedComponent>();
+                ref readonly var spd = ref entity.Get<SpeedComponent>();
 
                 if (pos.Value != dst.Value)
                 {
@@ -42,8 +34,20 @@ namespace Pixel.ECS.Systems
 
                     var distanceToDest = Vector2.Distance(pos.Value, dst.Value);
                     var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Velocity);
+                    var keepmoving = false;
+                    if(distanceToDest <= moveDistance && entity.Has<InputComponent>())
+                    {
+                        ref readonly var inp = ref entity.Get<InputComponent>();
+                        keepmoving = inp.OldButtons.Contains(PixelGlueButtons.Left) || inp.OldButtons.Contains(PixelGlueButtons.Right) || inp.OldButtons.Contains(PixelGlueButtons.Down) || inp.OldButtons.Contains(PixelGlueButtons.Up);
+                        if (entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
+                        {
+                            ref readonly var net = ref entity.Get<NetworkComponent>();
+                            NetworkSystem.Send(MsgWalk.Create(net.UniqueId, dst.Value));
+                        }
+                        dst.Value += inp.Axis * Global.TileSize;
+                    }
 
-                    if (distanceToDest > moveDistance)
+                    if (distanceToDest > moveDistance || keepmoving)
                         pos.Value += vel.Velocity;
                     else
                     {
@@ -61,15 +65,11 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
-            if (entity.Has<PositionComponent>() && entity.Has<VelocityComponent>()
-             && entity.Has<DestinationComponent>() && entity.Has<SpeedComponent>())
-                base.AddEntity(entity);
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void Update(float deltaTime)
-        {
-            this.deltaTime = deltaTime;
-            UnblockThreads();
+            if (entity.Has<PositionComponent>())
+                if (entity.Has<VelocityComponent>())
+                    if (entity.Has<DestinationComponent>())
+                        if (entity.Has<SpeedComponent>())
+                            base.AddEntity(entity);
         }
     }
 }

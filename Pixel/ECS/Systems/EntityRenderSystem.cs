@@ -19,17 +19,6 @@ namespace Pixel.ECS.Systems
                 base.AddEntity(entity);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void Update(float deltaTime)
-        {
-            //foreach (var entity in Entities)
-            //{
-            //    ref readonly var pos = ref entity.Get<PositionComponent>();
-            //
-            //    if (pos.Value.X < Scene.Camera.ServerScreenRect.Left || pos.Value.X > Scene.Camera.ServerScreenRect.Right || pos.Value.Y < Scene.Camera.ServerScreenRect.Top || pos.Value.Y > Scene.Camera.ServerScreenRect.Bottom)
-            //            Scene.Destroy(entity.EntityId);
-            //}
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
             var origin = new Vector2(8);
@@ -41,7 +30,7 @@ namespace Pixel.ECS.Systems
 
                 if (OutOfRange(pos.Value+drawable.SrcRect.Size.ToVector2()))
                     {
-                        //Scene.Destroy(entity);
+                        Scene.Destroy(entity);
                         continue;
                     }
 

@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using Shared.Enums;
 using Shared;
 using Pixel.Entities;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
@@ -26,13 +27,13 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
-            if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>()&& entity.Has<PositionComponent>())
+            if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>() && entity.Has<PositionComponent>())
                 base.AddEntity(entity);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
-            for(int i = 0; i< Entities.Count; i++)
+            for (int i = 0; i < Entities.Count; i++)
             {
                 var entity = Entities[i];
                 ref var inp = ref entity.Get<InputComponent>();
@@ -51,7 +52,7 @@ namespace Pixel.ECS.Systems
                 Mouse(ref mouse, ref inp);
                 Keyboard(ref inp);
 
-                if(pos.Value == dst.Value)
+                if (pos.Value == dst.Value)
                     dst.Value = pos.Value + (inp.Axis * Global.TileSize);
 
                 inp.OldButtons.Clear();
@@ -73,9 +74,24 @@ namespace Pixel.ECS.Systems
             if (mouse.LeftButton == ButtonState.Pressed)
             {
                 var point = scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
-                var dir = point - scene.Player.Get<PositionComponent>().Value;
-                dir.Normalize();
-                inp.Axis = dir;
+                point.X = (int)point.X / Global.TileSize;
+                point.Y = (int)point.Y / Global.TileSize;
+                point.X = (int)point.X * Global.TileSize;
+                point.Y = (int)point.Y * Global.TileSize;
+                Entity selected = default;
+                foreach (var entity in scene.Entities)
+                {
+                    if (entity.Value.Has<PositionComponent>() && entity.Value.Has<DrawableComponent>())
+                    {
+                        ref readonly var pos = ref entity.Value.Get<PositionComponent>();
+                        if(pos.Value == point)
+                        {
+                            selected = entity.Value;
+                            break;
+                        }
+                    }
+                }
+                scene.Destroy(selected.EntityId);
             }
         }
 

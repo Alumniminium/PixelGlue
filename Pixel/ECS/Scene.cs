@@ -40,9 +40,9 @@ namespace Pixel.ECS
         public virtual void Initialize()
         {
             Camera = new Camera();
-            Player = CreateEntity(EntityType.Player);
             for (int i = 0; i < Systems.Count; i++)
                 Systems[i].Initialize();
+            Player = CreateEntity(EntityType.Player);
             IsReady = true;
         }
 
@@ -90,26 +90,28 @@ namespace Pixel.ECS
         public virtual void Destroy(Entity entity) => Destroy(entity.EntityId);
         public virtual void Destroy(int entity)
         {
-            Entities.TryRemove(entity, out var actualEntity);
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].RemoveEntity(actualEntity);
+            PostUpdateQueue.Enqueue(() =>
+           {
+               Entities.TryRemove(entity, out var actualEntity);
+               for (int i = 0; i < Systems.Count; i++)
+                   Systems[i].RemoveEntity(actualEntity);
 
-            if (actualEntity.EntityId != -1)
-            {
-                actualEntity.DestroyComponents();
-                if (actualEntity.Children != null)
-                {
-                    foreach (var id in actualEntity.Children)
-                    {
-                        var child = Entities[id];
-                        child.DestroyComponents();
-                        Destroy(child.EntityId);
-                    }
-                }
-            }
-            EntityIdToUniqueId.TryRemove(entity, out var uid);
-            UniqueIdToEntityId.TryRemove(uid, out _);
-
+               if (actualEntity.EntityId != -1)
+               {
+                   actualEntity.DestroyComponents();
+                   if (actualEntity.Children != null)
+                   {
+                       foreach (var id in actualEntity.Children)
+                       {
+                           var child = Entities[id];
+                           child.DestroyComponents();
+                           Destroy(child.EntityId);
+                       }
+                   }
+               }
+               EntityIdToUniqueId.TryRemove(entity, out var uid);
+               UniqueIdToEntityId.TryRemove(uid, out _);
+           });
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -171,7 +173,7 @@ namespace Pixel.ECS
                     entity.Add<VelocityComponent>();
 
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-                    entity.Add(new SpeedComponent(64));
+                    entity.Add(new SpeedComponent(16));
 
                     var nt = CreateEntity(EntityType.Default);
                     nt.Add(new TextComponent($"{entity.EntityId}: {entity}", "profont"));

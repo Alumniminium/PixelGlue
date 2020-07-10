@@ -8,7 +8,7 @@ namespace Pixel.Helpers
 {
     public static class ComponentArray<T> where T : struct
     {
-        public const int AMOUNT = 100000;
+        public const int AMOUNT = 1000000;
         public static ConcurrentStack<int> AvailableIndicies = new ConcurrentStack<int>(Enumerable.Range(0, AMOUNT));
         public static ConcurrentDictionary<int, int> EntityIdToArrayOffset = new ConcurrentDictionary<int, int>();
         private readonly static T[] array = new T[AMOUNT];

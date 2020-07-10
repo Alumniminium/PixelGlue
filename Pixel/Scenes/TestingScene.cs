@@ -17,6 +17,7 @@ namespace Pixel.Scenes
             Systems.Add(new CameraSystem());
             //Systems.Add(new MapShaderRenderer());
             Systems.Add(new WorldRenderSystem());
+            //Systems.Add(new PretendSystem());
             Systems.Add(new EntityRenderSystem());
             Systems.Add(new NameTagRenderSystem());
             //Systems.Add(new DialogSystem());
