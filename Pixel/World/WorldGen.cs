@@ -7,6 +7,7 @@ using Shared.Noise;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Pixel.World
@@ -81,6 +82,7 @@ namespace Pixel.World
                 Prefetcher[i].Start(i % 2);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Load(object idobj)
         {
             int id = (int)idobj;
@@ -104,6 +106,7 @@ namespace Pixel.World
                 Thread.Sleep(1);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? decor) Generate(int x, int y)
         {
             var dstRect = new Rectangle(x, y, Global.TileSize, Global.TileSize);
@@ -115,6 +118,7 @@ namespace Pixel.World
             var river = GenerateRiver(x2, y2, dstRect);
             return (terrain, decor, river);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
         {
             var val = RiverNoise.GetNoise(x, y);
@@ -128,6 +132,7 @@ namespace Pixel.World
             else
                 return null;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (DrawableComponent? ground, DrawableComponent? decor) GenerateBiome(float x, float y, Rectangle dstRect)
         {
             var biome = BiomeNoise.GetNoise(x, y);
@@ -141,7 +146,7 @@ namespace Pixel.World
             else
                 return GenerateMountains(x, y, dstRect);
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (DrawableComponent? ground, DrawableComponent? decor) GenerateMountains(float x, float y, Rectangle dstRect)
         {
             DrawableComponent? decor = null;
@@ -167,6 +172,7 @@ namespace Pixel.World
 
             return (ground, decor);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (DrawableComponent?, DrawableComponent?) GenerateDesert(float x, float y, Rectangle dstRect)
         {
             DrawableComponent? decor = null;
@@ -189,6 +195,7 @@ namespace Pixel.World
 
             return (ground, decor);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (DrawableComponent?, DrawableComponent?) GenerateSwamp(float x, float y, Rectangle dstRect)
         {
             DrawableComponent? decor = null;
@@ -212,6 +219,7 @@ namespace Pixel.World
             return (ground, decor);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (DrawableComponent?, DrawableComponent?) GeneratePlains(float x, float y, Rectangle dstRect)
         {
             Dictionary<float, (DrawableComponent, DrawableComponent?)> heights = new Dictionary<float, (DrawableComponent, DrawableComponent?)>()
@@ -243,6 +251,7 @@ namespace Pixel.World
             return (null, null);
         }
         public static int last;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static (DrawableComponent?, DrawableComponent?) GetTiles(int x, int y)
         {
             if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))

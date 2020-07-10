@@ -3,11 +3,13 @@ using Shared;
 using Shared.IO;
 using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.Networking
 {
     public static class PacketHandler
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Handle(byte[] buffer)
         {
             var packetId = BitConverter.ToUInt16(buffer, 4);

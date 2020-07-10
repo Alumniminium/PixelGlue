@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Entities;
@@ -11,11 +12,13 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Camera System";
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
             if (entity.Has<CameraFollowTagComponent>() && entity.Has<PositionComponent>())
                 base.AddEntity(entity);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
             var scene = SceneManager.ActiveScene;

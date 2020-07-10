@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
@@ -12,6 +13,7 @@ namespace Pixel.Networking.Handlers
 {
     public static class Login
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Handle(MsgLogin packet)
         {
             var scene = SceneManager.ActiveScene;

@@ -19,6 +19,7 @@ namespace Shared.Enums
 
         ScalePlus,
         ScaleMinus,
+        NameTags,
     }
 
 }

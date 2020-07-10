@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Shared;
 using Pixel.Entities;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS.Systems
 {
@@ -11,11 +12,13 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Entity Rendering System";
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
             if (entity.Has<PositionComponent>() && entity.Has<DrawableComponent>())
                 base.AddEntity(entity);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
             //foreach (var entity in Entities)
@@ -26,6 +29,7 @@ namespace Pixel.ECS.Systems
             //            Scene.Destroy(entity.EntityId);
             //}
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
             var origin = new Vector2(8);
@@ -42,8 +46,7 @@ namespace Pixel.ECS.Systems
                     }
 
                 sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Value + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
-                Global.DrawCalls++;
-            }
+           }
         }
 
         private bool OutOfRange(Vector2 pos)

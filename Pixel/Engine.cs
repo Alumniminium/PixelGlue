@@ -70,7 +70,6 @@ namespace Pixel
         {
             Global.DrawTime=0;
             Global.FrameCounter++;
-            Global.DrawCalls = 0;
             _graphics.GraphicsDevice.Clear(Color.Black);
 
             if (SceneManager.ActiveScene.IsReady)

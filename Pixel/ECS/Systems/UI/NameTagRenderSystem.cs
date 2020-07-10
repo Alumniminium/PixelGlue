@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
@@ -8,6 +9,7 @@ namespace Pixel.ECS.Systems
     public class NameTagRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "Name Tag Render System";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
             if (!entity.Has<PositionComponent>())
@@ -22,6 +24,7 @@ namespace Pixel.ECS.Systems
                 }
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
             foreach (var entity in Entities)

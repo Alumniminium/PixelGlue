@@ -18,6 +18,7 @@ namespace Pixel.Configuration
             [PixelGlueButtons.EscapeMenu] = (Keys.Escape, Keys.Escape),
             [PixelGlueButtons.ConsoleToggle] = (Keys.OemTilde, Keys.OemTilde),
             [PixelGlueButtons.DbgBoundingBoxes] = (Keys.B, Keys.Back),
+            [PixelGlueButtons.NameTags] = (Keys.N, Keys.N),
             [PixelGlueButtons.Sprint] = (Keys.LeftShift, Keys.LeftShift),
             [PixelGlueButtons.ScalePlus] = (Keys.PageUp, Keys.PageUp),
             [PixelGlueButtons.ScaleMinus] = (Keys.PageDown, Keys.PageDown),
@@ -34,6 +35,7 @@ namespace Pixel.Configuration
             [Keys.Escape] = PixelGlueButtons.EscapeMenu,
             [Keys.OemTilde] = PixelGlueButtons.ConsoleToggle,
             [Keys.B] = PixelGlueButtons.DbgBoundingBoxes,
+            [Keys.N] = PixelGlueButtons.NameTags,
         };
         public static Dictionary<PixelGlueButtons, Buttons[]> GamepadMap = new Dictionary<PixelGlueButtons, Buttons[]>()
         {

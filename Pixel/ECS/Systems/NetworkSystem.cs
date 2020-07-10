@@ -8,6 +8,7 @@ using Shared.TerribleSockets.Packets;
 using Shared.TerribleSockets.Queues;
 using System;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS.Systems
 {
@@ -26,6 +27,7 @@ namespace Pixel.ECS.Systems
             Socket.OnDisconnect += Disconnected;
             Socket.OnConnected += Connected;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
             switch (ConnectionState)
@@ -44,6 +46,7 @@ namespace Pixel.ECS.Systems
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SyncObjects()
         {
             while (PendingPackets.TryDequeue(out var packet))
@@ -55,6 +58,7 @@ namespace Pixel.ECS.Systems
             }).ConfigureAwait(false);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Connect(string ip, ushort port)
         {
             if (ConnectionState != ConnectionState.NotConnected)
@@ -67,18 +71,22 @@ namespace Pixel.ECS.Systems
             Socket.ConnectAsync(ip, port);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Connected()
         {
             ConnectionState = ConnectionState.Connected;
             FConsole.WriteLine("[NetworkSystem] CONNECTED! :D");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Disconnected()
         {
             ConnectionState = ConnectionState.NotConnected;
             FConsole.WriteLine("[NetworkSystem] DISCONNECTED! Reconnecting...");
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Send(byte[] packet) => PendingSends.Enqueue(packet);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Receive(ClientSocket client, byte[] packet) => PendingPackets.Enqueue(packet);
     }
 }

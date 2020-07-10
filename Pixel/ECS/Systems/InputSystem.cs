@@ -17,16 +17,19 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Input System";
         private PixelGlueButtons[] _mappedButtons;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {
             _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
             IsActive = true;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
             if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>()&& entity.Has<PositionComponent>())
                 base.AddEntity(entity);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
             for(int i = 0; i< Entities.Count; i++)
@@ -106,6 +109,11 @@ namespace Pixel.ECS.Systems
                 system.IsActive = !system.IsActive;
                 //ar system2 = scene.GetSystem<NameTagRenderSystem>();
                 //ystem2.IsActive = !system2.IsActive;
+            }
+            if (inp.IsPressed(PixelGlueButtons.NameTags))
+            {
+                var system = scene.GetSystem<NameTagRenderSystem>();
+                system.IsActive = !system.IsActive;
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))
                 Environment.Exit(0);

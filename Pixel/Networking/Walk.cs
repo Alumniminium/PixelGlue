@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Pixel.ECS.Components;
 using Pixel.Scenes;
 using Shared.TerribleSockets.Packets;
@@ -6,6 +7,7 @@ namespace Pixel.Networking.Handlers
 {
     public static class Walk
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Handle(MsgWalk packet)
         {
             var uniqueId = packet.UniqueId;

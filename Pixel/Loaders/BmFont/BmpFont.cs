@@ -5,6 +5,7 @@ using Pixel.Loaders.BmFont.Models;
 using Shared;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace Pixel.Loaders
@@ -21,6 +22,7 @@ namespace Pixel.Loaders
             fontTexture = contentManager.Load<Texture2D>(Path.GetFileName(fontName).Replace(".fnt", "_0"));
             Load(fontFilePath);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Load(string filename)
         {
             XmlSerializer deserializer = new XmlSerializer(typeof(FontFile));
@@ -33,6 +35,7 @@ namespace Pixel.Loaders
                 _characterMap.Add(c, new BmpFontChar(fontCharacter));
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawText(SpriteBatch spriteBatch, float x, float y, string text,Color color, float scale = 0.5f)
         {
             int dx = (int)x;
@@ -44,7 +47,6 @@ namespace Pixel.Loaders
                     var dst = new Rectangle(dx + (int)(fc.FontChar.XOffset * scale), dy + (int)(fc.FontChar.YOffset * scale), (int)(fc.SrcRect.Width * scale), (int)(fc.SrcRect.Height * scale));
                     spriteBatch.Draw(fontTexture, dst, fc.SrcRect, color);
                     dx += (int)(fc.FontChar.XAdvance * scale);
-                    Global.DrawCalls++;
                 }
             }
         }

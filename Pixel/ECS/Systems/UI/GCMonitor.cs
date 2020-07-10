@@ -1,44 +1,37 @@
 using System.Threading;
 using Shared.IO;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Pixel.ECS.Systems
 {
     public class GCMonitor : PixelSystem
     {
         public override string Name { get; set; } = "GC Monitoring System";
-        public Thread Worker;
-        public AutoResetEvent Block = new AutoResetEvent(true);
         public int[] GenCollections;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {
             GenCollections = new int[3];
-            Worker = new Thread(Step)
-            {
-                IsBackground = true,
-                Priority = ThreadPriority.Lowest
-            };
-            Worker.Start();
+            StartWorkerThreads(1, true, ThreadPriority.Lowest);
             IsActive = true;
         }
-        public override void FixedUpdate(float gameTime) => Block.Set();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void FixedUpdate(float gameTime) => UnblockThreads();
 
-        public void Step()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void AsyncUpdate(int threadId)
         {
-            while (true)
+            for (int i = 0; i < GenCollections.Length; i++)
             {
-                Block.WaitOne();
-                for (int i = 0; i < GenCollections.Length; i++)
-                {
-                    var newVal = GC.CollectionCount(i);
-                    var oldVal = GenCollections[i];
+                var newVal = GC.CollectionCount(i);
+                var oldVal = GenCollections[i];
 
-                    if (newVal != oldVal)
-                    {
-                        FConsole.WriteLine($"GC: Gen0: {GenCollections[0]:000}, Gen1: {GenCollections[1]:000}, Gen2: {GenCollections[2]:000}");
-                        GenCollections[i] = newVal;
-                    }
+                if (newVal != oldVal)
+                {
+                    FConsole.WriteLine($"GC: Gen0: {GenCollections[0]:000}, Gen1: {GenCollections[1]:000}, Gen2: {GenCollections[2]:000}");
+                    GenCollections[i] = newVal;
                 }
             }
         }

@@ -17,13 +17,12 @@ namespace Shared
         public static int HalfScreenWidth => ScreenWidth / 2;
         public static int HalfScreenHeight =>ScreenHeight / 2;
         public static GraphicsDevice Device { get; set; }
-        public static int DrawCalls { get; set; }
         public static string[] Names { get; set; }
         public static ContentManager ContentManager { get; set; }
         public static int TileSize => 16;
         public static long FrameCounter { get; set; }
         public static GraphicsMetrics Metrics { get; set; }
-        public static bool Verbose { get; set; } = true;
+        public static bool Verbose { get; set; } = false;
         public static float DrawTime { get; set; }
         public static float UpdateTime { get; set; }
         public static int Major { get; set; } = 0;

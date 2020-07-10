@@ -21,6 +21,7 @@ namespace Pixel.Entities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DestroyComponents()
         {
             ComponentArray<PositionComponent>.Remove(EntityId);

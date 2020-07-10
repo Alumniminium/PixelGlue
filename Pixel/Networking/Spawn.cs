@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Entities;
@@ -10,6 +11,7 @@ namespace Pixel.Networking
 {
     public static class Spawn
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Handle(MsgSpawn packet)
         {
             if (SceneManager.ActiveScene.UniqueIdToEntityId.ContainsKey(packet.UniqueId))

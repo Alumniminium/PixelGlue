@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Entities;
 using Pixel.Scenes;
@@ -12,12 +14,54 @@ namespace Pixel.ECS
         public bool IsActive { get; set; } = true;
         public List<Entity> Entities { get; set; } = new List<Entity>();
         public Scene Scene => SceneManager.ActiveScene;
+        private Thread[] Workers;
+        private AutoResetEvent[] Blocks;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void StartWorkerThreads(int count, bool blockState, ThreadPriority priority)
+        {
+            Workers = new Thread[count];
+            Blocks = new AutoResetEvent[count];
+            for (int i = 0; i < count; i++)
+            {
+                Blocks[i] = new AutoResetEvent(blockState);
+                Workers[i] = new Thread(AsyncUpdateLoop)
+                {
+                    IsBackground = true,
+                    Priority = priority
+                };
+                Workers[i].Start(i);
+            }
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UnblockThreads()
+        {
+            for (int i = 0; i < Blocks.Length; i++)
+                Blocks[i].Set();
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void AsyncUpdateLoop(object idx)
+        {
+            int id = (int)idx;
+            while (true)
+            {
+                Blocks[id].WaitOne();
+                AsyncUpdate(id);
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual void AsyncUpdate(int id)
+        {
+
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Initialize() { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Update(float deltaTime) { }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public virtual void FixedUpdate(float deltaTime) { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Draw(SpriteBatch spriteBatch) { }
@@ -33,7 +77,7 @@ namespace Pixel.ECS
         public virtual void RemoveEntity(Entity entity)
         {
             if (Scene != null)
-                Scene.PostUpdateQueue.Enqueue(() => 
+                Scene.PostUpdateQueue.Enqueue(() =>
                 {
                     Entities.Remove(entity);
                     entity.DestroyComponents();
