@@ -34,6 +34,7 @@ namespace Pixel.ECS.Systems
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
                 entity.Get<DestinationComponent>().Value = new Vector2(1024, 2048);
+            entity.Register();
         }
     }
 }

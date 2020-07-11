@@ -23,7 +23,7 @@ namespace Pixel.Scenes
         public Camera Camera;
         public Entity Player;
 
-        public Scene()=>Camera = new Camera(Vector2.Zero, 0, Vector2.One, (Global.VirtualScreenWidth, Global.VirtualScreenHeight));
+        public Scene() => Camera = new Camera(Vector2.Zero, 0, Vector2.One, (Global.VirtualScreenWidth, Global.VirtualScreenHeight));
 
         public virtual void Initialize()
         {
@@ -86,22 +86,22 @@ namespace Pixel.Scenes
             switch (et)
             {
                 case EntityType.Camera:
-                    entity.With<TransformComponent>()
-                          .With<DbgBoundingBoxComponent>();
+                    entity.Add<TransformComponent>();
+                    entity.Add<DbgBoundingBoxComponent>();
                     break;
                 case EntityType.Player:
-                    entity = entity.With<InputComponent>()
-                                .With<PositionComponent>()
-                                .With<DestinationComponent>()
-                                .With<DbgBoundingBoxComponent>()
-                                .With<VelocityComponent>()
-                                .With(new SpeedComponent(32))
-                                .With(new CameraFollowTagComponent(1))
-                                .With(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
+                    entity.Add<InputComponent>();
+                    entity.Add<PositionComponent>();
+                    entity.Add<DestinationComponent>();
+                    entity.Add<DbgBoundingBoxComponent>();
+                    entity.Add<VelocityComponent>();
+                    entity.Add(new SpeedComponent(32));
+                    entity.Add(new CameraFollowTagComponent(1));
+                    entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
-                    var nameTag = World.CreateEntity()
-                                .With(new TextComponent($"{entity.EntityId}: {entity}"))
-                                .With(new PositionComponent(-16, -16, 0));
+                    var nameTag = World.CreateEntity();
+                    nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
+                    nameTag.Add(new PositionComponent(-16, -16, 0));
 
                     entity.AddChild(nameTag);
                     break;
@@ -109,16 +109,16 @@ namespace Pixel.Scenes
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
 
-                    entity = entity.With(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect))
-                                .With<PositionComponent>()
-                                .With<DestinationComponent>()
-                                .With<VelocityComponent>()
-                                .With<DbgBoundingBoxComponent>()
-                                .With(new SpeedComponent(32));
+                    entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
+                    entity.Add<PositionComponent>();
+                    entity.Add<DestinationComponent>();
+                    entity.Add<VelocityComponent>();
+                    entity.Add<DbgBoundingBoxComponent>();
+                    entity.Add(new SpeedComponent(32));
 
-                    nameTag = World.CreateEntity()
-                                .With(new TextComponent($"{entity.EntityId}: {name}"))
-                                .With(new PositionComponent(-16, -16, 0));
+                    nameTag = World.CreateEntity();
+                    nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
+                    nameTag.Add(new PositionComponent(-16, -16, 0));
 
                     entity.AddChild(nameTag);
                     break;
