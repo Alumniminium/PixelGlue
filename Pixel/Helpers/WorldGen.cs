@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Pixel.World
+namespace Pixel.Helpers
 {
     public static class WorldGen
     {
@@ -93,12 +93,12 @@ namespace Pixel.World
                     var (x, y) = t;
                     if (LayerZero.ContainsKey((x, y)))
                         continue;
-                    var (terrain, river, tree) = Generate(x, y);
-                    LayerZero.TryAdd((x, y), terrain);
-                    if (river.HasValue)
-                        LayerTwo.TryAdd((x, y), river);
-                    else if (tree.HasValue)
-                        LayerOne.TryAdd((x, y), tree);
+                    var tiles = Generate(x, y);
+                    LayerZero.TryAdd((x, y), tiles[0]);
+                    if (tiles[1].HasValue)
+                        LayerTwo.TryAdd((x, y), tiles[1]);
+                    else if (tiles[2].HasValue)
+                        LayerOne.TryAdd((x, y), tiles[2]);
 
                     TilesLoading.TryRemove((x, y), out _);
                     Thread.Sleep(1);
@@ -107,16 +107,20 @@ namespace Pixel.World
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (DrawableComponent? terrain, DrawableComponent? river, DrawableComponent? decor) Generate(int x, int y)
+        public static DrawableComponent?[] Generate(int x, int y)
         {
             var dstRect = new Rectangle(x, y, Global.TileSize, Global.TileSize);
+            var arr = new DrawableComponent?[3];
             float x2, y2;
             x2 = x;
             y2 = y;
             RiverNoise.GradientPerturbFractal(ref x2, ref y2);
             var (terrain, decor) = GenerateBiome(x2, y2, dstRect);
             var river = GenerateRiver(x2, y2, dstRect);
-            return (terrain, decor, river);
+            arr[0] = terrain;
+            arr[1] = decor;
+            arr[2] = river;
+            return arr;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
@@ -263,8 +267,11 @@ namespace Pixel.World
                     last = 0;
             }
             LayerOne.TryGetValue((x, y), out var decorTile);
-            LayerTwo.TryGetValue((x, y), out decorTile);
+            LayerTwo.TryGetValue((x, y), out var decorTile2);
+            if(decorTile.HasValue)
             return (terrainTile, decorTile);
+            else
+            return (terrainTile, decorTile2);
         }
     }
 }

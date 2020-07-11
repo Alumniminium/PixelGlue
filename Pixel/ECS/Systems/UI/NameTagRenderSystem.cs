@@ -2,13 +2,15 @@ using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using Pixel.Entities;
+using Pixel.Scenes;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {
     public class NameTagRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "Name Tag Render System";
+        public Scene Scene => SceneManager.ActiveScene;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
         {
@@ -16,7 +18,7 @@ namespace Pixel.ECS.Systems
                 return;
             foreach (var id in entity.Children)
             {
-                var child = Scene.Entities[id];
+                var child = World.Entities[id];
                 if (child.Has<TextComponent>() || child.Has<PositionComponent>())
                 {
                     base.AddEntity(entity);
@@ -31,16 +33,21 @@ namespace Pixel.ECS.Systems
             {
                 foreach (var id in entity.Children)
                 {
-                    var child = Scene.Entities[id];
+                    var child = World.Entities[id];
                     if (!child.Has<TextComponent>() || !child.Has<PositionComponent>())
                         continue;
 
                     ref readonly var pos = ref entity.Get<PositionComponent>();
 
-                    if (pos.Value.X <= Scene.Camera.SimulationRect.Left || pos.Value.X >= Scene.Camera.SimulationRect.Right)
+                    if (pos.Value.X <= Scene.Camera.Bounds.Left || pos.Value.X >= Scene.Camera.Bounds.Right)
                         continue;
-                    if (pos.Value.Y <= Scene.Camera.SimulationRect.Top || pos.Value.Y >= Scene.Camera.SimulationRect.Bottom)
+                    if (pos.Value.Y <= Scene.Camera.Bounds.Top || pos.Value.Y >= Scene.Camera.Bounds.Bottom)
                         continue;
+
+                    //if (pos.Value.X <= Scene.Camera.SimulationRect.Left || pos.Value.X >= Scene.Camera.SimulationRect.Right)
+                    //    continue;
+                    //if (pos.Value.Y <= Scene.Camera.SimulationRect.Top || pos.Value.Y >= Scene.Camera.SimulationRect.Bottom)
+                    //    continue;
 
                     ref readonly var offset = ref child.Get<PositionComponent>();
                     ref readonly var text = ref child.Get<TextComponent>();

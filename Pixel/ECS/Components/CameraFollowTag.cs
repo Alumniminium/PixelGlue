@@ -3,7 +3,7 @@ using Shared;
 
 namespace Pixel.ECS.Components
 {
-    public struct CameraFollowTagComponent
+    public struct CameraFollowTagComponent 
     {
         public float Zoom { get; set; }
         public Vector2 PositionOffset { get; set; }

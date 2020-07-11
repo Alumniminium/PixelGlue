@@ -2,9 +2,8 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Pixel.Entities;
 
-namespace Pixel.Helpers
+namespace Shared.ECS
 {
     public static class ComponentArray<T> where T : struct
     {

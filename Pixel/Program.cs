@@ -17,7 +17,7 @@ namespace Pixel
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             FConsole.WriteLine("Initializing the engine...");
 
-            var engine = new Engine(true)
+            var engine = new Engine(false)
             {
                 IsFixedTimeStep = false
             };

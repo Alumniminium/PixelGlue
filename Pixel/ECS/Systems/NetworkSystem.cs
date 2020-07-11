@@ -9,6 +9,7 @@ using Shared.TerribleSockets.Queues;
 using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {
@@ -52,10 +53,8 @@ namespace Pixel.ECS.Systems
             while (PendingPackets.TryDequeue(out var packet))
                 PacketHandler.Handle(packet);
 
-            Task.Run( ()=>{
             while (PendingSends.TryDequeue(out var packet))
                 Socket.Send(packet);
-            }).ConfigureAwait(false);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

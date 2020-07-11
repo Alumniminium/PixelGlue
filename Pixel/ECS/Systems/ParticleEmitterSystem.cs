@@ -1,5 +1,5 @@
 using Pixel.ECS.Components;
-using Pixel.Entities;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {

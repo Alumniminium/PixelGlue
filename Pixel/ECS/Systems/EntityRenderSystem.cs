@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using Shared;
-using Pixel.Entities;
+using Shared.ECS;
 using System.Runtime.CompilerServices;
+using Pixel.Scenes;
 
 namespace Pixel.ECS.Systems
 {
@@ -11,6 +11,7 @@ namespace Pixel.ECS.Systems
     public class EntityRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "Entity Rendering System";
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
@@ -30,7 +31,7 @@ namespace Pixel.ECS.Systems
 
                 if (OutOfRange(pos.Value+drawable.SrcRect.Size.ToVector2()))
                     {
-                        Scene.Destroy(entity);
+                        //Scene.World.Destroy(entity.EntityId);
                         continue;
                     }
 
@@ -40,7 +41,8 @@ namespace Pixel.ECS.Systems
 
         private bool OutOfRange(Vector2 pos)
         {
-            return pos.X < Scene.Camera.SimulationRect.Left || pos.X > Scene.Camera.SimulationRect.Right || pos.Y <= Scene.Camera.SimulationRect.Top || pos.Y >= Scene.Camera.SimulationRect.Bottom;
+            return pos.X < Scene.Camera.Bounds.Left || pos.X > Scene.Camera.Bounds.Right || pos.Y <= Scene.Camera.Bounds.Top || pos.Y >= Scene.Camera.Bounds.Bottom;
+            //return pos.X < Scene.Camera.SimulationRect.Left || pos.X > Scene.Camera.SimulationRect.Right || pos.Y <= Scene.Camera.SimulationRect.Top || pos.Y >= Scene.Camera.SimulationRect.Bottom;
         }
     }
 }

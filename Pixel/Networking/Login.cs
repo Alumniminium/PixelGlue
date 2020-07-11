@@ -1,11 +1,9 @@
-using System.Net.Mime;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
-using Pixel.Entities;
 using Pixel.Enums;
 using Pixel.Scenes;
+using Shared.ECS;
 using Shared.IO;
 using Shared.TerribleSockets.Packets;
 
@@ -17,13 +15,18 @@ namespace Pixel.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var scene = SceneManager.ActiveScene;
-            var child = scene.Entities[scene.Player.Children.Find(c => scene.Entities[c].Has<TextComponent>())];
+
+            var child = World.Entities[scene.Player.Children.Find(c => World.Entities[c].Has<TextComponent>())];
+
             ref var txt = ref child.Get<TextComponent>();
+
             txt.Value = $"Name: {packet.GetUsername()}";
             FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
+
             scene.Player.Add(new NetworkComponent(packet.UniqueId));
-            scene.UniqueIdToEntityId.TryAdd(packet.UniqueId, scene.Player.EntityId);
-            scene.EntityIdToUniqueId.TryAdd(scene.Player.EntityId, packet.UniqueId);
+            World.UniqueIdToEntityId.TryAdd(packet.UniqueId, scene.Player.EntityId);
+            World.EntityIdToUniqueId.TryAdd(scene.Player.EntityId, packet.UniqueId);
+            scene.Player.Register();
             NetworkSystem.ConnectionState = ConnectionState.Authenticated;
         }
     }

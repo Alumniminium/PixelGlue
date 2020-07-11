@@ -1,3 +1,6 @@
+using Pixel.Entities;
+using Shared.ECS;
+
 namespace Pixel.ECS.Systems
 {
     public class DialogSystem : PixelSystem

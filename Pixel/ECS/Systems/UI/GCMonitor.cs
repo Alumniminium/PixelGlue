@@ -2,6 +2,7 @@ using System.Threading;
 using Shared.IO;
 using System;
 using System.Runtime.CompilerServices;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {

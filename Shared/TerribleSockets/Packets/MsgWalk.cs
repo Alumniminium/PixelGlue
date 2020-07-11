@@ -9,7 +9,7 @@ namespace Shared.TerribleSockets.Packets
     {
         public int Length;
         public ushort Id;
-        public int TickCount;
+        public long TickCount;
         public int UniqueId;
         public int X, Y;
         public Vector2 Position => new Vector2(X,Y);
@@ -19,7 +19,7 @@ namespace Shared.TerribleSockets.Packets
             var msg = stackalloc MsgWalk[1];
             msg->Length = sizeof(MsgWalk);
             msg->Id = 1001;
-            msg->TickCount = Environment.TickCount;
+            msg->TickCount = DateTime.UtcNow.Ticks;
             msg->UniqueId = uniqueId;
             msg->X = x;
             msg->Y = y;

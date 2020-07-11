@@ -1,16 +1,14 @@
-using System;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using Pixel.Entities;
 using Pixel.Scenes;
-using Shared;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {
     public class CameraSystem : PixelSystem
     {
         public override string Name { get; set; } = "Camera System";
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
@@ -21,45 +19,13 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
-            var scene = SceneManager.ActiveScene;
             for (int i = 0; i < Entities.Count; i++)
             {
                 var entity = Entities[i];
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref var fol = ref entity.Get<CameraFollowTagComponent>();
 
-                if (entity.Has<InputComponent>())
-                {
-                    ref readonly var inp = ref entity.Get<InputComponent>();
-                    if (inp.Scroll > inp.OldScroll)
-                        fol.Zoom += 0.01f;
-                    else if (inp.Scroll < inp.OldScroll)
-                        fol.Zoom -= 0.01f;
-                }
-                var scaleX = Global.ScreenWidth / Global.VirtualScreenWidth;
-                var scaleY = Global.ScreenHeight / Global.VirtualScreenHeight;
-
-                var camPos = pos.Value + fol.PositionOffset;
-                var camX = (int)(camPos.X / Global.TileSize) * Global.TileSize;
-                var camY = (int)(camPos.Y / Global.TileSize) * Global.TileSize;
-            
-                var simRectX = (int)Math.Floor(camX+fol.PositionOffset.X) - (Global.HalfVirtualScreenWidth + (Global.TileSize * 2));
-                var simRectY = (int)Math.Floor(camY+fol.PositionOffset.Y) - (Global.HalfVirtualScreenHeight + (Global.TileSize * 2));
-                var simRectW = Global.VirtualScreenWidth + (Global.TileSize * 4);
-                var simRectH = Global.VirtualScreenHeight + (Global.TileSize * 4);
-
-                var screenRectX = (int)(camX - (Global.HalfVirtualScreenWidth / fol.Zoom));
-                var screenRectY = (int)(camY - (Global.HalfVirtualScreenHeight / fol.Zoom));
-                var screenRectW = (int)(Global.VirtualScreenWidth / fol.Zoom);
-                var screenRectH = (int)(Global.VirtualScreenHeight / fol.Zoom);
-                
-                scene.Camera.DrawRectZoomed = new Rectangle(screenRectX, screenRectY, screenRectW, screenRectH);
-                scene.Camera.SimulationRect = new Rectangle(simRectX, simRectY, simRectW, simRectH);
-
-                scene.Camera.ViewMatrix = Matrix.CreateTranslation(-camPos.X, -camPos.Y, 0)
-                                            * Matrix.CreateScale(scaleX, scaleY, 1f)
-                                            * Matrix.CreateScale(fol.Zoom)
-                                            * Matrix.CreateTranslation(Global.HalfScreenWidth, Global.HalfScreenHeight, 0);
+                Scene.Camera.XY = pos.Value + fol.PositionOffset;
             }
         }
     }

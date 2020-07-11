@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Shared.Enums;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Shared.TerribleSockets.Packets
 {
@@ -13,6 +14,22 @@ namespace Shared.TerribleSockets.Packets
         public int X, Y;
         public int Model;
         public Direction Direction;
+        public fixed byte Name[32];
+
+        public string GetName()
+        {
+            fixed (byte* p = Name)
+                return Encoding.ASCII.GetString(p, 32).Trim('\0');
+        }
+
+        public void SetName(string username)
+        {
+            fixed (byte* p = Name)
+            {
+                for (var i = 0; i < username.Length; i++)
+                    p[i] = (byte)username[i];
+            }
+        }
         
         public static MsgSpawn Create(int uniqueId, int x, int y, int model, string name)
         {
@@ -24,6 +41,7 @@ namespace Shared.TerribleSockets.Packets
             msg->X = x;
             msg->Y = y;
             msg->Direction = Direction.North;
+            msg->SetName(name);
             return *msg;
         }
         public static MsgSpawn Create(int uniqueId, Vector2 pos, int model,string name) => Create(uniqueId,(int)pos.X,(int)pos.Y,model,name);

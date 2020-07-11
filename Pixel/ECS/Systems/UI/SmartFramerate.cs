@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Scenes;
 using Shared;
-using Shared.IO;
+using Shared.ECS;
 using Shared.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -21,6 +21,7 @@ namespace Pixel.ECS.Systems
         private double weight;
         private int numerator;
 
+        public Scene Scene => SceneManager.ActiveScene;
         private readonly string[] lines = new string[64];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,9 +49,9 @@ namespace Pixel.ECS.Systems
                 Block.WaitOne();
 
                 int lastLine = 5;
-                for (int i = 0; i < SceneManager.ActiveScene.Systems.Count; i++)
+                for (int i = 0; i < World.Systems.Count; i++)
                 {
-                    var system = Scene.Systems[i];
+                    var system = World.Systems[i];
                     if (!system.IsActive)
                         continue;
                     lines[lastLine++] = string.Empty;
@@ -68,7 +69,7 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float timeSinceLastFrame)
         {
-            lines[0] = $"| Pixel Engine | Entities: {Scene.Entities.Count}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
+            lines[0] = $"| Pixel Engine | Entities: {World.Entities.Count}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
             lines[1] = $"|   v {Global.Major}.{Global.Minor:00}     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
             lines[2] = $"|  {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:0000}  | FPS: {updateRate:##0} (Total: {Global.DrawTime + Global.UpdateTime:##0.00}ms, Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms)";
 

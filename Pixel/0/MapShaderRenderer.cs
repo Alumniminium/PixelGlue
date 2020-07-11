@@ -4,34 +4,36 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS;
 using Pixel.ECS.Components;
+using Pixel.Helpers;
 using Pixel.Scenes;
-using Pixel.World;
 using Shared;
+using Shared.ECS;
 
 namespace Pixel.zero
 {
     public class MapShaderRenderer : PixelSystem
     {
         public MapShaderRenderer() => Name = "Map Shader Renderer";
-        public DateTime LastUpdate{get;set;}
+        public MapShaderRenderer(DateTime lastUpdate) => LastUpdate = lastUpdate;
+        public DateTime LastUpdate { get; set; }
 
         public const int VERTICES_PER_QUAD = 6;
         public const int TRIANGLES_PER_QUAD = 2;
         public static Effect effect;
         public int mapWidth = 500;
         public int mapHeight = 500;
-        public List<VertexPositionColorTexture> vertexList = new List<VertexPositionColorTexture>();       
+        public List<VertexPositionColorTexture> vertexList = new List<VertexPositionColorTexture>();
         public List<Texture2D> layerTextures = new List<Texture2D>();
         private VertexBuffer vertexBuffer;
 
         public override void Initialize()
-        {         
-            var Projection = Matrix.CreateScale(1, -1, 1) * Matrix.CreateOrthographicOffCenter(0, Global.ScreenWidth,Global.ScreenHeight, 0, 0, 1) * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f);
-            
+        {
+            var Projection = Matrix.CreateScale(1, -1, 1) * Matrix.CreateOrthographicOffCenter(0, Global.ScreenWidth, Global.ScreenHeight, 0, 0, 1) * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f);
+
             CreateTileMapFromSheet(mapWidth, mapHeight);
             CreateTileMapFromSheet(mapWidth, mapHeight);
             CreateTileMapFromSheet(mapWidth, mapHeight);
-            
+
             var quads = vertexList.ToArray();
             vertexBuffer = new VertexBuffer(Global.Device, typeof(VertexPositionColorTexture), quads.Length, BufferUsage.WriteOnly);
             vertexBuffer.SetData(quads);
@@ -41,19 +43,19 @@ namespace Pixel.zero
             effect.Parameters["Projection"].SetValue(Projection);
             effect.Parameters["TextureA"].SetValue(AssetManager.GetTexture("pixel"));
             effect.Parameters["World"].SetValue(Matrix.Identity);
-            
-            IsActive=true;
+
+            IsActive = true;
         }
 
         public override void Update(float deltaTime)
         {
-            LastUpdate=DateTime.Now;
+            LastUpdate = DateTime.Now;
             var camera = SceneManager.ActiveScene.Camera;
-            effect.Parameters["View"].SetValue(camera.ViewMatrix);
+            effect.Parameters["View"].SetValue(camera.View());
         }
 
         public override void Draw(SpriteBatch spriteBatch)
-        {            
+        {
             Global.Device.Clear(Color.CornflowerBlue);
             Global.Device.BlendState = BlendState.AlphaBlend; // AlphaBlend Opaque NonPremultiplied
             Global.Device.DepthStencilState = DepthStencilState.Default;
@@ -71,12 +73,12 @@ namespace Pixel.zero
             var playerPos = player.Get<PositionComponent>().Value;
             var x = (int)playerPos.X;
             var y = (int)playerPos.Y;
-            DrawTileMap(new Rectangle(x,y,1000,1000), 0, 3);
+            DrawTileMap(new Rectangle(x, y, 1000, 1000), 0, 3);
         }
         public void DrawTileMap(Rectangle TileRegionToDraw, int StartingLayer, int LayerLength)
         {
             int mapTilesLength = mapWidth * mapHeight;
-            
+
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 for (int layer = StartingLayer; layer < (StartingLayer + LayerLength); layer++)
@@ -108,21 +110,27 @@ namespace Pixel.zero
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-                    var (t,t2,t3) = WorldGen.Generate(x,y);
-                    var source = t.Value.SrcRect;
-                    var destination = new Rectangle(x * Global.TileSize, y * Global.TileSize, Global.TileSize, Global.TileSize);
-                    Vector2 tl = source.Location.ToVector2() / Global.TileSize;
-                    Vector2 tr = new Vector2(source.Right, source.Top) /  Global.TileSize;
-                    Vector2 br = new Vector2(source.Right, source.Bottom) /  Global.TileSize;
-                    Vector2 bl = new Vector2(source.Left, source.Bottom) /  Global.TileSize;
-                    // t1
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Bottom, 0f), Color.White, bl));
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
-                    // t2
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Top, 0f), Color.White, tr));
-                    vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
+                    var tiles = WorldGen.Generate(x, y);
+                    for (int i = 0; i < tiles.Length; i++)
+                    {
+                        var t = tiles[i];
+                        if (!t.HasValue)
+                            continue;
+                        var source = t.Value.SrcRect;
+                        var destination = new Rectangle(x * Global.TileSize, y * Global.TileSize, Global.TileSize, Global.TileSize);
+                        Vector2 tl = source.Location.ToVector2() / Global.TileSize;
+                        Vector2 tr = new Vector2(source.Right, source.Top) / Global.TileSize;
+                        Vector2 br = new Vector2(source.Right, source.Bottom) / Global.TileSize;
+                        Vector2 bl = new Vector2(source.Left, source.Bottom) / Global.TileSize;
+                        // t1
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Bottom, 0f), Color.White, bl));
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
+                        // t2
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Top, 0f), Color.White, tr));
+                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
+                    }
                 }
             }
         }

@@ -2,8 +2,8 @@
 using Pixel.ECS;
 using Pixel.ECS.Systems;
 using Pixel.Helpers;
-using Pixel.World;
 using Shared;
+using Shared.ECS;
 
 namespace Pixel.Scenes
 {
@@ -11,21 +11,21 @@ namespace Pixel.Scenes
     {
         public override void Initialize()
         {
-            Systems.Add(new NetworkSystem());
-            Systems.Add(new PlayerInputSystem());
-            Systems.Add(new MoveSystem());
-            Systems.Add(new CameraSystem());
+            World.Systems.Add(new NetworkSystem());
+            World.Systems.Add(new PlayerInputSystem());
+            World.Systems.Add(new MoveSystem());
+            World.Systems.Add(new CameraSystem());
             //Systems.Add(new MapShaderRenderer());
-            Systems.Add(new WorldRenderSystem());
+            World.Systems.Add(new WorldRenderSystem());
             //Systems.Add(new PretendSystem());
-            Systems.Add(new EntityRenderSystem());
-            Systems.Add(new NameTagRenderSystem());
+            World.Systems.Add(new EntityRenderSystem());
+            World.Systems.Add(new NameTagRenderSystem());
             //Systems.Add(new DialogSystem());
-            Systems.Add(new DbgBoundingBoxRenderSystem());
+            World.Systems.Add(new DbgBoundingBoxRenderSystem());
 
             //Systems.Add(new UIRenderSystem());
-            Systems.Add(new SmartFramerate());
-            Systems.Add(new GCMonitor());
+            World.Systems.Add(new SmartFramerate());
+            World.Systems.Add(new GCMonitor());
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)

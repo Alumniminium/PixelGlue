@@ -1,6 +1,7 @@
+using System;
 using System.Runtime.CompilerServices;
 using Pixel.ECS.Components;
-using Pixel.Scenes;
+using Shared.ECS;
 using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers
@@ -12,12 +13,14 @@ namespace Pixel.Networking.Handlers
         {
             var uniqueId = packet.UniqueId;
             var tickCount = packet.TickCount;
-            var scene = SceneManager.ActiveScene;
-            if (scene.UniqueIdToEntityId.TryGetValue(uniqueId, out var entityId))
+            
+            if (World.UniqueIdToEntityId.TryGetValue(uniqueId, out var entityId))
             {
-                var entity = scene.Entities[entityId];
-                ref var dst = ref entity.Get<DestinationComponent>();                
-                dst.Value = packet.Position;
+                var entity = World.Entities[entityId];
+                ref var dst = ref entity.Get<DestinationComponent>();
+                
+                if (tickCount + 10000 * 1000 * 5 != DateTime.UtcNow.Ticks)
+                    dst.Value = packet.Position;
             }
         }
     }

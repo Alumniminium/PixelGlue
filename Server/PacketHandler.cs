@@ -27,7 +27,8 @@ namespace Server
                         {
                             UniqueId = msgLogin.UniqueId,
                             Username = user,
-                            Password = pass
+                            Password = pass,
+                            Name = user
                         };
                         socket.StateObject = player;
 
@@ -58,7 +59,7 @@ namespace Server
                         if (player == null)
                             break;
                         player.Location = new Vector2(msgWalk.X,msgWalk.Y);
-                        msgWalk.TickCount = Environment.TickCount;
+                        msgWalk.TickCount = DateTime.UtcNow.Ticks;
                         if(Global.Verbose)
                         Console.WriteLine($"Player: {player.Username} ({msgWalk.UniqueId}) moved to: {player.Location.X},{player.Location.Y}");
 

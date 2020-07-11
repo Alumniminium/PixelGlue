@@ -1,18 +1,19 @@
-using System;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using Pixel.Entities;
 using Shared.Enums;
 using Shared.TerribleSockets.Packets;
 using Shared;
+
+using Shared.ECS;
+using Pixel.Scenes;
 
 namespace Pixel.ECS.Systems
 {
     public class MoveSystem : PixelSystem
     {
         public override string Name { get; set; } = "Move System";
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)

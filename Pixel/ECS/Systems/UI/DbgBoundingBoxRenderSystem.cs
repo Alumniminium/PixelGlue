@@ -2,14 +2,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Shared;
-using Pixel.Entities;
 using System.Runtime.CompilerServices;
+using Shared.ECS;
+using Pixel.Scenes;
 
 namespace Pixel.ECS.Systems
 {
     public class DbgBoundingBoxRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "Debug Boundingbox System";
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(Entity entity)
@@ -21,8 +23,9 @@ namespace Pixel.ECS.Systems
         public override void Draw(SpriteBatch sb)
         {
             var camera = Scene.Camera;
-            var rectangle = camera.SimulationRect;
-            int lineWidth = 2;
+            //var rectangle = camera.SimulationRect;
+            var rectangle = camera.Bounds;
+            const int lineWidth = 2;
             Color color = Color.LightGreen;
 
             sb.Draw(AssetManager.GetTexture("pixel"), new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);

@@ -3,12 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pixel.ECS.Components;
 using Pixel.Scenes;
-using Pixel.World;
 using System;
 using System.Collections.Concurrent;
 using Shared.Enums;
 using Shared;
-using Pixel.Entities;
+using Shared.ECS;
 using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
@@ -17,6 +16,7 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Input System";
         private PixelGlueButtons[] _mappedButtons;
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
@@ -43,7 +43,7 @@ namespace Pixel.ECS.Systems
 
                 var mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
                 var keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-                var gamepad = GamePad.GetState(PlayerIndex.One);
+                //var gamepad = GamePad.GetState(PlayerIndex.One);
 
                 foreach (var mappedButton in _mappedButtons)
                     if (KeyboardHelper.IsDown(ref keyboard, mappedButton))
@@ -79,19 +79,19 @@ namespace Pixel.ECS.Systems
                 point.X = (int)point.X * Global.TileSize;
                 point.Y = (int)point.Y * Global.TileSize;
                 Entity selected = default;
-                foreach (var entity in scene.Entities)
+                foreach (var entity in World.Entities)
                 {
                     if (entity.Value.Has<PositionComponent>() && entity.Value.Has<DrawableComponent>())
                     {
                         ref readonly var pos = ref entity.Value.Get<PositionComponent>();
-                        if(pos.Value == point)
+                        if (pos.Value == point)
                         {
                             selected = entity.Value;
                             break;
                         }
                     }
                 }
-                scene.Destroy(selected.EntityId);
+                World.Destroy(selected.EntityId);
             }
         }
 
@@ -107,7 +107,6 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Keyboard(ref InputComponent inp)
         {
-            var scene = SceneManager.ActiveScene;
             var axis = Vector2.Zero;
 
             if (inp.IsDown(PixelGlueButtons.Up))
@@ -121,14 +120,12 @@ namespace Pixel.ECS.Systems
             inp.Axis = axis;
             if (inp.IsPressed(PixelGlueButtons.DbgBoundingBoxes))
             {
-                var system = scene.GetSystem<DbgBoundingBoxRenderSystem>();
+                var system = World.GetSystem<DbgBoundingBoxRenderSystem>();
                 system.IsActive = !system.IsActive;
-                //ar system2 = scene.GetSystem<NameTagRenderSystem>();
-                //ystem2.IsActive = !system2.IsActive;
             }
             if (inp.IsPressed(PixelGlueButtons.NameTags))
             {
-                var system = scene.GetSystem<NameTagRenderSystem>();
+                var system = World.GetSystem<NameTagRenderSystem>();
                 system.IsActive = !system.IsActive;
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))

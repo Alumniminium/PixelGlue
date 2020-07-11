@@ -3,7 +3,7 @@ using Shared.IO;
 using System;
 using System.Collections.Generic;
 
-namespace Pixel.World
+namespace Pixel.Helpers
 {
     public static class Database
     {

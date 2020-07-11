@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.World;
+using Pixel.Helpers;
+using Pixel.Scenes;
 using Shared;
+using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {
@@ -10,12 +12,13 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "World Rendering System";
         public Point Overdraw = new Point(Global.TileSize*4,Global.TileSize*2);
+        public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-            for (int x = Scene.Camera.DrawRectZoomed.Left - Overdraw.X; x < Scene.Camera.DrawRectZoomed.Right + Overdraw.X; x += Global.TileSize)
-                for (int y = Scene.Camera.DrawRectZoomed.Top - Overdraw.Y; y < Scene.Camera.DrawRectZoomed.Bottom + Overdraw.Y; y += Global.TileSize)
+           for (int x = Scene.Camera.Bounds.Left - Overdraw.X; x < Scene.Camera.Bounds.Right + Overdraw.X; x += Global.TileSize)
+                for (int y = Scene.Camera.Bounds.Top - Overdraw.Y; y < Scene.Camera.Bounds.Bottom + Overdraw.Y; y += Global.TileSize)
                 {
                     var (terrainTile, riverTile) = WorldGen.GetTiles(x, y);
 
