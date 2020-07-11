@@ -5,6 +5,8 @@ namespace Pixel.ECS.Systems
 {
     public class ParticleSystem : PixelSystem
     {
+        public ParticleSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Particle System";
 
         public override void AddEntity(Entity entity)

@@ -12,6 +12,9 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "World Rendering System";
         public Point Overdraw = new Point(Global.TileSize*4,Global.TileSize*2);
+
+        public WorldRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

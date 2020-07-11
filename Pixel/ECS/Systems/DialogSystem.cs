@@ -7,5 +7,6 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Dialog System";
         
+        public DialogSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
     }
 }

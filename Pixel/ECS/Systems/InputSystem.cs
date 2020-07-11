@@ -16,6 +16,9 @@ namespace Pixel.ECS.Systems
     {
         public override string Name { get; set; } = "Input System";
         private PixelGlueButtons[] _mappedButtons;
+
+        public PlayerInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

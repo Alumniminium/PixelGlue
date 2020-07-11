@@ -12,6 +12,8 @@ namespace Pixel.ECS.Systems
 {
     public class MoveSystem : PixelSystem
     {
+        public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Move System";
         public Scene Scene => SceneManager.ActiveScene;
 

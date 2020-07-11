@@ -13,6 +13,13 @@ namespace Shared.ECS
         public List<Entity> Entities { get; set; } = new List<Entity>();
         private Thread[] Workers;
         private AutoResetEvent[] Blocks;
+        public bool WantsUpdate,WantsDraw;
+
+        public PixelSystem(bool doUpdate,bool doDraw)
+        {
+            WantsUpdate=doUpdate;
+            WantsDraw=doDraw;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void StartWorkerThreads(int count, bool blockState, ThreadPriority priority)
@@ -49,11 +56,7 @@ namespace Shared.ECS
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void AsyncUpdate(int id)
-        {
-
-        }
-
+        public virtual void AsyncUpdate(int id) { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Initialize() { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -63,7 +66,11 @@ namespace Shared.ECS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Draw(SpriteBatch spriteBatch) { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void AddEntity(Entity entity) => Global.PostUpdateQueue.Enqueue(() => Entities.Add(entity));
+        public virtual void AddEntity(Entity entity) => Global.PostUpdateQueue.Enqueue(() =>
+        {
+            if (!Entities.Contains(entity))
+                Entities.Add(entity);
+        });
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void RemoveEntity(Entity entity) => Global.PostUpdateQueue.Enqueue(() => Entities.Remove(entity));
     }

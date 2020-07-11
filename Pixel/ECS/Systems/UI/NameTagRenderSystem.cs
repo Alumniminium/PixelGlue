@@ -4,11 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Pixel.Scenes;
 using Shared.ECS;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
     public class NameTagRenderSystem : PixelSystem
     {
+        public NameTagRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Name Tag Render System";
         public Scene Scene => SceneManager.ActiveScene;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

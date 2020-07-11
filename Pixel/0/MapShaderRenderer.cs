@@ -13,8 +13,7 @@ namespace Pixel.zero
 {
     public class MapShaderRenderer : PixelSystem
     {
-        public MapShaderRenderer() => Name = "Map Shader Renderer";
-        public MapShaderRenderer(DateTime lastUpdate) => LastUpdate = lastUpdate;
+        public override string Name => "Map Shader Renderer";
         public DateTime LastUpdate { get; set; }
 
         public const int VERTICES_PER_QUAD = 6;
@@ -25,6 +24,8 @@ namespace Pixel.zero
         public List<VertexPositionColorTexture> vertexList = new List<VertexPositionColorTexture>();
         public List<Texture2D> layerTextures = new List<Texture2D>();
         private VertexBuffer vertexBuffer;
+
+        public MapShaderRenderer(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         public override void Initialize()
         {

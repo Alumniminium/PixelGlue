@@ -3,7 +3,7 @@ using Pixel.Loaders;
 using Shared;
 using System.Collections.Generic;
 
-namespace Pixel.ECS
+namespace Pixel.Helpers
 {
     public static class AssetManager
     {

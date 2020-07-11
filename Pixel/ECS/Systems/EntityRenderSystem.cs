@@ -4,12 +4,15 @@ using Pixel.ECS.Components;
 using Shared.ECS;
 using System.Runtime.CompilerServices;
 using Pixel.Scenes;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
 
     public class EntityRenderSystem : PixelSystem
     {
+        public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Entity Rendering System";
         public Scene Scene => SceneManager.ActiveScene;
 

@@ -11,21 +11,20 @@ namespace Pixel.Scenes
     {
         public override void Initialize()
         {
-            World.Systems.Add(new NetworkSystem());
-            World.Systems.Add(new PlayerInputSystem());
-            World.Systems.Add(new MoveSystem());
-            World.Systems.Add(new CameraSystem());
+            World.Systems.Add(new GCMonitor(true,false));
+            World.Systems.Add(new NetworkSystem(true,false));
+            World.Systems.Add(new PlayerInputSystem(true,false));
+            World.Systems.Add(new MoveSystem(true,false));
+            World.Systems.Add(new CameraSystem(true,false));
             //Systems.Add(new MapShaderRenderer());
-            World.Systems.Add(new WorldRenderSystem());
-            //Systems.Add(new PretendSystem());
-            World.Systems.Add(new EntityRenderSystem());
-            World.Systems.Add(new NameTagRenderSystem());
+            World.Systems.Add(new WorldRenderSystem(false,true));
+            World.Systems.Add(new PretendSystem(true,false));
+            World.Systems.Add(new EntityRenderSystem(true,true));
+            World.Systems.Add(new NameTagRenderSystem(false,true));
             //Systems.Add(new DialogSystem());
-            World.Systems.Add(new DbgBoundingBoxRenderSystem());
+            World.Systems.Add(new DbgBoundingBoxRenderSystem(false,true));
 
-            //Systems.Add(new UIRenderSystem());
-            World.Systems.Add(new SmartFramerate());
-            World.Systems.Add(new GCMonitor());
+            World.Systems.Add(new SmartFramerate(true,true));
             base.Initialize();
         }
         public override void LoadContent(ContentManager cm)

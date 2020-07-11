@@ -11,6 +11,8 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "GC Monitoring System";
         public int[] GenCollections;
 
+        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {

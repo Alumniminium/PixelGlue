@@ -11,6 +11,8 @@ namespace Pixel.ECS.Systems
 {
     public class PretendSystem : PixelSystem
     {
+        public PretendSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Camera System";
         public Scene Scene => SceneManager.ActiveScene;
 

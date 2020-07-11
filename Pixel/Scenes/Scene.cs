@@ -11,8 +11,9 @@ using Shared.Diagnostics;
 using Shared.ECS;
 using Pixel.ECS.Components;
 using Pixel.Helpers;
+using Pixel.ECS;
 
-namespace Pixel.ECS
+namespace Pixel.Scenes
 {
     public class Scene
     {
@@ -22,10 +23,7 @@ namespace Pixel.ECS
         public Camera Camera;
         public Entity Player;
 
-        public Scene()
-        {
-            Camera = new Camera(Vector2.Zero, 0, Vector2.One, (Global.VirtualScreenWidth, Global.VirtualScreenHeight));
-        }
+        public Scene()=>Camera = new Camera(Vector2.Zero, 0, Vector2.One, (Global.VirtualScreenWidth, Global.VirtualScreenHeight));
 
         public virtual void Initialize()
         {
@@ -47,10 +45,13 @@ namespace Pixel.ECS
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var preUpdateTicks = DateTime.UtcNow.Ticks;
-                if (World.Systems[i].IsActive)
-                    World.Systems[i].Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+                var system = World.Systems[i];
+                if (!system.WantsUpdate)
+                    continue;
+                if (system.IsActive)
+                    system.Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
                 var postUpdateTicks = DateTime.UtcNow.Ticks;
-                Profiler.AddUpdate(World.Systems[i].Name, (postUpdateTicks - preUpdateTicks) / 10000f);
+                Profiler.AddUpdate(system.Name, (postUpdateTicks - preUpdateTicks) / 10000f);
             }
             while (Global.PostUpdateQueue.Count > 0)
                 Global.PostUpdateQueue.Dequeue().Invoke();
@@ -69,10 +70,13 @@ namespace Pixel.ECS
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var preDrawTicks = DateTime.UtcNow.Ticks;
-                if (World.Systems[i].IsActive)
-                    World.Systems[i].Draw(sb);
+                var system = World.Systems[i];
+                if (!system.WantsDraw)
+                    continue;
+                if (system.IsActive)
+                    system.Draw(sb);
                 var postDrawTicks = DateTime.UtcNow.Ticks;
-                Profiler.AddDraw(World.Systems[i].Name, (postDrawTicks - preDrawTicks) / 10000f);
+                Profiler.AddDraw(system.Name, (postDrawTicks - preDrawTicks) / 10000f);
             }
             sb.End();
         }

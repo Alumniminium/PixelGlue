@@ -5,11 +5,14 @@ using Shared;
 using System.Runtime.CompilerServices;
 using Shared.ECS;
 using Pixel.Scenes;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
     public class DbgBoundingBoxRenderSystem : PixelSystem
     {
+        public DbgBoundingBoxRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Debug Boundingbox System";
         public Scene Scene => SceneManager.ActiveScene;
 

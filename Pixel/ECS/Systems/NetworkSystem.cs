@@ -22,7 +22,7 @@ namespace Pixel.ECS.Systems
         private static ConcurrentQueue<byte[]> PendingPackets { get; } = new ConcurrentQueue<byte[]>();
         private static ConcurrentQueue<byte[]> PendingSends { get; } = new ConcurrentQueue<byte[]>();
 
-        public NetworkSystem()
+        public NetworkSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw)
         {
             ReceiveQueue.Start(Receive);
             Socket.OnDisconnect += Disconnected;

@@ -7,6 +7,8 @@ namespace Pixel.ECS.Systems
 {
     public class CameraSystem : PixelSystem
     {
+        public CameraSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
         public override string Name { get; set; } = "Camera System";
         public Scene Scene => SceneManager.ActiveScene;
 
