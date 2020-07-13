@@ -12,7 +12,7 @@ namespace Server
     public static class Program
     {
         public static Random Random = new Random(1337);
-        public static int BotCount = 1;
+        public static int BotCount;
         public static void Main(string[] args)
         {
             if (args.Length > 0)

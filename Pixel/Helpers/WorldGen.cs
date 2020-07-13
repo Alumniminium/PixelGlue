@@ -12,6 +12,22 @@ using System.Threading;
 
 namespace Pixel.Helpers
 {
+
+    public static class Chunkinator
+    {
+        public const int PRELOAD_DISTANCE = 3;
+        public const int CHUNK_SIZE = 16;
+        public static Chunk[] Chunks = new Chunk[PRELOAD_DISTANCE * PRELOAD_DISTANCE];
+
+        public static ref Chunk GetChunk(int id)
+        {
+            return ref Chunks[id];
+        }    
+    }
+    public class Chunk
+    {
+        public 
+    }
     public static class WorldGen
     {
         public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
@@ -273,5 +289,6 @@ namespace Pixel.Helpers
             else
             return (terrainTile, decorTile2);
         }
+       
     }
 }

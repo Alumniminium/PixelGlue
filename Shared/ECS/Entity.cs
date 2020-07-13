@@ -28,16 +28,6 @@ namespace Shared.ECS
             //ret += Environment.NewLine;
             return ret;
         }
-        public Entity With<T>(T component) where T : struct
-        {
-            ComponentArray<T>.AddFor(this, component);
-            return this;
-        }
-        public Entity With<T>() where T : struct
-        {
-            ComponentArray<T>.AddFor(this, default);
-            return this;
-        }
 
         public void AddChild(Entity nt)
         {
