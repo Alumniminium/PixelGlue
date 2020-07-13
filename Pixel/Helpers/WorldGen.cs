@@ -26,7 +26,7 @@ namespace Pixel.Helpers
     }
     public class Chunk
     {
-
+        public 
     }
     public static class WorldGen
     {
