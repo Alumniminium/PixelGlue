@@ -10,15 +10,15 @@ namespace Shared.ECS
     {
         public virtual string Name { get; set; } = "Unnamed System";
         public bool IsActive { get; set; } = true;
-        public List<Entity> Entities { get; set; } = new List<Entity>();
+        public List<int> Entities { get; set; } = new List<int>();
         private Thread[] Workers;
         private AutoResetEvent[] Blocks;
-        public bool WantsUpdate,WantsDraw;
+        public bool WantsUpdate, WantsDraw;
 
-        public PixelSystem(bool doUpdate,bool doDraw)
+        public PixelSystem(bool doUpdate, bool doDraw)
         {
-            WantsUpdate=doUpdate;
-            WantsDraw=doDraw;
+            WantsUpdate = doUpdate;
+            WantsDraw = doDraw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -66,12 +66,12 @@ namespace Shared.ECS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Draw(SpriteBatch spriteBatch) { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void AddEntity(Entity entity) => Global.PostUpdateQueue.Enqueue(() =>
+        public virtual void AddEntity(int entity) => Global.PostUpdateQueue.Enqueue(() =>
         {
             if (!Entities.Contains(entity))
                 Entities.Add(entity);
         });
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void RemoveEntity(Entity entity) => Global.PostUpdateQueue.Enqueue(() => Entities.Remove(entity));
+        public virtual void RemoveEntity(int entity) => Global.PostUpdateQueue.Enqueue(() => Entities.Remove(entity));
     }
 }

@@ -25,7 +25,7 @@ namespace Shared.ECS
            {
                Entities.TryRemove(entity, out var actualEntity);
                for (int i = 0; i < Systems.Count; i++)
-                   Systems[i].RemoveEntity(actualEntity);
+                   Systems[i].RemoveEntity(actualEntity.EntityId);
 
                if (actualEntity.EntityId == 0)
                    return;
@@ -54,7 +54,7 @@ namespace Shared.ECS
             Entities.TryAdd(entity.EntityId, entity);
 
             for (int i = 0; i < Systems.Count; i++)
-                Systems[i].AddEntity(entity);
+                Systems[i].AddEntity(entity.EntityId);
 
             return entity;
         }

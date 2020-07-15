@@ -23,22 +23,22 @@ namespace Shared.ECS
         public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void AddFor(Entity owner, T component)
+        public static void AddFor(int owner, T component)
         {
             if (AvailableIndicies.TryPop(out int offset))
             {
-                EntityIdToArrayOffset.TryAdd(owner.EntityId, offset);
+                EntityIdToArrayOffset.TryAdd(owner, offset);
                 array[offset] = component;
             }
             else
                 throw new System.Exception("AHHHHH");
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void AddFor(Entity owner)
+        public static void AddFor(int owner)
         {
             if (AvailableIndicies.TryPop(out int offset))
             {
-                EntityIdToArrayOffset.TryAdd(owner.EntityId, offset);
+                EntityIdToArrayOffset.TryAdd(owner, offset);
                 array[offset] = default;
             }
             else

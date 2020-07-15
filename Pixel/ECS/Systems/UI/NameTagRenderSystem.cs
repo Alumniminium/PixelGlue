@@ -15,16 +15,19 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Name Tag Render System";
         public Scene Scene => SceneManager.ActiveScene;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+        public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (!entity.Has<PositionComponent>())
+                return;
+            if(entity.Children == null)
                 return;
             foreach (var id in entity.Children)
             {
                 var child = World.Entities[id];
                 if (child.Has<TextComponent>() || child.Has<PositionComponent>())
                 {
-                    base.AddEntity(entity);
+                    base.AddEntity(entityId);
                     break;
                 }
             }
@@ -32,8 +35,9 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-            foreach (var entity in Entities)
+            foreach (var entityId in Entities)
             {
+                var entity = World.Entities[entityId];
                 foreach (var id in entity.Children)
                 {
                     var child = World.Entities[id];

@@ -1,14 +1,12 @@
+using System.Threading;
 using Microsoft.Xna.Framework;
-using Pixel.ECS.Components;
 using Shared;
 using Shared.Enums;
 using Shared.Extensions;
 using Shared.Noise;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Pixel.Helpers
 {
@@ -16,34 +14,111 @@ namespace Pixel.Helpers
     public static class Chunkinator
     {
         public const int PRELOAD_DISTANCE = 3;
-        public const int CHUNK_SIZE = 16;
-        public static Chunk[] Chunks = new Chunk[PRELOAD_DISTANCE * PRELOAD_DISTANCE];
+        public const int CHUNK_SIZE = 1024;
+        public static Dictionary<long, Chunk> Chunks = new Dictionary<long, Chunk>();
 
-        public static ref Chunk GetChunk(int id)
+        public static Thread ChunkLoader = new Thread(LoadLoop);
+        public static ConcurrentStack<Chunk> ChunksToLoad = new ConcurrentStack<Chunk>();
+        public static AutoResetEvent Block = new AutoResetEvent(false);
+
+        static Chunkinator()
         {
-            return ref Chunks[id];
-        }    
+            ChunkLoader.Name = "Chunkloader";
+            ChunkLoader.Priority=ThreadPriority.Highest;
+            ChunkLoader.Start();
+        }
+        public static void QueueChunk(Chunk chunk)
+        {
+            ChunksToLoad.Push(chunk);
+            Block.Set();
+        }
+        private static void LoadLoop()
+        {
+            while (true)
+            {
+                Block.WaitOne();
+                while (ChunksToLoad.TryPop(out var chunk))
+                {
+                    for (int tx = 0; tx < chunk.Tiles.Length; tx++)
+                        for (int ty = 0; ty < chunk.Tiles.Length; ty++)
+                        {
+                            if (chunk.Tiles[tx] == null)
+                                chunk.Tiles[tx] = new Tile[chunk.Tiles.Length];
+
+                            chunk.Tiles[tx][ty] = WorldGen.GetTile((chunk.X * CHUNK_SIZE) + (tx * Global.TileSize), (chunk.Y * CHUNK_SIZE) + (ty * Global.TileSize));
+                            Thread.Yield();
+                        }
+                }
+            }
+        }
+
+        public static Chunk GetChunk(int x, int y)
+        {
+            var cx = x / (CHUNK_SIZE * Global.TileSize);
+            var cy = y / (CHUNK_SIZE * Global.TileSize);
+            long id = cy * 1_000_000_000 + cx;
+            if (!Chunks.TryGetValue(id, out var chunk))
+            {
+                chunk = new Chunk(cx, cy, CHUNK_SIZE);
+                QueueChunk(chunk);
+                Chunks.Add(id, chunk);
+            }
+            return chunk;
+        }
+
+        public static Tile GetTile(int x, int y)
+        {
+            var chunk = GetChunk(x, y);
+            var tx = Math.Abs(x % CHUNK_SIZE);
+            var ty = Math.Abs(y % CHUNK_SIZE);
+            var tile = chunk.Tiles[tx]?[ty];
+            if (tile != null)
+            {
+                tile.X = x;
+                tile.Y = y;
+                tile.Dst = new Rectangle(x, y, Global.TileSize, Global.TileSize);
+            }
+            return tile;
+        }
     }
     public class Chunk
     {
-        public 
+        public int X, Y;
+        public Tile[][] Tiles;
+        public string Hash;
+
+        public Chunk(int x, int y, int size)
+        {
+            X = x;
+            Y = y;
+            Tiles = new Tile[size][];
+        }
+    }
+    public class Tile
+    {
+        public int X, Y;
+        public Color Color;
+
+        public Rectangle Dst;
+
+        public Tile(int x, int y, Color color)
+        {
+            X = x;
+            Y = y;
+            Color = color;
+        }
+        public Tile(Vector2 position, Color color) => new Tile((int)position.X, (int)position.Y, color);
     }
     public static class WorldGen
     {
-        public static ConcurrentDictionary<(int x, int y), bool> TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-        public static Thread[] Prefetcher = new Thread[Environment.ProcessorCount * 2];
-        public static ConcurrentStack<(int x, int y)>[] Queue = new ConcurrentStack<(int x, int y)>[2];
-        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerZero = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
-        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerOne = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
-        public static ConcurrentDictionary<(int x, int y), DrawableComponent?> LayerTwo = new ConcurrentDictionary<(int x, int y), DrawableComponent?>();
+        private const float Frequency = 0.0004f;
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
-        public static Rectangle srcRect = new Rectangle(0, 0, Global.TileSize, Global.TileSize);
         static WorldGen()
         {
             BiomeNoise = new FastNoise(203414084);
             BiomeNoise.SetNoiseType(NoiseType.Cellular);
             BiomeNoise.SetInterp(Interp.Linear);
-            BiomeNoise.SetFrequency(0.00004f);
+            BiomeNoise.SetFrequency(Frequency);
             BiomeNoise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
             BiomeNoise.SetCellularReturnType(CellularReturnType.CellValue);
             BiomeNoise.SetCellularJitter(0.3f);
@@ -53,7 +128,7 @@ namespace Pixel.Helpers
             RiverNoise = new FastNoise(203414084);
             RiverNoise.SetNoiseType(NoiseType.Cellular);
             RiverNoise.SetInterp(Interp.Linear);
-            RiverNoise.SetFrequency(0.00004f);
+            RiverNoise.SetFrequency(Frequency);
             RiverNoise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
             RiverNoise.SetCellularReturnType(CellularReturnType.Distance2Div);
             RiverNoise.SetCellularJitter(0.3f);
@@ -78,217 +153,146 @@ namespace Pixel.Helpers
             MountainNoise = new FastNoise(330);
             MountainNoise.SetNoiseType(NoiseType.Cellular);
             MountainNoise.SetInterp(Interp.Linear);
-            MountainNoise.SetFrequency(0.00004f);
+            MountainNoise.SetFrequency(Frequency);
             MountainNoise.SetCellularDistanceFunction(CellularDistanceFunction.Natural);
             MountainNoise.SetCellularReturnType(CellularReturnType.Distance2Div);
             MountainNoise.SetCellularJitter(0.3f);
             MountainNoise.SetGradientPerturbAmp(1000);
             MountainNoise.SetGradientFrequency(0.0004f);
-
-            for (int i = 0; i < Queue.Length; i++)
-                Queue[i] = new ConcurrentStack<(int x, int y)>();
-
-            for (int i = 0; i < Prefetcher.Length; i++)
-            {
-                Prefetcher[i] = new Thread(new ParameterizedThreadStart(Load))
-                {
-                    IsBackground = true,
-                    Priority = ThreadPriority.Lowest,
-                };
-                Prefetcher[i].Start(i % 2);
-            }
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Load(object idobj)
+
+        public static float GenerateRiver(float x, float y)
         {
-            int id = (int)idobj;
-            while (true)
-            {
-                while (Queue[id].TryPop(out var t))
-                {
-                    var (x, y) = t;
-                    if (LayerZero.ContainsKey((x, y)))
-                        continue;
-                    var tiles = Generate(x, y);
-                    LayerZero.TryAdd((x, y), tiles[0]);
-                    if (tiles[1].HasValue)
-                        LayerTwo.TryAdd((x, y), tiles[1]);
-                    else if (tiles[2].HasValue)
-                        LayerOne.TryAdd((x, y), tiles[2]);
-
-                    TilesLoading.TryRemove((x, y), out _);
-                    Thread.Sleep(1);
-                }
-                Thread.Sleep(1);
-            }
+            return RiverNoise.GetNoise(x, y);
+            //if (val >= 0.98f)
+            //    return new DrawableComponent("0099DB".ToColor();
+            //else if (val > 0.96f)
+            //    return new DrawableComponent("4CB7E5".ToColor();
+            //else if (val > 0.945f)
+            //    return new DrawableComponent("C28569".ToColor();
+            //else
+            //    return null;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DrawableComponent?[] Generate(int x, int y)
+        public enum BiomeType
         {
-            var dstRect = new Rectangle(x, y, Global.TileSize, Global.TileSize);
-            var arr = new DrawableComponent?[3];
-            float x2, y2;
-            x2 = x;
-            y2 = y;
-            RiverNoise.GradientPerturbFractal(ref x2, ref y2);
-            var (terrain, decor) = GenerateBiome(x2, y2, dstRect);
-            var river = GenerateRiver(x2, y2, dstRect);
-            arr[0] = terrain;
-            arr[1] = decor;
-            arr[2] = river;
-            return arr;
+            Plains,
+            Desert,
+            Swamp,
+            Mountains,
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DrawableComponent? GenerateRiver(float x, float y, Rectangle dstRect)
-        {
-            var val = RiverNoise.GetNoise(x, y);
-
-            if (val >= 0.98f)
-                return new DrawableComponent("0099DB".ToColor(), dstRect);
-            else if (val > 0.96f)
-                return new DrawableComponent("4CB7E5".ToColor(), dstRect);
-            else if (val > 0.945f)
-                return new DrawableComponent("C28569".ToColor(), dstRect);
-            else
-                return null;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (DrawableComponent? ground, DrawableComponent? decor) GenerateBiome(float x, float y, Rectangle dstRect)
+        public static BiomeType GenerateBiome(float x, float y)
         {
             var biome = BiomeNoise.GetNoise(x, y);
 
             if (biome > 0.7)
-                return GeneratePlains(x, y, dstRect);
+                return BiomeType.Plains;
             else if (biome > 0.5)
-                return GenerateDesert(x, y, dstRect);
+                return BiomeType.Desert;
             else if (biome < 0.2)
-                return GenerateSwamp(x, y, dstRect);
+                return BiomeType.Swamp;
             else
-                return GenerateMountains(x, y, dstRect);
+                return BiomeType.Mountains;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (DrawableComponent? ground, DrawableComponent? decor) GenerateMountains(float x, float y, Rectangle dstRect)
+        private static float GenerateMountains(float x, float y)
         {
-            DrawableComponent? decor = null;
-            var val = MountainNoise.GetNoise(x, y);
-
-            DrawableComponent? ground;
-            if (val > 0.9f)
-                ground = new DrawableComponent("C0CBDC".ToColor(), dstRect);
-            else if (val > 0.7f)
-                ground = new DrawableComponent("3e2731".ToColor(), dstRect);
-            else if (val > 0.6f)
-                ground = new DrawableComponent("733e39".ToColor(), dstRect);
-            else if (val > 0.5f)
-                ground = new DrawableComponent("B86F50".ToColor(), dstRect);
-            else if (val > 0.4f)
-                ground = new DrawableComponent("C28569".ToColor(), dstRect);
-            else if (val > 0.3f)
-                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
-            else if (val > -0.3)
-                ground = new DrawableComponent("E8B796".ToColor(), dstRect);
-            else
-                ground = new DrawableComponent("EAD4AA".ToColor(), dstRect);
-
-            return (ground, decor);
+            return (float)MountainNoise.GetNoise(x, y);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (DrawableComponent?, DrawableComponent?) GenerateDesert(float x, float y, Rectangle dstRect)
+        private static float GenerateDesert(float x, float y)
         {
-            DrawableComponent? decor = null;
             var val = DesertNoise.GetNoise(x / 32, y / 32);
             val += 0.5f * DesertNoise.GetNoise(x / 16, y / 16);
             val += 0.15f * DesertNoise.GetNoise(x / 8, y / 8);
-            DrawableComponent? ground;
             //val += 0.75f * RiverNoise.GetNoise(x, y);
-
-            if (val > 0.7f)
-                ground = new DrawableComponent("B86F50".ToColor(), dstRect);
-            else if (val > 0.4f)
-                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
-            else if (val > 0f)
-                ground = new DrawableComponent("E8B796".ToColor(), dstRect);
-            else if (val > -0.6)
-                ground = new DrawableComponent("E4A672".ToColor(), dstRect);
-            else
-                ground = new DrawableComponent("C28569".ToColor(), dstRect);
-
-            return (ground, decor);
+            return val;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (DrawableComponent?, DrawableComponent?) GenerateSwamp(float x, float y, Rectangle dstRect)
+        private static float GenerateSwamp(float x, float y)
         {
-            DrawableComponent? decor = null;
-
             var val = SwampNoise.GetNoise(x / 32, y / 32);
             val += 0.5f * SwampNoise.GetNoise(x / 16, y / 16);
             val += 0.15f * SwampNoise.GetNoise(x / 8, y / 8);
-            DrawableComponent? ground;
             //val += 0.75f * RiverNoise.GetNoise(x, y);
-
-            if (val > 0.6f)
-                ground = new DrawableComponent("193c3e".ToColor(), dstRect);
-            else if (val > 0.4f)
-                ground = new DrawableComponent("265c42".ToColor(), dstRect);
-            else if (val > -0.2f)
-                ground = new DrawableComponent("3E8948".ToColor(), dstRect);
-            else if (val > -0.4)
-                ground = new DrawableComponent("4CB7E5".ToColor(), dstRect);
-            else
-                ground = new DrawableComponent("0099DB".ToColor(), srcRect);
-            return (ground, decor);
+            return val;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (DrawableComponent?, DrawableComponent?) GeneratePlains(float x, float y, Rectangle dstRect)
+        private static float GeneratePlains(float x, float y)
         {
-            Dictionary<float, (DrawableComponent, DrawableComponent?)> heights = new Dictionary<float, (DrawableComponent, DrawableComponent?)>()
-            {
-                [0.85f] = (new DrawableComponent("C0CBDC".ToColor(), dstRect), null),
-                [0.80f] = (new DrawableComponent("733e39".ToColor(), dstRect), null),
-                [0.75f] = (new DrawableComponent("dawn", new Rectangle(480, 352, 16, 16), dstRect), null),
-                [0.70f] = (new DrawableComponent("dawn", new Rectangle(96, 272, 16, 16), dstRect), null),
-                [0.62f] = (new DrawableComponent("dawn", new Rectangle(16 * 4, 0, 16, 16), dstRect), null),
-                [0.60f] = (new DrawableComponent("dawn", new Rectangle(16 * 5, 0, 16, 16), dstRect), null),
-                [0.42f] = (new DrawableComponent("dawn", new Rectangle(32, 0, 16, 16), dstRect), new DrawableComponent("dawn", new Rectangle(96 + 16, 0, 16, 16), dstRect)),
-                [0.40f] = (new DrawableComponent("dawn", new Rectangle(16, 0, 16, 16), dstRect), new DrawableComponent("dawn", new Rectangle(96 + 32, 0, 16, 16), dstRect)),
-                [0.35f] = (new DrawableComponent("dawn", new Rectangle(96, 0, 16, 16), dstRect), null),
-                [0.30f] = (new DrawableComponent("dawn", new Rectangle(16 * 3, 16, 16, 16), dstRect), null),
-                [0.20f] = (new DrawableComponent("dawn", new Rectangle(16 * 2, 16, 16, 16), dstRect), null),
-                [-0.5f] = (new DrawableComponent("dawn", new Rectangle(16, 0, 16, 16), dstRect), null),
-                [-0.6f] = (new DrawableComponent("dawn", new Rectangle(144, 496, 16, 16), dstRect), null),
-                [-1f] = (new DrawableComponent("dawn", new Rectangle(128, 496, 16, 16), dstRect), null),
-            };
-
             var val = PlainNoise.GetNoise(x / 32, y / 32);
             val += 0.75f * PlainNoise.GetNoise(x / 26, y / 26);
             val += 0.25f * PlainNoise.GetNoise(x / 8, y / 8);
-
-            foreach (var f in heights)
-                if (val >= f.Key)
-                    return f.Value;
-
-            return (null, null);
+            return val;
         }
-        public static int last;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static (DrawableComponent?, DrawableComponent?) GetTiles(int x, int y)
+
+        public static Tile GetTile(int x, int y)
         {
-            if (!LayerZero.TryGetValue((x, y), out var terrainTile) && !TilesLoading.TryGetValue((x, y), out _))
+            float x2, y2;
+            x2 = x;
+            y2 = y;
+            RiverNoise.GradientPerturbFractal(ref x2, ref y2);
+            var river = GenerateRiver(x2, y2);
+            var tile = new Tile(x, y, Color.Purple);
+
+            if (river > 0.945f)
             {
-                TilesLoading.TryAdd((x, y), false);
-                Queue[last].Push((x, y));
-                last++;
-                if (last == Queue.Length)
-                    last = 0;
+                tile.Color = Color.Blue;
             }
-            LayerOne.TryGetValue((x, y), out var decorTile);
-            LayerTwo.TryGetValue((x, y), out var decorTile2);
-            if(decorTile.HasValue)
-            return (terrainTile, decorTile);
             else
-            return (terrainTile, decorTile2);
+            {
+                float val = 0f;
+                switch (GenerateBiome(x2, y2))
+                {
+                    case BiomeType.Plains:
+                        val = GeneratePlains(x2, y2);
+                        break;
+                    case BiomeType.Desert:
+                        val = GenerateDesert(x2, y2);
+                        if (val > 0.7f)
+                            tile.Color = "B86F50".ToColor();
+                        else if (val > 0.4f)
+                            tile.Color = "E4A672".ToColor();
+                        else if (val > 0f)
+                            tile.Color = "E8B796".ToColor();
+                        else if (val > -0.6)
+                            tile.Color = "E4A672".ToColor();
+                        else
+                            tile.Color = "C28569".ToColor();
+                        break;
+                    case BiomeType.Swamp:
+                        val = GenerateSwamp(x2, y2);
+                        if (val > 0.6f)
+                            tile.Color = "193c3e".ToColor();
+                        else if (val > 0.4f)
+                            tile.Color = "265c42".ToColor();
+                        else if (val > -0.2f)
+                            tile.Color = "3E8948".ToColor();
+                        else if (val > -0.4)
+                            tile.Color = "4CB7E5".ToColor();
+                        else
+                            tile.Color = "0099DB".ToColor();
+                        break;
+                    case BiomeType.Mountains:
+                        val = GenerateMountains(x2, y2);
+                        if (val > 0.9f)
+                            tile.Color = "C0CBDC".ToColor();
+                        else if (val > 0.7f)
+                            tile.Color = "3e2731".ToColor();
+                        else if (val > 0.6f)
+                            tile.Color = "733e39".ToColor();
+                        else if (val > 0.5f)
+                            tile.Color = "B86F50".ToColor();
+                        else if (val > 0.4f)
+                            tile.Color = "C28569".ToColor();
+                        else if (val > 0.3f)
+                            tile.Color = "E4A672".ToColor();
+                        else if (val > -0.3)
+                            tile.Color = "E8B796".ToColor();
+                        else
+                            tile.Color = "EAD4AA".ToColor();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("What the fuck");
+                }
+            }
+            return tile;
         }
-       
     }
 }

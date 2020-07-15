@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using System.Threading;
 using System;
 using Microsoft.Xna.Framework;
@@ -7,6 +8,7 @@ using Shared.ECS;
 using Shared.Diagnostics;
 using Pixel.Helpers;
 using System.Runtime.CompilerServices;
+using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
@@ -57,6 +59,8 @@ namespace Pixel.ECS.Systems
             }
             for (int i = lastLine; i < lines.Length; i++)
                 lines[i] = string.Empty;
+
+            FConsole.WriteLine($"FPS: {updateRate:###0}");
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float timeSinceLastFrame)

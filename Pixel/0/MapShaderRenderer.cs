@@ -111,27 +111,27 @@ namespace Pixel.zero
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-                    var tiles = WorldGen.Generate(x, y);
-                    for (int i = 0; i < tiles.Length; i++)
-                    {
-                        var t = tiles[i];
-                        if (!t.HasValue)
-                            continue;
-                        var source = t.Value.SrcRect;
-                        var destination = new Rectangle(x * Global.TileSize, y * Global.TileSize, Global.TileSize, Global.TileSize);
-                        Vector2 tl = source.Location.ToVector2() / Global.TileSize;
-                        Vector2 tr = new Vector2(source.Right, source.Top) / Global.TileSize;
-                        Vector2 br = new Vector2(source.Right, source.Bottom) / Global.TileSize;
-                        Vector2 bl = new Vector2(source.Left, source.Bottom) / Global.TileSize;
-                        // t1
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Bottom, 0f), Color.White, bl));
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
-                        // t2
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Top, 0f), Color.White, tr));
-                        vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
-                    }
+                   // var tiles = WorldGen.Generate(x, y);
+                   // for (int i = 0; i < tiles.Length; i++)
+                   // {
+                   //     var t = tiles[i];
+                   //     if (!t.HasValue)
+                   //         continue;
+                   //     var source = t.Value.SrcRect;
+                   //     var destination = new Rectangle(x * Global.TileSize, y * Global.TileSize, Global.TileSize, Global.TileSize);
+                   //     Vector2 tl = source.Location.ToVector2() / Global.TileSize;
+                   //     Vector2 tr = new Vector2(source.Right, source.Top) / Global.TileSize;
+                   //     Vector2 br = new Vector2(source.Right, source.Bottom) / Global.TileSize;
+                   //     Vector2 bl = new Vector2(source.Left, source.Bottom) / Global.TileSize;
+                   //     // t1
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Bottom, 0f), Color.White, bl));
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
+                   //     // t2
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Bottom, 0f), Color.White, br));
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Right, destination.Top, 0f), Color.White, tr));
+                   //     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), Color.White, tl));
+                   // }
                 }
             }
         }

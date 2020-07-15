@@ -8,7 +8,7 @@ namespace Server
     public class Player
     {
         private Rectangle _viewRect = new Rectangle(0, 0, Global.VirtualScreenWidth + (Global.TileSize * 4), Global.VirtualScreenHeight + (Global.TileSize * 4));
-        private Vector2 _location;
+        private Vector2 _location = new Vector2(5000,5000);
         public string Name;
         public int UniqueId;
         public Rectangle ViewBounds => _viewRect;

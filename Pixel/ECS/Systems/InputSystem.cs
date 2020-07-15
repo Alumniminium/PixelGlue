@@ -28,17 +28,18 @@ namespace Pixel.ECS.Systems
             IsActive = true;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+        public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>() && entity.Has<PositionComponent>())
-                base.AddEntity(entity);
+                base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
-            for (int i = 0; i < Entities.Count; i++)
+            foreach (var entityId in Entities)
             {
-                var entity = Entities[i];
+                var entity = World.Entities[entityId];
                 ref var inp = ref entity.Get<InputComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
@@ -68,9 +69,7 @@ namespace Pixel.ECS.Systems
         public static void Mouse(ref MouseState mouse, ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;
-            if (inp.Scroll != mouse.ScrollWheelValue)
-                WorldGen.TilesLoading = new ConcurrentDictionary<(int x, int y), bool>();
-
+           
             inp.OldScroll = inp.Scroll;
             inp.Scroll = mouse.ScrollWheelValue;
 

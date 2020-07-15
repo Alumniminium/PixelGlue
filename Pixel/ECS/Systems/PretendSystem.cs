@@ -17,23 +17,29 @@ namespace Pixel.ECS.Systems
         public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+        public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (entity.Has<CameraFollowTagComponent>() && entity.Has<PositionComponent>())
-                base.AddEntity(entity);
+                base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 
         public override void Update(float dt)
         {
             var scene = SceneManager.ActiveScene;
-                var entity = World.CreateEntity();
-                scene.ApplyArchetype(ref entity, EntityType.Npc);
-                var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-                entity.Get<PositionComponent>().Value = Scene.Player.Get<PositionComponent>().Value;
-                entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
-                entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
-                entity.Get<DestinationComponent>().Value = new Vector2(1024, 2048);
+            var entity = World.CreateEntity();
+            scene.ApplyArchetype(ref entity, EntityType.Npc);
+            var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
+            ref var pos = ref entity.Get<PositionComponent>();
+            ref var drw = ref entity.Get<DrawableComponent>();
+            ref var dst = ref entity.Get<DestinationComponent>();
+            ref var playerpos = ref Scene.Player.Get<PositionComponent>();
+            pos.Value = playerpos.Value;
+            
+            drw.SrcRect = srcEntity.SrcRect;
+            drw.TextureName = srcEntity.TextureName;
+            dst.Value = new Vector2(1024, 2048);
             entity.Register();
         }
     }

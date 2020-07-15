@@ -11,25 +11,49 @@ namespace Pixel.ECS.Systems
     public class WorldRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "World Rendering System";
-        public Point Overdraw = new Point(Global.TileSize*4,Global.TileSize*2);
+        public Point Overdraw = new Point(Global.TileSize * 4, Global.TileSize * 2);
 
         public WorldRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         public Scene Scene => SceneManager.ActiveScene;
+        public Texture2D Pixel;
+
+        public override void Initialize()
+        {
+            Pixel = AssetManager.GetTexture("pixel");
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-           for (int x = Scene.Camera.Bounds.Left - Overdraw.X; x < Scene.Camera.Bounds.Right + Overdraw.X; x += Global.TileSize)
-                for (int y = Scene.Camera.Bounds.Top - Overdraw.Y; y < Scene.Camera.Bounds.Bottom + Overdraw.Y; y += Global.TileSize)
-                {
-                    var (terrainTile, riverTile) = WorldGen.GetTiles(x, y);
+            ExtendBounds(out int xs, out int ys, out int xe, out int ye);
 
-                    if (terrainTile.HasValue)
-                        sb.Draw(AssetManager.GetTexture(terrainTile.Value.TextureName), terrainTile.Value.DestRect, terrainTile.Value.SrcRect, terrainTile.Value.Color, 0, Vector2.Zero, SpriteEffects.None,0);
-                    if (riverTile.HasValue && terrainTile.HasValue && !(terrainTile.Value.TextureName == "water" || terrainTile.Value.TextureName == "shallow_water" || terrainTile.Value.TextureName == "deep_water"))
-                        sb.Draw(AssetManager.GetTexture(riverTile.Value.TextureName), riverTile.Value.DestRect, riverTile.Value.SrcRect, riverTile.Value.Color, 0, Vector2.Zero, SpriteEffects.None,0);
+            for (int x = xs; x < xe; x += Global.TileSize)
+                for (int y = ys; y < ye; y += Global.TileSize)
+                {
+                    var tile = Chunkinator.GetTile(x, y);
+                    if (tile == null)
+                        continue;
+                    sb.Draw(Pixel, tile.Dst, Pixel.Bounds, tile.Color, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
+        }
+
+        private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
+        {
+            var bounds = Scene.Camera.WorldBounds();
+            xs = bounds.Left - Overdraw.X;
+            ys = bounds.Top - Overdraw.Y;
+            xs /= Global.TileSize;
+            xs *= Global.TileSize;
+            ys /= Global.TileSize;
+            ys *= Global.TileSize;
+
+            xe = bounds.Right + Overdraw.X;
+            ye = bounds.Bottom + Overdraw.Y;
+            xe /= Global.TileSize;
+            xe *= Global.TileSize;
+            ye /= Global.TileSize;
+            ye *= Global.TileSize;
         }
     }
 }

@@ -14,9 +14,8 @@ namespace Pixel.Networking
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Handle(MsgSpawn packet)
         {
-            if (World.UniqueIdToEntityId.ContainsKey(packet.UniqueId))
-                return;
-
+            if (!World.UniqueIdToEntityId.TryGetValue(packet.UniqueId,out var id))
+            {
             var entity = World.CreateEntity();
             SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Npc);
             entity.Add(new NetworkComponent(packet.UniqueId));
@@ -27,6 +26,16 @@ namespace Pixel.Networking
             entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
             entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
             entity.Register();
+            }
+            else
+            {
+                var entity = World.Entities[id];
+                var srcEntity = Database.Entities[packet.Model];
+                entity.Get<PositionComponent>().Value = new Vector2(packet.X, packet.Y);
+                entity.Get<DestinationComponent>().Value = new Vector2(packet.X, packet.Y);
+                entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
+                entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
+            }
         }
     }
 }

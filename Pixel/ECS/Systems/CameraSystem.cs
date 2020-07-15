@@ -13,20 +13,31 @@ namespace Pixel.ECS.Systems
         public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+        public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (entity.Has<CameraFollowTagComponent>() && entity.Has<PositionComponent>())
-                base.AddEntity(entity);
+                base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
-            for (int i = 0; i < Entities.Count; i++)
+            foreach (var entityId in Entities)
             {
-                var entity = Entities[i];
+                var entity = World.Entities[entityId];
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref var fol = ref entity.Get<CameraFollowTagComponent>();
 
+                if(entity.Has<InputComponent>())
+                {
+                    ref readonly var inp = ref entity.Get<InputComponent>();
+                    if (inp.Scroll > inp.OldScroll)
+                        fol.Zoom *= 2f;
+                    else if (inp.Scroll < inp.OldScroll)
+                        fol.Zoom /= 2f;
+                }
+
+                Scene.Camera.Z = fol.Zoom;
                 Scene.Camera.XY = pos.Value + fol.PositionOffset;
             }
         }

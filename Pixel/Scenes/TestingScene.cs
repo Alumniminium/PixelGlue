@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Content;
-using Pixel.ECS;
 using Pixel.ECS.Systems;
 using Pixel.Helpers;
 using Shared;
@@ -18,7 +17,7 @@ namespace Pixel.Scenes
             World.Systems.Add(new CameraSystem(true,false));
             //Systems.Add(new MapShaderRenderer());
             World.Systems.Add(new WorldRenderSystem(false,true));
-            //World.Systems.Add(new PretendSystem(true,false));
+            World.Systems.Add(new PretendSystem(true,false));
             World.Systems.Add(new EntityRenderSystem(true,true));
             World.Systems.Add(new NameTagRenderSystem(false,true));
             //Systems.Add(new DialogSystem());
@@ -35,7 +34,7 @@ namespace Pixel.Scenes
             AssetManager.LoadTexture("selectionrect4");
             AssetManager.LoadTexture("tree");
             AssetManager.LoadTexture("dawn");
-            AssetManager.LoadTexture("pixel", TextureGen.Pixel(Global.Device, "000000"));
+            AssetManager.LoadTexture("pixel", TextureGen.Pixel(Global.Device, "ffffff"));
             base.LoadContent(cm);
         }
     }

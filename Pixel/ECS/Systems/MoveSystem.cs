@@ -20,9 +20,9 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
-            for (int ei = 0; ei < Entities.Count; ei++)
+            foreach (var entityId in Entities)
             {
-                var entity = Entities[ei];
+                var entity = World.Entities[entityId];
                 ref var vel = ref entity.Get<VelocityComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
@@ -66,13 +66,14 @@ namespace Pixel.ECS.Systems
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+                public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (entity.Has<PositionComponent>())
                 if (entity.Has<VelocityComponent>())
                     if (entity.Has<DestinationComponent>())
                         if (entity.Has<SpeedComponent>())
-                            base.AddEntity(entity);
+                            base.AddEntity(entityId);
         }
     }
 }

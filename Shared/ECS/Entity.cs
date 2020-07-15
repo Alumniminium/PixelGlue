@@ -8,13 +8,13 @@ namespace Shared.ECS
         public int EntityId;
         public int Parent;
         public List<int> Children;
-        
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add<T>(T component) where T : struct => ComponentArray<T>.AddFor(this, component);
+        public void Add<T>(T component) where T : struct => ComponentArray<T>.AddFor(EntityId, component);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add<T>() where T : struct => ComponentArray<T>.AddFor(this);
+        public void Add<T>() where T : struct => ComponentArray<T>.AddFor(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct => ComponentArray<T>.HasFor(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -37,8 +37,8 @@ namespace Shared.ECS
 
         public void Register()
         {
-            foreach(var sys in World.Systems)
-                sys.AddEntity(this);
+            foreach (var sys in World.Systems)
+                sys.AddEntity(EntityId);
         }
     }
 }

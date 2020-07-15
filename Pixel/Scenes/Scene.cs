@@ -11,7 +11,6 @@ using Shared.Diagnostics;
 using Shared.ECS;
 using Pixel.ECS.Components;
 using Pixel.Helpers;
-using Pixel.ECS;
 
 namespace Pixel.Scenes
 {
@@ -40,7 +39,7 @@ namespace Pixel.Scenes
             Global.Names = File.ReadAllText("../Build/Content/RuntimeContent/Names.txt").Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Update(GameTime deltaTime)
+        public void Update(GameTime deltaTime)
         {
             for (int i = 0; i < World.Systems.Count; i++)
             {
@@ -57,14 +56,14 @@ namespace Pixel.Scenes
                 Global.PostUpdateQueue.Dequeue().Invoke();
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void FixedUpdate(float deltaTime)
+        public void FixedUpdate(float deltaTime)
         {
             for (int i = 0; i < World.Systems.Count; i++)
                 if (World.Systems[i].IsActive)
                     World.Systems[i].FixedUpdate(deltaTime);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch sb)
         {
             sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.View(), samplerState: SamplerState.PointClamp);
             for (int i = 0; i < World.Systems.Count; i++)
@@ -95,8 +94,8 @@ namespace Pixel.Scenes
                     entity.Add<DestinationComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add<VelocityComponent>();
-                    entity.Add(new SpeedComponent(32));
-                    entity.Add(new CameraFollowTagComponent(1));
+                    entity.Add(new SpeedComponent(3200));
+                    entity.Add(new CameraFollowTagComponent(2));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
                     var nameTag = World.CreateEntity();

@@ -17,35 +17,36 @@ namespace Pixel.ECS.Systems
         public Scene Scene => SceneManager.ActiveScene;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void AddEntity(Entity entity)
+        public override void AddEntity(int entityId)
         {
+            var entity = World.Entities[entityId];
             if (entity.Has<PositionComponent>() && entity.Has<DrawableComponent>())
-                base.AddEntity(entity);
+                base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
             var origin = new Vector2(8);
-            for(int i = 0; i< Entities.Count; i++)
+            foreach (var entityId in Entities)
             {
-                var entity = Entities[i];
+                var entity = World.Entities[entityId];
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
 
-                if (OutOfRange(pos.Value+drawable.SrcRect.Size.ToVector2()))
-                    {
-                        //Scene.World.Destroy(entity.EntityId);
-                        continue;
-                    }
+                if (OutOfRange(pos.Value + drawable.SrcRect.Size.ToVector2()))
+                {
+                    //Scene.World.Destroy(entity.EntityId);
+                    continue;
+                }
 
                 sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Value + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
-           }
+            }
         }
 
         private bool OutOfRange(Vector2 pos)
         {
-            return pos.X < Scene.Camera.Bounds.Left || pos.X > Scene.Camera.Bounds.Right || pos.Y <= Scene.Camera.Bounds.Top || pos.Y >= Scene.Camera.Bounds.Bottom;
-            //return pos.X < Scene.Camera.SimulationRect.Left || pos.X > Scene.Camera.SimulationRect.Right || pos.Y <= Scene.Camera.SimulationRect.Top || pos.Y >= Scene.Camera.SimulationRect.Bottom;
+            var bounds = Scene.Camera.WorldBounds();
+            return pos.X < bounds.Left || pos.X > bounds.Right || pos.Y <= bounds.Top || pos.Y >= bounds.Bottom;
         }
     }
 }
