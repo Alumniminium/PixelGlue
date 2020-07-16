@@ -1,117 +1,14 @@
-using System.Threading;
 using Microsoft.Xna.Framework;
-using Shared;
 using Shared.Enums;
 using Shared.Extensions;
 using Shared.Noise;
 using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace Pixel.Helpers
 {
-
-    public static class Chunkinator
-    {
-        public const int PRELOAD_DISTANCE = 3;
-        public const int CHUNK_SIZE = 1024;
-        public static Dictionary<long, Chunk> Chunks = new Dictionary<long, Chunk>();
-
-        public static Thread ChunkLoader = new Thread(LoadLoop);
-        public static ConcurrentStack<Chunk> ChunksToLoad = new ConcurrentStack<Chunk>();
-        public static AutoResetEvent Block = new AutoResetEvent(false);
-
-        static Chunkinator()
-        {
-            ChunkLoader.Name = "Chunkloader";
-            ChunkLoader.Priority=ThreadPriority.Highest;
-            ChunkLoader.Start();
-        }
-        public static void QueueChunk(Chunk chunk)
-        {
-            ChunksToLoad.Push(chunk);
-            Block.Set();
-        }
-        private static void LoadLoop()
-        {
-            while (true)
-            {
-                Block.WaitOne();
-                while (ChunksToLoad.TryPop(out var chunk))
-                {
-                    for (int tx = 0; tx < chunk.Tiles.Length; tx++)
-                        for (int ty = 0; ty < chunk.Tiles.Length; ty++)
-                        {
-                            if (chunk.Tiles[tx] == null)
-                                chunk.Tiles[tx] = new Tile[chunk.Tiles.Length];
-
-                            chunk.Tiles[tx][ty] = WorldGen.GetTile((chunk.X * CHUNK_SIZE) + (tx * Global.TileSize), (chunk.Y * CHUNK_SIZE) + (ty * Global.TileSize));
-                            Thread.Yield();
-                        }
-                }
-            }
-        }
-
-        public static Chunk GetChunk(int x, int y)
-        {
-            var cx = x / (CHUNK_SIZE * Global.TileSize);
-            var cy = y / (CHUNK_SIZE * Global.TileSize);
-            long id = cy * 1_000_000_000 + cx;
-            if (!Chunks.TryGetValue(id, out var chunk))
-            {
-                chunk = new Chunk(cx, cy, CHUNK_SIZE);
-                QueueChunk(chunk);
-                Chunks.Add(id, chunk);
-            }
-            return chunk;
-        }
-
-        public static Tile GetTile(int x, int y)
-        {
-            var chunk = GetChunk(x, y);
-            var tx = Math.Abs(x % CHUNK_SIZE);
-            var ty = Math.Abs(y % CHUNK_SIZE);
-            var tile = chunk.Tiles[tx]?[ty];
-            if (tile != null)
-            {
-                tile.X = x;
-                tile.Y = y;
-                tile.Dst = new Rectangle(x, y, Global.TileSize, Global.TileSize);
-            }
-            return tile;
-        }
-    }
-    public class Chunk
-    {
-        public int X, Y;
-        public Tile[][] Tiles;
-        public string Hash;
-
-        public Chunk(int x, int y, int size)
-        {
-            X = x;
-            Y = y;
-            Tiles = new Tile[size][];
-        }
-    }
-    public class Tile
-    {
-        public int X, Y;
-        public Color Color;
-
-        public Rectangle Dst;
-
-        public Tile(int x, int y, Color color)
-        {
-            X = x;
-            Y = y;
-            Color = color;
-        }
-        public Tile(Vector2 position, Color color) => new Tile((int)position.X, (int)position.Y, color);
-    }
     public static class WorldGen
     {
-        private const float Frequency = 0.0004f;
+        private const float Frequency = 0.00004f;
         public static FastNoise BiomeNoise, PlainNoise, DesertNoise, SwampNoise, MountainNoise, RiverNoise;
         static WorldGen()
         {
@@ -230,7 +127,6 @@ namespace Pixel.Helpers
             RiverNoise.GradientPerturbFractal(ref x2, ref y2);
             var river = GenerateRiver(x2, y2);
             var tile = new Tile(x, y, Color.Purple);
-
             if (river > 0.945f)
             {
                 tile.Color = Color.Blue;
