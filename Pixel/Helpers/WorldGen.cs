@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Shared;
 using Shared.Enums;
 using Shared.Extensions;
 using Shared.Noise;

@@ -10,7 +10,7 @@ namespace Pixel.Helpers
     public static class Chunkinator
     {
         public const int PRELOAD_DISTANCE = 3;
-        public const int CHUNK_SIZE = 32;
+        public const int CHUNK_SIZE = 512;
         public static Dictionary<Point, Chunk> Chunks = new Dictionary<Point, Chunk>();
 
         public static Thread ChunkLoader = new Thread(LoadLoop);
@@ -33,9 +33,9 @@ namespace Pixel.Helpers
             while (true)
             {
                 Block.WaitOne();
-                while (PointsToGenerate.TryPop(out var xy))
+                while (PointsToGenerate.TryPop(out var cxy))
                 {
-                    if(Chunks.TryGetValue(xy,out var chunk))
+                    if(Chunks.TryGetValue(cxy,out var chunk))
                     {
                     for (int tx = 0; tx < CHUNK_SIZE; tx++)
                         for (int ty = 0; ty < CHUNK_SIZE; ty++)
@@ -43,12 +43,15 @@ namespace Pixel.Helpers
                             if (chunk.Tiles[tx] == null)
                                 chunk.Tiles[tx] = new Tile[CHUNK_SIZE];
 
-                            var wx = xy.X + (tx * Global.TileSize);
-                            var wy = xy.Y + (ty * Global.TileSize);
+                            var wx = chunk.X + (tx * Global.TileSize);
+                            var wy = chunk.Y + (ty * Global.TileSize);
 
                             chunk.Tiles[tx][ty] = WorldGen.GetTile(wx, wy);
-                            Thread.Yield();
                         }
+                    }
+                    else
+                    {
+
                     }
                 }
             }
@@ -56,15 +59,15 @@ namespace Pixel.Helpers
 
         public static Chunk GetChunk(int x, int y)
         {
-            var cx = x / (CHUNK_SIZE * Global.TileSize);
-            var cy = y / (CHUNK_SIZE * Global.TileSize);
-            var cxy = new Point(x,y);
+            var cx = x / CHUNK_SIZE;
+            var cy = y / CHUNK_SIZE;
+            var cxy = new Point(cx,cy);
             
             if (!Chunks.TryGetValue(cxy, out var chunk))
             {
-                chunk = new Chunk(cx, cy, CHUNK_SIZE);
-                QueueChunk(cxy);
+                chunk = new Chunk(x, y, CHUNK_SIZE);
                 Chunks.Add(cxy, chunk);
+                QueueChunk(cxy);
             }
             return chunk;
         }
@@ -75,8 +78,6 @@ namespace Pixel.Helpers
             var tx = Math.Abs(x % CHUNK_SIZE);
             var ty = Math.Abs(y % CHUNK_SIZE);
             var tile = chunk.Tiles[tx]?[ty];
-            if (tile != null)
-                tile.Dst = new Rectangle(x, y, Global.TileSize, Global.TileSize);
             return tile;
         }
     }

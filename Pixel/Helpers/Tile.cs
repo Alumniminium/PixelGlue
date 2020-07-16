@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Shared;
 
 namespace Pixel.Helpers
 {
@@ -14,6 +15,7 @@ namespace Pixel.Helpers
             X = x;
             Y = y;
             Color = color;
+            Dst = new Rectangle(X, Y, Global.TileSize, Global.TileSize);
         }
         public Tile(Vector2 position, Color color) => new Tile((int)position.X, (int)position.Y, color);
     }
