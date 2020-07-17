@@ -51,8 +51,8 @@ namespace Pixel.zero
         public override void Update(float deltaTime)
         {
             LastUpdate = DateTime.Now;
-            var camera = SceneManager.ActiveScene.Camera;
-            effect.Parameters["View"].SetValue(camera.View());
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            effect.Parameters["View"].SetValue(cam.Transform);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

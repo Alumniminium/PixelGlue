@@ -38,7 +38,7 @@ namespace Pixel.ECS.Systems
                     var distanceToDest = Vector2.Distance(pos.Value, dst.Value);
                     var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Velocity);
                     var keepmoving = false;
-                    if(distanceToDest <= moveDistance && entity.Has<InputComponent>())
+                    if (distanceToDest <= moveDistance && entity.Has<InputComponent>())
                     {
                         ref readonly var inp = ref entity.Get<InputComponent>();
                         keepmoving = inp.OldButtons.Contains(PixelGlueButtons.Left) || inp.OldButtons.Contains(PixelGlueButtons.Right) || inp.OldButtons.Contains(PixelGlueButtons.Down) || inp.OldButtons.Contains(PixelGlueButtons.Up);
@@ -66,7 +66,7 @@ namespace Pixel.ECS.Systems
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                public override void AddEntity(int entityId)
+        public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
             if (entity.Has<PositionComponent>())
@@ -74,6 +74,34 @@ namespace Pixel.ECS.Systems
                     if (entity.Has<DestinationComponent>())
                         if (entity.Has<SpeedComponent>())
                             base.AddEntity(entityId);
+        }
+    }
+    public class CursorMoveSystem : PixelSystem
+    {
+        public CursorMoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
+        public override string Name { get; set; } = "Cursor Move System";
+        public Scene Scene => SceneManager.ActiveScene;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void Update(float deltaTime)
+        {
+            foreach (var entityId in Entities)
+            {
+                var entity = World.Entities[entityId];
+                ref readonly var mos = ref entity.Get<MouseComponent>();
+                ref var pos = ref entity.Get<PositionComponent>();
+
+                pos.Value.X = mos.X;
+                pos.Value.Y = mos.Y;
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void AddEntity(int entityId)
+        {
+            var entity = World.Entities[entityId];
+            if (entity.Has<PositionComponent, MouseComponent>() && !entity.Has<VelocityComponent,SpeedComponent>())
+                base.AddEntity(entityId);
         }
     }
 }

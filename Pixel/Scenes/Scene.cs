@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.Entities;
 using Shared;
 using System;
 using System.IO;
@@ -19,10 +18,7 @@ namespace Pixel.Scenes
         public int Id;
         public bool IsActive;
         public bool IsReady;
-        public Camera Camera;
         public Entity Player;
-
-        public Scene() => Camera = new Camera(Vector2.Zero, 0, Vector2.One, (Global.VirtualScreenWidth, Global.VirtualScreenHeight));
 
         public virtual void Initialize()
         {
@@ -65,7 +61,8 @@ namespace Pixel.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(SpriteBatch sb)
         {
-            sb.Begin(SpriteSortMode.Deferred, transformMatrix: Camera.View(), samplerState: SamplerState.PointClamp);
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            sb.Begin(SpriteSortMode.Deferred, transformMatrix: cam.Transform, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var preDrawTicks = DateTime.UtcNow.Ticks;
@@ -84,18 +81,15 @@ namespace Pixel.Scenes
         {
             switch (et)
             {
-                case EntityType.Camera:
-                    entity.Add<TransformComponent>();
-                    entity.Add<DbgBoundingBoxComponent>();
-                    break;
                 case EntityType.Player:
                     entity.Add<InputComponent>();
+                    entity.Add<MouseComponent>();
                     entity.Add<PositionComponent>();
                     entity.Add<DestinationComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add<VelocityComponent>();
                     entity.Add(new SpeedComponent(3200));
-                    entity.Add(new CameraFollowTagComponent(2));
+                    entity.Add(new CameraComponent(1));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
                     var nameTag = World.CreateEntity();

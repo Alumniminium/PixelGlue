@@ -10,7 +10,7 @@ namespace Pixel.Helpers
     public static class Chunkinator
     {
         public const int PRELOAD_DISTANCE = 3;
-        public const int CHUNK_SIZE = 512;
+        public const int CHUNK_SIZE = 1;
         public static Dictionary<Point, Chunk> Chunks = new Dictionary<Point, Chunk>();
 
         public static Thread ChunkLoader = new Thread(LoadLoop);

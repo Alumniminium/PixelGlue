@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
 using Pixel.Helpers;
 using Shared;
@@ -12,6 +14,7 @@ namespace Pixel.Scenes
         {
             World.Systems.Add(new GCMonitor(true,false));
             World.Systems.Add(new NetworkSystem(true,false));
+            World.Systems.Add(new MouseInputSystem(true,false));
             World.Systems.Add(new PlayerInputSystem(true,false));
             World.Systems.Add(new MoveSystem(true,false));
             World.Systems.Add(new CameraSystem(true,false));
@@ -25,6 +28,13 @@ namespace Pixel.Scenes
 
             World.Systems.Add(new SmartFramerate(true,true));
             base.Initialize();
+
+            var cursor = World.CreateEntity();
+            cursor.Add<MouseComponent>();
+            cursor.Add<PositionComponent>();
+            var cursorDrw = new DrawableComponent(Color.Blue,new Microsoft.Xna.Framework.Rectangle(0,0,16,16));
+            cursor.Add(cursorDrw);
+            cursor.Register();
         }
         public override void LoadContent(ContentManager cm)
         {

@@ -26,9 +26,8 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-            var camera = Scene.Camera;
-            //var rectangle = camera.SimulationRect;
-            var rectangle = camera.WorldBounds();
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            var rectangle = cam.ScreenRect;
             const int lineWidth = 4;
             Color color = Color.LightGreen;
 

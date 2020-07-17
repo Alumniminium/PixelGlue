@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pixel.ECS.Components;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared;
@@ -40,7 +41,8 @@ namespace Pixel.ECS.Systems
 
         private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
         {
-            var bounds = Scene.Camera.WorldBounds();
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            var bounds = cam.ScreenRect;
             xs = bounds.Left - Overdraw.X;
             ys = bounds.Top - Overdraw.Y;
             xs /= Global.TileSize;

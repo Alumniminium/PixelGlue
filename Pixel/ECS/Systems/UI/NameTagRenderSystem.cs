@@ -45,10 +45,11 @@ namespace Pixel.ECS.Systems
                         continue;
 
                     ref readonly var pos = ref entity.Get<PositionComponent>();
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
 
-                    if (pos.Value.X <= Scene.Camera.Bounds.Left || pos.Value.X >= Scene.Camera.Bounds.Right)
+                    if (pos.Value.X <= cam.ScreenRect.Left || pos.Value.X >=cam.ScreenRect.Right)
                         continue;
-                    if (pos.Value.Y <= Scene.Camera.Bounds.Top || pos.Value.Y >= Scene.Camera.Bounds.Bottom)
+                    if (pos.Value.Y <= cam.ScreenRect.Top || pos.Value.Y >= cam.ScreenRect.Bottom)
                         continue;
 
                     //if (pos.Value.X <= Scene.Camera.SimulationRect.Left || pos.Value.X >= Scene.Camera.SimulationRect.Right)

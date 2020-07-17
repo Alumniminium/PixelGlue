@@ -20,7 +20,7 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            if (entity.Has<CameraFollowTagComponent>() && entity.Has<PositionComponent>())
+            if (entity.Has<PositionComponent,CameraComponent>())
                 base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

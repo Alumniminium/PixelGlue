@@ -45,7 +45,8 @@ namespace Pixel.ECS.Systems
 
         private bool OutOfRange(Vector2 pos)
         {
-            var bounds = Scene.Camera.WorldBounds();
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            var bounds = cam.ScreenRect;
             return pos.X < bounds.Left || pos.X > bounds.Right || pos.Y <= bounds.Top || pos.Y >= bounds.Bottom;
         }
     }

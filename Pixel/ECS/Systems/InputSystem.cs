@@ -31,7 +31,7 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            if (entity.Has<InputComponent>() && entity.Has<DestinationComponent>() && entity.Has<PositionComponent>())
+            if (entity.Has<InputComponent, DestinationComponent, PositionComponent>())
                 base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,13 +69,14 @@ namespace Pixel.ECS.Systems
         public static void Mouse(ref MouseState mouse, ref InputComponent inp)
         {
             var scene = SceneManager.ActiveScene;
-           
+
             inp.OldScroll = inp.Scroll;
             inp.Scroll = mouse.ScrollWheelValue;
 
             if (mouse.LeftButton == ButtonState.Pressed)
             {
-                var point = scene.Camera.ScreenToWorld(mouse.Position.ToVector2());
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+                var point = cam.ScreenToWorld(mouse.Position.ToVector2());
                 point.X = (int)point.X / Global.TileSize;
                 point.Y = (int)point.Y / Global.TileSize;
                 point.X = (int)point.X * Global.TileSize;
