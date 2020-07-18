@@ -12,7 +12,7 @@ using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
-    public class SmartFramerate : PixelSystem
+    public class SmartFramerate : AsyncPixelSystem
     {
         public override string Name { get; set; } = "Metrics UI Overlay System";
         private double currentFrametimes;

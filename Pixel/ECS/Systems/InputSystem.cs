@@ -1,14 +1,10 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Pixel.ECS.Components;
-using Pixel.Scenes;
 using System;
-using System.Collections.Concurrent;
 using Shared.Enums;
 using Shared;
 using Shared.ECS;
-using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
@@ -19,41 +15,35 @@ namespace Pixel.ECS.Systems
 
         public PlayerInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
-        public Scene Scene => SceneManager.ActiveScene;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {
             _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
-            IsActive = true;
+            base.Initialize();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            if (entity.Has<InputComponent, DestinationComponent, PositionComponent>())
+            if (entity.Has<KeyboardComponent, DestinationComponent, PositionComponent>())
                 base.AddEntity(entityId);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override void Update(float deltaTime)
         {
             foreach (var entityId in Entities)
             {
                 var entity = World.Entities[entityId];
-                ref var inp = ref entity.Get<InputComponent>();
+                ref var inp = ref entity.Get<KeyboardComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 EnsureReady(ref inp);
 
-                var mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
                 var keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-                //var gamepad = GamePad.GetState(PlayerIndex.One);
 
                 foreach (var mappedButton in _mappedButtons)
                     if (KeyboardHelper.IsDown(ref keyboard, mappedButton))
                         inp.Buttons.Add(mappedButton);
 
-                Mouse(ref mouse, ref inp);
                 Keyboard(ref inp);
 
                 if (pos.Value == dst.Value)
@@ -65,41 +55,9 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Mouse(ref MouseState mouse, ref InputComponent inp)
-        {
-            var scene = SceneManager.ActiveScene;
-
-            inp.OldScroll = inp.Scroll;
-            inp.Scroll = mouse.ScrollWheelValue;
-
-            if (mouse.LeftButton == ButtonState.Pressed)
-            {
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
-                var point = cam.ScreenToWorld(mouse.Position.ToVector2());
-                point.X = (int)point.X / Global.TileSize;
-                point.Y = (int)point.Y / Global.TileSize;
-                point.X = (int)point.X * Global.TileSize;
-                point.Y = (int)point.Y * Global.TileSize;
-                Entity selected = default;
-                foreach (var entity in World.Entities)
-                {
-                    if (entity.Value.Has<PositionComponent>() && entity.Value.Has<DrawableComponent>())
-                    {
-                        ref readonly var pos = ref entity.Value.Get<PositionComponent>();
-                        if (pos.Value == point)
-                        {
-                            selected = entity.Value;
-                            break;
-                        }
-                    }
-                }
-                World.Destroy(selected.EntityId);
-            }
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void EnsureReady(ref InputComponent inp)
+        private static void EnsureReady(ref KeyboardComponent inp)
         {
             if (inp.Buttons == null)
                 inp.Buttons = new System.Collections.Generic.List<PixelGlueButtons>();
@@ -108,7 +66,7 @@ namespace Pixel.ECS.Systems
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Keyboard(ref InputComponent inp)
+        private static void Keyboard(ref KeyboardComponent inp)
         {
             var axis = Vector2.Zero;
 

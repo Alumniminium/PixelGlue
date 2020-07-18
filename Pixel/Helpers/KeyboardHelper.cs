@@ -19,7 +19,7 @@ namespace Pixel.ECS
                 return kb.IsKeyUp(realKey.defaultBind) || kb.IsKeyUp(realKey.userBind);
             return false;
         }
-        public static bool IsPressed(ref InputComponent component, PixelGlueButtons key)
+        public static bool IsPressed(ref KeyboardComponent component, PixelGlueButtons key)
         {
             if (UserKeybinds.GenericToKeybinds.TryGetValue(key, out var realKey))
             {

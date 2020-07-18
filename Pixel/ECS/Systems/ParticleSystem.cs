@@ -5,11 +5,10 @@ namespace Pixel.ECS.Systems
 {
     public class ParticleSystem : PixelSystem
     {
+        public override string Name { get; set; } = "Particle System";
         public ParticleSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
-        public override string Name { get; set; } = "Particle System";
-
-                public override void AddEntity(int entityId)
+        public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
             if (entity.Has<PositionComponent>() && entity.Has<VelocityComponent>()&& entity.Has<DrawableComponent>())

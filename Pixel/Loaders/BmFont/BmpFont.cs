@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Loaders.BmFont.Models;
-using Shared;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -36,7 +35,7 @@ namespace Pixel.Loaders
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawText(SpriteBatch spriteBatch, float x, float y, string text,Color color, float scale = 0.5f)
+        public void DrawText(SpriteBatch spriteBatch, float x, float y, string text, Color color, float scale = 0.5f)
         {
             int dx = (int)x;
             int dy = (int)y;

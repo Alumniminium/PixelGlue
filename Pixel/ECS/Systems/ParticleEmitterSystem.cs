@@ -5,13 +5,13 @@ namespace Pixel.ECS.Systems
 {
     public class ParticleEmitterSystem : PixelSystem
     {
+        public override string Name { get; set; } = "Particle System";
         public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
-        public override string Name { get; set; } = "Particle System";
-                public override void AddEntity(int entityId)
+        public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            if (entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>()&& entity.Has<ParticleComponent>())
+            if (entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>() && entity.Has<ParticleComponent>())
                 base.AddEntity(entityId);
         }
         public override void Update(float deltaTime)

@@ -5,16 +5,16 @@ using Shared.ECS;
 using System.Runtime.CompilerServices;
 using Pixel.Scenes;
 using Pixel.Helpers;
+using System;
 
 namespace Pixel.ECS.Systems
 {
 
     public class EntityRenderSystem : PixelSystem
     {
-        public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         public override string Name { get; set; } = "Entity Rendering System";
-        public Scene Scene => SceneManager.ActiveScene;
+        public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(int entityId)
@@ -33,13 +33,20 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
 
-                if (OutOfRange(pos.Value + drawable.SrcRect.Size.ToVector2()))
-                {
-                    //Scene.World.Destroy(entity.EntityId);
-                    continue;
-                }
+                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Value + origin, drawable.SrcRect, drawable.Color, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
+            }
+        }
 
-                sb.Draw(AssetManager.GetTexture(drawable.TextureName), pos.Value + origin, drawable.SrcRect, Color.White, pos.Rotation, origin, Vector2.One, SpriteEffects.None, 0f);
+        public override void FixedUpdate(float deltaTime)
+        {
+            foreach (var entityId in Entities)
+            {
+                if (entityId == 1)
+                    continue;
+                var entity = World.Entities[entityId];
+                ref readonly var pos = ref entity.Get<PositionComponent>();
+                if (OutOfRange(pos.Value))
+                    World.Destroy(entity.EntityId);
             }
         }
 

@@ -19,7 +19,7 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            if (entity.Has<PositionComponent,CameraComponent>())
+            if (entity.Has<PositionComponent, CameraComponent>())
                 base.AddEntity(entityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -31,9 +31,9 @@ namespace Pixel.ECS.Systems
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref var cam = ref entity.Get<CameraComponent>();
 
-                if (entity.Has<InputComponent>())
+                if (entity.Has<KeyboardComponent>())
                 {
-                    ref readonly var inp = ref entity.Get<InputComponent>();
+                    ref readonly var inp = ref entity.Get<MouseComponent>();
                     if (inp.Scroll > inp.OldScroll)
                         cam.Zoom *= 2f;
                     else if (inp.Scroll < inp.OldScroll)
@@ -48,9 +48,8 @@ namespace Pixel.ECS.Systems
 
                 cam.Transform = Matrix.CreateTranslation(-pos.Value.X, -pos.Value.Y, 0)
                                                      * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
-                                                     * Matrix.CreateScale(Math.Max(0.5f,cam.Zoom))
+                                                     * Matrix.CreateScale(Math.Max(0.5f, cam.Zoom))
                                                      * Matrix.CreateTranslation(Global.ScreenWidth / 2, Global.ScreenHeight / 2, 0);
-
             }
         }
     }

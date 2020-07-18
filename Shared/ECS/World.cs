@@ -19,28 +19,24 @@ namespace Shared.ECS
             Systems = new List<PixelSystem>();
         }
 
-        public static void Destroy(int entity)
+        public static void Destroy(int entity) => Global.PostUpdateQueue.Enqueue(() => DestroyNow(entity));
+        internal static void DestroyNow(int entity)
         {
-            Global.PostUpdateQueue.Enqueue(() =>
-           {
-               Entities.TryRemove(entity, out var actualEntity);
-               for (int i = 0; i < Systems.Count; i++)
-                   Systems[i].RemoveEntity(actualEntity.EntityId);
+            Entities.TryRemove(entity, out var actualEntity);
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].RemoveEntity(actualEntity.EntityId);
 
-               if (actualEntity.EntityId == 0)
-                   return;
-               if (actualEntity.Children == null)
-                   return;
+            EntityIdToUniqueId.TryRemove(entity, out var uid);
+            UniqueIdToEntityId.TryRemove(uid, out _);
 
-               foreach (var id in actualEntity.Children)
-               {
-                   var child = Entities[id];
-                   Destroy(child.EntityId);
-               }
+            if (actualEntity.Children == null)
+                return;
 
-               EntityIdToUniqueId.TryRemove(entity, out var uid);
-               UniqueIdToEntityId.TryRemove(uid, out _);
-           });
+            foreach (var id in actualEntity.Children)
+            {
+                var child = Entities[id];
+                Destroy(child.EntityId);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -52,10 +48,6 @@ namespace Shared.ECS
             };
 
             Entities.TryAdd(entity.EntityId, entity);
-
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].AddEntity(entity.EntityId);
-
             return entity;
         }
 

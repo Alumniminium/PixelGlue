@@ -12,27 +12,28 @@ namespace Pixel.Scenes
     {
         public override void Initialize()
         {
-            World.Systems.Add(new GCMonitor(true,false));
-            World.Systems.Add(new NetworkSystem(true,false));
-            World.Systems.Add(new MouseInputSystem(true,false));
-            World.Systems.Add(new PlayerInputSystem(true,false));
-            World.Systems.Add(new MoveSystem(true,false));
-            World.Systems.Add(new CameraSystem(true,false));
+            World.Systems.Add(new GCMonitor(true, false));
+            World.Systems.Add(new NetworkSystem(true, false));
+            World.Systems.Add(new MouseInputSystem(true, false));
+            World.Systems.Add(new PlayerInputSystem(true, false));
+            World.Systems.Add(new CursorMoveSystem(true, false));
+            World.Systems.Add(new MoveSystem(true, false));
+            World.Systems.Add(new CameraSystem(true, false));
             //Systems.Add(new MapShaderRenderer());
-            World.Systems.Add(new WorldRenderSystem(false,true));
-            //World.Systems.Add(new PretendSystem(true,false));
-            World.Systems.Add(new EntityRenderSystem(true,true));
-            World.Systems.Add(new NameTagRenderSystem(false,true));
+            World.Systems.Add(new WorldRenderSystem(false, true));
+            World.Systems.Add(new DbgEntitySpawnSystem(true, false));
+            World.Systems.Add(new EntityRenderSystem(true, true));
+            World.Systems.Add(new NameTagRenderSystem(false, true));
             //Systems.Add(new DialogSystem());
-            World.Systems.Add(new DbgBoundingBoxRenderSystem(false,true));
+            World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
 
-            World.Systems.Add(new SmartFramerate(true,true));
+            World.Systems.Add(new SmartFramerate(true, true));
             base.Initialize();
 
             var cursor = World.CreateEntity();
             cursor.Add<MouseComponent>();
             cursor.Add<PositionComponent>();
-            var cursorDrw = new DrawableComponent(Color.Blue,new Microsoft.Xna.Framework.Rectangle(0,0,16,16));
+            var cursorDrw = new DrawableComponent(Color.IndianRed, new Rectangle(0, 0, 16, 16));
             cursor.Add(cursorDrw);
             cursor.Register();
         }

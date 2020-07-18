@@ -1,16 +1,17 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Input;
 using Pixel.ECS.Components;
-using Pixel.Scenes;
+using Shared;
 using Shared.ECS;
-using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
     public class MouseInputSystem : PixelSystem
     {
         public override string Name { get; set; } = "Mouse Input System";
+
         public MouseInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(int entityId)
@@ -22,20 +23,43 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float deltaTime)
         {
+            var mouse = Mouse.GetState();
             foreach (var entityId in Entities)
             {
                 var entity = World.Entities[entityId];
-                ref var inp = ref entity.Get<MouseComponent>();
+                ref var mos = ref entity.Get<MouseComponent>();
 
-                var mouse = Mouse.GetState();
-
-                inp.OldScroll = inp.Scroll;
-                inp.Scroll = mouse.ScrollWheelValue;
+                mos.OldScroll = mos.Scroll;
+                mos.Scroll = mouse.ScrollWheelValue;
                 
+                if (mouse.LeftButton == ButtonState.Pressed)
+                {
+                    ref readonly var came = ref ComponentArray<CameraComponent>.Get(1);
+                    var point = came.ScreenToWorld(mouse.Position.ToVector2());
+                    point.X = (int)point.X / Global.TileSize;
+                    point.Y = (int)point.Y / Global.TileSize;
+                    point.X = (int)point.X * Global.TileSize;
+                    point.Y = (int)point.Y * Global.TileSize;
+                    Entity selected = default;
+                    foreach (var kvp in World.Entities)
+                    {
+                        if (kvp.Value.Has<PositionComponent>() && kvp.Value.Has<DrawableComponent>())
+                        {
+                            ref readonly var pos = ref kvp.Value.Get<PositionComponent>();
+                            if (pos.Value == point)
+                            {
+                                selected = kvp.Value;
+                                break;
+                            }
+                        }
+                    }
+                    World.Destroy(selected.EntityId);
+                }
+
                 ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
                 var worldPos = cam.ScreenToWorld(mouse.Position.ToVector2());
-                inp.X = worldPos.X;
-                inp.Y = worldPos.Y;
+                mos.X = worldPos.X;
+                mos.Y = worldPos.Y;
             }
         }
     }

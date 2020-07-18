@@ -6,24 +6,18 @@ using Shared.ECS;
 
 namespace Pixel.ECS.Systems
 {
-    public class GCMonitor : PixelSystem
+    public class GCMonitor : AsyncPixelSystem
     {
         public override string Name { get; set; } = "GC Monitoring System";
-        public int[] GenCollections;
+        public int[] GenCollections = new int[3];
 
         public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {
-            GenCollections = new int[3];
             StartWorkerThreads(1, true, ThreadPriority.Lowest);
             IsActive = true;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void FixedUpdate(float gameTime) => UnblockThreads();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AsyncUpdate(int threadId)
         {
             for (int i = 0; i < GenCollections.Length; i++)
