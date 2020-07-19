@@ -21,7 +21,6 @@ namespace Pixel.ECS.Systems
                 ref readonly var entity = ref World.GetEntity(entityId);
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref var pem = ref entity.Get<ParticleEmitterComponent>();
-
             }
         }
     }

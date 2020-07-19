@@ -3,7 +3,6 @@ using Pixel.ECS.Components;
 using Shared.Enums;
 using Shared.TerribleSockets.Packets;
 using Shared;
-
 using Shared.ECS;
 using Pixel.Scenes;
 
@@ -26,10 +25,11 @@ namespace Pixel.ECS.Systems
             foreach (var entityId in Entities)
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
+                ref readonly var spd = ref entity.Get<SpeedComponent>();
+
                 ref var vel = ref entity.Get<VelocityComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
-                ref readonly var spd = ref entity.Get<SpeedComponent>();
 
                 if (pos.Value != dst.Value)
                 {

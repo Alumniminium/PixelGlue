@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
-using Pixel.Scenes;
 using Shared.ECS;
 using Pixel.Helpers;
 
@@ -10,9 +8,9 @@ namespace Pixel.ECS.Systems
 {
     public class NameTagRenderSystem : PixelSystem
     {
-        public NameTagRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
         public override string Name { get; set; } = "Name Tag Render System";
+
+        public NameTagRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
         public override void AddEntity(int entityId)
         {
             ref readonly var entity = ref World.GetEntity(entityId);

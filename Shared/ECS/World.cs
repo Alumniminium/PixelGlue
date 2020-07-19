@@ -11,13 +11,13 @@ namespace Shared.ECS
         public static int EntityCount => 1_000_000 - AvailableArrayIndicies.Count;
         private static int LastEntityId = 1;
         private static readonly Entity[] Entities;
-        private static readonly Stack<int> AvailableArrayIndicies;
+        private static readonly Queue<int> AvailableArrayIndicies;
         private static readonly Dictionary<int, int> EntityToArrayOffset, UniqueIdToEntityId, EntityIdToUniqueId;
         public static List<PixelSystem> Systems;
         static World()
         {
             Entities = new Entity[1_000_001];
-            AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1,1_000_000));
+            AvailableArrayIndicies = new Queue<int>(Enumerable.Range(1,1_000_000));
             EntityToArrayOffset = new Dictionary<int, int>();
             UniqueIdToEntityId = new Dictionary<int, int>();
             EntityIdToUniqueId = new Dictionary<int, int>();
@@ -29,7 +29,7 @@ namespace Shared.ECS
             {
                 EntityId = LastEntityId++
             };
-            var arrayIndex=  AvailableArrayIndicies.Pop();
+            var arrayIndex=  AvailableArrayIndicies.Dequeue();
             EntityToArrayOffset.TryAdd(entity.EntityId, arrayIndex);
             Entities[arrayIndex] = entity;
             return ref Entities[arrayIndex];
@@ -60,6 +60,7 @@ namespace Shared.ECS
 
             EntityIdToUniqueId.Remove(id, out var uid);
             UniqueIdToEntityId.Remove(uid, out _);
+            AvailableArrayIndicies.Enqueue(arrayOffset);
 
             if (actualEntity.Children == null)
                 return;
@@ -69,7 +70,6 @@ namespace Shared.ECS
                 ref var child = ref GetEntity(childId);
                 Destroy(child.EntityId);
             }
-            AvailableArrayIndicies.Push(arrayOffset);
         }
         public static T GetSystem<T>() where T : PixelSystem
         {

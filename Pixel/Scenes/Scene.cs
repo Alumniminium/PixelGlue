@@ -92,7 +92,7 @@ namespace Pixel.Scenes
                     entity.Add(new CameraComponent(1));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
-                    var nameTag = World.CreateEntity();
+                    ref var nameTag = ref World.CreateEntity();
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
                     nameTag.Add(new PositionComponent(-16, -16, 0));
                     entity.AddChild(ref nameTag);
@@ -109,7 +109,7 @@ namespace Pixel.Scenes
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
 
-                    nameTag = World.CreateEntity();
+                    nameTag = ref World.CreateEntity();
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
                     nameTag.Add(new PositionComponent(-16, -16, 0));
                     entity.AddChild(ref nameTag);

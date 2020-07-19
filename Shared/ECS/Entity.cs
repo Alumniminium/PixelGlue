@@ -6,6 +6,7 @@ namespace Shared.ECS
     public partial struct Entity
     {
         public int EntityId;
+        public ulong Components;
         public int Parent;
         public List<int> Children;
     }
@@ -26,13 +27,7 @@ namespace Shared.ECS
         public bool Has<T, T2,T3,T4>() where T : struct where T2 : struct where T3 : struct where T4 : struct => Has<T,T2,T3>() && Has<T4>();
 
 
-        public override string ToString()
-        {
-            var ret = string.Empty;
-            ret += "UID: " + EntityId;
-            //ret += Environment.NewLine;
-            return ret;
-        }
+        public override string ToString() => $"ID: {EntityId}, Parent: {Parent}, Children: {Children?.Count}";
 
         public void AddChild(ref Entity nt)
         {
