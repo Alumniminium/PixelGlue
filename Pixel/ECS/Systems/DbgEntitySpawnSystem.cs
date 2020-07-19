@@ -21,7 +21,7 @@ namespace Pixel.ECS.Systems
         }
         public override void Update(float dt)
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 ref var entity = ref World.CreateEntity();
                 SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Npc);
