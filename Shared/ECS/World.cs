@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,51 +8,69 @@ namespace Shared.ECS
 {
     public static class World
     {
-        public static int LastEntityId = 1;
-        public static ConcurrentDictionary<int, Entity> Entities;
-        public static ConcurrentDictionary<int, int> UniqueIdToEntityId, EntityIdToUniqueId;
+        public static int EntityCount => 1_000_000 - AvailableArrayIndicies.Count;
+        private static int LastEntityId = 1;
+        private static readonly Entity[] Entities;
+        private static readonly Stack<int> AvailableArrayIndicies;
+        private static readonly Dictionary<int, int> EntityToArrayOffset, UniqueIdToEntityId, EntityIdToUniqueId;
         public static List<PixelSystem> Systems;
         static World()
         {
-            Entities = new ConcurrentDictionary<int, Entity>();
-            UniqueIdToEntityId = new ConcurrentDictionary<int, int>();
-            EntityIdToUniqueId = new ConcurrentDictionary<int, int>();
+            Entities = new Entity[1_000_001];
+            AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1,1_000_000));
+            EntityToArrayOffset = new Dictionary<int, int>();
+            UniqueIdToEntityId = new Dictionary<int, int>();
+            EntityIdToUniqueId = new Dictionary<int, int>();
             Systems = new List<PixelSystem>();
         }
-
-        public static void Destroy(int entity) => Global.PostUpdateQueue.Enqueue(() => DestroyNow(entity));
-        internal static void DestroyNow(int entity)
-        {
-            Entities.TryRemove(entity, out var actualEntity);
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].RemoveEntity(actualEntity.EntityId);
-
-            EntityIdToUniqueId.TryRemove(entity, out var uid);
-            UniqueIdToEntityId.TryRemove(uid, out _);
-
-            if (actualEntity.Children == null)
-                return;
-
-            foreach (var id in actualEntity.Children)
-            {
-                var child = Entities[id];
-                Destroy(child.EntityId);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Entity CreateEntity()
+        public static ref Entity CreateEntity()
         {
             var entity = new Entity
             {
                 EntityId = LastEntityId++
             };
-
-            Entities.TryAdd(entity.EntityId, entity);
-            return entity;
+            var arrayIndex=  AvailableArrayIndicies.Pop();
+            EntityToArrayOffset.TryAdd(entity.EntityId, arrayIndex);
+            Entities[arrayIndex] = entity;
+            return ref Entities[arrayIndex];
         }
+        public static ref Entity CreateEntity(int uniqueId)
+        {
+            ref var entity = ref CreateEntity();
+            RegisterUniqueIdFor(entity.EntityId,uniqueId);
+            return ref entity;
+        }
+        public static void RegisterUniqueIdFor(int entityId, int uniqueId)
+        {
+            UniqueIdToEntityId.TryAdd(uniqueId,entityId);
+            EntityIdToUniqueId.TryAdd(entityId, uniqueId);
+        }
+        public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
+        public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
+        public static bool IdExists(int id) => EntityToArrayOffset.ContainsKey(id);
+        public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
+        public static void Destroy(int entity) => Global.PostUpdateQueue.Enqueue(() => DestroyNow(entity));
+        internal static void DestroyNow(int id)
+        {
+            EntityToArrayOffset.Remove(id, out var arrayOffset);
+            ref var actualEntity = ref Entities[arrayOffset];
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].RemoveEntity(actualEntity.EntityId);
+
+            EntityIdToUniqueId.Remove(id, out var uid);
+            UniqueIdToEntityId.Remove(uid, out _);
+
+            if (actualEntity.Children == null)
+                return;
+
+            foreach (var childId in actualEntity.Children)
+            {
+                ref var child = ref GetEntity(childId);
+                Destroy(child.EntityId);
+            }
+            AvailableArrayIndicies.Push(arrayOffset);
+        }
         public static T GetSystem<T>() where T : PixelSystem
         {
             foreach (var sys in Systems)

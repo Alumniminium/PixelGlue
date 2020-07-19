@@ -27,7 +27,7 @@ namespace Shared
         public static float DrawTime { get; set; }
         public static float UpdateTime { get; set; }
         public static int Major { get; set; } = 0;
-        public static int Minor { get; set; } = 05;
+        public static int Minor { get; set; } = 6;
         public static Queue<Action> PostUpdateQueue = new Queue<Action>(128);
     }
 }

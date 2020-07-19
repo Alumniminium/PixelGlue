@@ -1,7 +1,6 @@
 using System.Threading;
 using Shared.IO;
 using System;
-using System.Runtime.CompilerServices;
 using Shared.ECS;
 
 namespace Pixel.ECS.Systems
@@ -12,11 +11,7 @@ namespace Pixel.ECS.Systems
         public int[] GenCollections = new int[3];
 
         public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void Initialize()
-        {
-            StartWorkerThreads(1, true, ThreadPriority.Lowest);
-            IsActive = true;
-        }
+        public override void Initialize() => StartWorkerThreads(1, true, ThreadPriority.Lowest);
         public override void FixedUpdate(float gameTime) => UnblockThreads();
         public override void AsyncUpdate(int threadId)
         {

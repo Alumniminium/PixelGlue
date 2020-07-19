@@ -10,7 +10,7 @@ namespace Pixel.ECS.Systems
 
         public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<PositionComponent>() && entity.Has<VelocityComponent>()&& entity.Has<DrawableComponent>())
                 base.AddEntity(entityId);
         }
@@ -18,7 +18,7 @@ namespace Pixel.ECS.Systems
         {
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref readonly var vel = ref entity.Get<VelocityComponent>();
                 ref readonly var drw = ref entity.Get<DrawableComponent>();

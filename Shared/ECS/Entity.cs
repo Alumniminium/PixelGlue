@@ -42,7 +42,6 @@ namespace Shared.ECS
 
         public void Register()
         {
-            World.Entities[EntityId] = this;
             foreach (var sys in World.Systems)
                 sys.AddEntity(EntityId);
         }

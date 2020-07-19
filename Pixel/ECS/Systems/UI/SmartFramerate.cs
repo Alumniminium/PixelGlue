@@ -1,4 +1,3 @@
-using System.Reflection.Emit;
 using System.Threading;
 using System;
 using Microsoft.Xna.Framework;
@@ -7,7 +6,6 @@ using Shared;
 using Shared.ECS;
 using Shared.Diagnostics;
 using Pixel.Helpers;
-using System.Runtime.CompilerServices;
 using Shared.IO;
 
 namespace Pixel.ECS.Systems
@@ -23,8 +21,6 @@ namespace Pixel.ECS.Systems
         private readonly string[] lines = new string[64];
 
         public SmartFramerate(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Initialize()
         {
             numerator = 3;
@@ -36,13 +32,13 @@ namespace Pixel.ECS.Systems
             StartWorkerThreads(1, false, ThreadPriority.Lowest);
             IsActive = true;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override void AsyncUpdate(int id)
         {
-            lines[0] = $"| Pixel Engine | Entities: {World.Entities.Count}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
+            lines[0] = $"| Pixel Engine | Entities: {World.EntityCount}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
             lines[1] = $"|   v {Global.Major}.{Global.Minor:00}     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
             lines[2] = $"|  {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:0000}  | FPS: {updateRate:##0} (Total: {Global.DrawTime + Global.UpdateTime:##0.00}ms, Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms)";
-
+        
             int lastLine = 5;
             for (int i = 0; i < World.Systems.Count; i++)
             {
@@ -62,7 +58,6 @@ namespace Pixel.ECS.Systems
 
             FConsole.WriteLine($"FPS: {updateRate:###0}");
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Update(float timeSinceLastFrame)
         {
             counter++;
@@ -82,7 +77,7 @@ namespace Pixel.ECS.Systems
             sb.Begin(SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
 
             for (int i = 0; i < lines.Length; i++)
-                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 18 * i, lines[i], Color.IndianRed, 0.72f);
+                AssetManager.Fonts["profont"].DrawText(sb, 16, 8 + 18 * i, lines[i], Color.Magenta, 0.72f);
         }
     }
 }

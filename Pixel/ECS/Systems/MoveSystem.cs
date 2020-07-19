@@ -17,7 +17,7 @@ namespace Pixel.ECS.Systems
         public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
         public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<PositionComponent, VelocityComponent, DestinationComponent, SpeedComponent>())
                 base.AddEntity(entityId);
         }
@@ -25,7 +25,7 @@ namespace Pixel.ECS.Systems
         {
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
                 ref var vel = ref entity.Get<VelocityComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();

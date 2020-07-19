@@ -23,7 +23,7 @@ namespace Pixel.ECS.Systems
 
         public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<KeyboardComponent, DestinationComponent, PositionComponent>())
                 base.AddEntity(entityId);
         }
@@ -32,7 +32,7 @@ namespace Pixel.ECS.Systems
         {
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
                 ref var inp = ref entity.Get<KeyboardComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();

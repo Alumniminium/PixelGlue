@@ -14,19 +14,17 @@ namespace Pixel.Networking.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Handle(MsgLogin packet)
         {
-            var scene = SceneManager.ActiveScene;
+            var player = SceneManager.ActiveScene.Player;
+            player.Add(new NetworkComponent(packet.UniqueId));
+            World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
+            player.Register();
 
-            var child = World.Entities[scene.Player.Children.Find(c => World.Entities[c].Has<TextComponent>())];
+            var child = World.GetEntity(player.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
             ref var txt = ref child.Get<TextComponent>();
             txt.Value = $"Name: {packet.GetUsername()}";
             
-            FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
-
-            scene.Player.Add(new NetworkComponent(packet.UniqueId));
-            World.UniqueIdToEntityId.TryAdd(packet.UniqueId, scene.Player.EntityId);
-            World.EntityIdToUniqueId.TryAdd(scene.Player.EntityId, packet.UniqueId);
-            scene.Player.Register();
             NetworkSystem.ConnectionState = ConnectionState.Authenticated;
+            FConsole.WriteLine("[Net][MsgLogin] " + txt.Value + " authenticated! (not implemented)");
         }
     }
 }

@@ -16,24 +16,25 @@ namespace Pixel.ECS.Systems
         public DbgEntitySpawnSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
         public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<PositionComponent, CameraComponent>())
                 base.AddEntity(entityId);
         }
-        public override void FixedUpdate(float dt)
+        public override void Update(float dt)
         {
-            var entity = World.CreateEntity();
+            ref var entity = ref World.CreateEntity();
             Scene.ApplyArchetype(ref entity, EntityType.Npc);
+
             var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
             ref var pos = ref entity.Get<PositionComponent>();
             ref var drw = ref entity.Get<DrawableComponent>();
             ref var dst = ref entity.Get<DestinationComponent>();
-            ref var playerpos = ref Scene.Player.Get<PositionComponent>();
+            ref readonly var playerpos = ref Scene.Player.Get<PositionComponent>();
             pos.Value = playerpos.Value;
 
             drw.SrcRect = srcEntity.SrcRect;
             drw.TextureName = srcEntity.TextureName;
-            dst.Value = new Vector2(int.MaxValue, int.MaxValue);
+            dst.Value = new Vector2(Global.Random.Next(int.MinValue,int.MaxValue), Global.Random.Next(int.MinValue,int.MaxValue));
             entity.Register();
         }
     }

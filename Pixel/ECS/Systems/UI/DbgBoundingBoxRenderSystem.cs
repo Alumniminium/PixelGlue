@@ -11,49 +11,52 @@ namespace Pixel.ECS.Systems
 {
     public class DbgBoundingBoxRenderSystem : PixelSystem
     {
-        public DbgBoundingBoxRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
         public override string Name { get; set; } = "Debug Boundingbox System";
-        public Scene Scene => SceneManager.ActiveScene;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                public override void AddEntity(int entityId)
+        public DbgBoundingBoxRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<DbgBoundingBoxComponent>())
                 base.AddEntity(entityId);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
-            var rectangle = cam.ScreenRect;
-            const int lineWidth = 4;
-            Color color = Color.LightGreen;
-
             var pxl = AssetManager.GetTexture("pixel");
-            sb.Draw(pxl, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height), color);
-            sb.Draw(pxl, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, lineWidth), color);
-            sb.Draw(pxl, new Rectangle(rectangle.X + rectangle.Width-lineWidth, rectangle.Y, lineWidth, rectangle.Height), color);
-            sb.Draw(pxl, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height-lineWidth, rectangle.Width, lineWidth), color);
-                
-            var dbgTexture = AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName);
+            var dbg = AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName);
+
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
+                if (entity.Has<CameraComponent>())
+                {
+                    ref readonly var cam = ref entity.Get<CameraComponent>();
+                    const int lineWidth = 4;
+                    Color color = Color.LightGreen;
+                    sb.Draw(pxl, new Rectangle(cam.ScreenRect.X, cam.ScreenRect.Y, lineWidth, cam.ScreenRect.Height), color);
+                    sb.Draw(pxl, new Rectangle(cam.ScreenRect.X, cam.ScreenRect.Y, cam.ScreenRect.Width, lineWidth), color);
+                    sb.Draw(pxl, new Rectangle(cam.ScreenRect.X + cam.ScreenRect.Width - lineWidth, cam.ScreenRect.Y, lineWidth, cam.ScreenRect.Height), color);
+                    sb.Draw(pxl, new Rectangle(cam.ScreenRect.X, cam.ScreenRect.Y + cam.ScreenRect.Height - lineWidth, cam.ScreenRect.Width, lineWidth), color);
+                }
                 if (entity.Has<DestinationComponent>())
                 {
                     ref readonly var dst = ref entity.Get<DestinationComponent>();
                     var destRect = new Rectangle((int)dst.Value.X, (int)dst.Value.Y, Global.TileSize, Global.TileSize);
-                    sb.Draw(dbgTexture, destRect, DbgBoundingBoxComponent.SrcRect, Color.Blue, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    sb.Draw(dbg, destRect, DbgBoundingBoxComponent.SrcRect, Color.Blue, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
-                if (entity.Has<DrawableComponent>() && entity.Has<PositionComponent>())
+                if (entity.Has<PositionComponent, DrawableComponent>())
                 {
                     ref readonly var pos = ref entity.Get<PositionComponent>();
                     ref readonly var drw = ref entity.Get<DrawableComponent>();
                     var destRect = new Rectangle((int)pos.Value.X, (int)pos.Value.Y, drw.SrcRect.Width, drw.SrcRect.Height);
-                    sb.Draw(dbgTexture, destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);
-                 }
+                    sb.Draw(dbg, destRect, DbgBoundingBoxComponent.SrcRect, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);
+                }
+                else if (entity.Has<PositionComponent>())
+                {
+                    ref readonly var pos = ref entity.Get<PositionComponent>();
+                    var destRect = new Rectangle((int)pos.Value.X, (int)pos.Value.Y, Global.TileSize, Global.TileSize);
+                    sb.Draw(dbg, destRect, DbgBoundingBoxComponent.SrcRect, Color.SeaGreen, 0, Vector2.Zero, SpriteEffects.None, 0);
+                }
             }
         }
     }

@@ -8,19 +8,14 @@ namespace Pixel.Networking.Handlers
 {
     public static class Walk
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Handle(MsgWalk packet)
         {
-            var uniqueId = packet.UniqueId;
-            var tickCount = packet.TickCount;
-            
-            if (World.UniqueIdToEntityId.TryGetValue(uniqueId, out var entityId))
+            if (World.UidExists(packet.UniqueId))
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntityByUniqueId(packet.UniqueId);
                 ref var dst = ref entity.Get<DestinationComponent>();
-                
-                if (tickCount + 10000 * 1000 * 5 != DateTime.UtcNow.Ticks)
-                    dst.Value = packet.Position;
+
+                dst.Value = packet.Position;
             }
         }
     }

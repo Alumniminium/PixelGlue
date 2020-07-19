@@ -19,7 +19,7 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddEntity(int entityId)
         {
-            var entity = World.Entities[entityId];
+            ref readonly var entity = ref World.GetEntity(entityId);
             if (entity.Has<PositionComponent>() && entity.Has<DrawableComponent>())
                 base.AddEntity(entityId);
         }
@@ -29,7 +29,7 @@ namespace Pixel.ECS.Systems
             var origin = new Vector2(8);
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drawable = ref entity.Get<DrawableComponent>();
 
@@ -43,7 +43,7 @@ namespace Pixel.ECS.Systems
             {
                 if (entityId == 1)
                     continue;
-                var entity = World.Entities[entityId];
+                ref readonly var entity = ref World.GetEntity(entityId);
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 if (OutOfRange(pos.Value))
                     World.Destroy(entity.EntityId);
