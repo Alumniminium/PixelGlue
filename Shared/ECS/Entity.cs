@@ -34,7 +34,7 @@ namespace Shared.ECS
             return ret;
         }
 
-        public void AddChild(Entity nt)
+        public void AddChild(ref Entity nt)
         {
             nt.Parent = EntityId;
             Children = new List<int> { nt.EntityId };
@@ -42,6 +42,7 @@ namespace Shared.ECS
 
         public void Register()
         {
+            World.Entities[EntityId] = this;
             foreach (var sys in World.Systems)
                 sys.AddEntity(EntityId);
         }

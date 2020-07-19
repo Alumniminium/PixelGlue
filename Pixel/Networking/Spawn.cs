@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
@@ -24,6 +25,7 @@ namespace Pixel.Networking
                 entity.Get<PositionComponent>().Value = new Vector2(packet.X, packet.Y);
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
+                World.Entities[entity.Children[0]].Get<TextComponent>().Value = packet.GetName();
                 entity.Register();
             }
             else
@@ -34,6 +36,8 @@ namespace Pixel.Networking
                 entity.Get<DestinationComponent>().Value = new Vector2(packet.X, packet.Y);
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
+                if(entity.Children != null)
+                World.Entities[entity.Children[0]].Get<TextComponent>().Value = packet.GetName();
             }
         }
     }

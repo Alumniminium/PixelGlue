@@ -16,34 +16,35 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             var entity = World.Entities[entityId];
-            var parent = World.Entities[entity.Parent];
-            if (entity.Has<TextComponent>() && parent.Has<PositionComponent>())
+            if (entity.Parent == 0)
+                return;
+            if (entity.Has<TextComponent, PositionComponent>())
                 base.AddEntity(entityId);
         }
         public override void Draw(SpriteBatch sb)
         {
             foreach (var entityId in Entities)
             {
-                var entity = World.Entities[entityId];
-                foreach (var id in entity.Children)
+                var nameTag = World.Entities[entityId];
+                if (nameTag.Parent != 0)
                 {
-                    var child = World.Entities[id];
+                    var parent = World.Entities[nameTag.Parent];
 
-                    ref readonly var pos = ref entity.Get<PositionComponent>();
                     ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
 
-                    if (pos.Value.X <= cam.ScreenRect.Left || pos.Value.X >= cam.ScreenRect.Right)
-                        continue;
-                    if (pos.Value.Y <= cam.ScreenRect.Top || pos.Value.Y >= cam.ScreenRect.Bottom)
-                        continue;
+                    ref readonly var parentPos = ref parent.Get<PositionComponent>();
+                    ref readonly var txt = ref nameTag.Get<TextComponent>();
+                    ref readonly var posOff = ref nameTag.Get<PositionComponent>();
 
-                    ref readonly var offset = ref child.Get<PositionComponent>();
-                    ref readonly var text = ref child.Get<TextComponent>();
+                    //if (parentPos.Value.X + posOff.Value.X <= cam.ScreenRect.Left || parentPos.Value.X + posOff.Value.X >= cam.ScreenRect.Right)
+                    //    continue;
+                    //if (parentPos.Value.Y + posOff.Value.Y <= cam.ScreenRect.Top || parentPos.Value.Y + posOff.Value.Y >= cam.ScreenRect.Bottom)
+                    //    continue;
 
-                    if (!string.IsNullOrEmpty(text.Value))
+                    if (!string.IsNullOrEmpty(txt.Value))
                     {
-                        var p = pos.Value + offset.Value;
-                        AssetManager.Fonts[text.FontName].DrawText(sb, p.X, p.Y, text.Value, Color.Blue, 0.2f);
+                        var p = parentPos.Value + posOff.Value;
+                        AssetManager.Fonts[txt.FontName].DrawText(sb, p.X, p.Y, txt.Value, Color.Blue, 0.2f);
                     }
                 }
             }

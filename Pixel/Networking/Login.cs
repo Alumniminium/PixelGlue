@@ -16,11 +16,10 @@ namespace Pixel.Networking.Handlers
         {
             var scene = SceneManager.ActiveScene;
 
-            //var child = World.Entities[scene.Player.Children.Find(c => World.Entities[c].Has<TextComponent>())];
-
-            //ref var txt = ref child.Get<TextComponent>();
-
-            //txt.Value = $"Name: {packet.GetUsername()}";
+            var child = World.Entities[scene.Player.Children.Find(c => World.Entities[c].Has<TextComponent>())];
+            ref var txt = ref child.Get<TextComponent>();
+            txt.Value = $"Name: {packet.GetUsername()}";
+            
             FConsole.WriteLine("[Net][MsgLogin] " + packet.GetUsername() + " authenticated! (not implemented)");
 
             scene.Player.Add(new NetworkComponent(packet.UniqueId));

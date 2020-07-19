@@ -92,15 +92,15 @@ namespace Pixel.Scenes
                     entity.Add(new CameraComponent(1));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
-                    //var nameTag = World.CreateEntity();
-                    //nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
-                    //nameTag.Add(new PositionComponent(-16, -16, 0));
-                    //entity.AddChild(nameTag);
-                    //nameTag.Register();
+                    var nameTag = World.CreateEntity();
+                    nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
+                    nameTag.Add(new PositionComponent(-16, -16, 0));
+                    entity.AddChild(ref nameTag);
+                    nameTag.Register();
                     break;
                 case EntityType.Npc:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-                    //var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
+                    var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
 
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
                     entity.Add<PositionComponent>();
@@ -109,11 +109,11 @@ namespace Pixel.Scenes
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
 
-                    //nameTag = World.CreateEntity();
-                    //nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
-                    //nameTag.Add(new PositionComponent(-16, -16, 0));
-                    //entity.AddChild(nameTag);
-                    //nameTag.Register();
+                    nameTag = World.CreateEntity();
+                    nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
+                    nameTag.Add(new PositionComponent(-16, -16, 0));
+                    entity.AddChild(ref nameTag);
+                    nameTag.Register();
                     break;
             }
         }
