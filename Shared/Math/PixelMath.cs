@@ -10,6 +10,5 @@
                    y2 < y1 + h1;
         }
         public static float Map(float input, float min_in, float max_in, float min_out, float max_out) => ((input - min_in) * (max_out - min_out) / (max_in - min_in)) + min_out;
-
     }
 }

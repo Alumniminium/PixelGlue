@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
 using Pixel.Helpers;
+using Pixel.zero;
 using Shared;
 using Shared.ECS;
 
@@ -19,21 +20,21 @@ namespace Pixel.Scenes
             World.Systems.Add(new CursorMoveSystem(true, false));
             World.Systems.Add(new MoveSystem(true, false));
             World.Systems.Add(new CameraSystem(true, false));
-            //Systems.Add(new MapShaderRenderer());
-            World.Systems.Add(new WorldRenderSystem(false, true));
-            //World.Systems.Add(new DbgEntitySpawnSystem(true, false));
+            World.Systems.Add(new MapShaderRenderer(true,true));
+            //World.Systems.Add(new WorldRenderSystem(false, true));
+            World.Systems.Add(new DbgEntitySpawnSystem(true, false));
             World.Systems.Add(new EntityRenderSystem(true, true));
             World.Systems.Add(new NameTagRenderSystem(false, true));
             //Systems.Add(new DialogSystem());
             World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
 
-            World.Systems.Add(new SmartFramerate(true, true));
+            //World.Systems.Add(new SmartFramerate(true, true));
             base.Initialize();
 
             var cursor = World.CreateEntity();
             cursor.Add<MouseComponent>();
             cursor.Add<PositionComponent>();
-            var cursorDrw = new DrawableComponent(Color.IndianRed, new Rectangle(0, 0, 16, 16));
+            var cursorDrw = new DrawableComponent(Color.IndianRed, new Rectangle(0, 0, 64, 64));
             cursor.Add(cursorDrw);
             cursor.Register();
         }
