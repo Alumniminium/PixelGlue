@@ -1,6 +1,9 @@
+using Shared.ECS;
+
 namespace Pixel.ECS.Components
 {
-    public struct ParticleComponent// : IEntityComponent
+    [Component]
+    public struct ParticleComponent
     {
         public int TTL;
     }

@@ -25,14 +25,12 @@ namespace Pixel.ECS.Systems
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
                 ref readonly var pos = ref entity.Get<PositionComponent>();
-
-                //TODO: this makes it so it doesn't destryoy player, camera and cursor
+               //TODO: this makes it so it doesn't destryoy player, camera and cursor
                 // implement it with archetypes instead of Ids which are volatile and meaningless af
                 if (entityId == 1 || entityId == 2 || entityId == 3)
                     continue;
-
-                if (OutOfRange(pos.Value,ref cam))
-                    World.Destroy(entity.EntityId);
+               if (OutOfRange(pos.Value,ref cam))
+                    World.DestroyAsap(entity.EntityId);
             }
         }
         public override void Draw(SpriteBatch sb)

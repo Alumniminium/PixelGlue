@@ -20,15 +20,15 @@ namespace Pixel.Scenes
             World.Systems.Add(new CursorMoveSystem(true, false));
             World.Systems.Add(new MoveSystem(true, false));
             World.Systems.Add(new CameraSystem(true, false));
-            World.Systems.Add(new MapShaderRenderer(true,true));
-            //World.Systems.Add(new WorldRenderSystem(false, true));
+            //World.Systems.Add(new MapShaderRenderer(true,true));
+            World.Systems.Add(new WorldRenderSystem(false, true));
             World.Systems.Add(new DbgEntitySpawnSystem(true, false));
             World.Systems.Add(new EntityRenderSystem(true, true));
             World.Systems.Add(new NameTagRenderSystem(false, true));
             //Systems.Add(new DialogSystem());
             World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
 
-            //World.Systems.Add(new SmartFramerate(true, true));
+            World.Systems.Add(new SmartFramerate(true, false));
             base.Initialize();
 
             var cursor = World.CreateEntity();
@@ -36,7 +36,7 @@ namespace Pixel.Scenes
             cursor.Add<PositionComponent>();
             var cursorDrw = new DrawableComponent(Color.IndianRed, new Rectangle(0, 0, 64, 64));
             cursor.Add(cursorDrw);
-            cursor.Register();
+            World.Register(ref cursor);
         }
         public override void LoadContent(ContentManager cm)
         {

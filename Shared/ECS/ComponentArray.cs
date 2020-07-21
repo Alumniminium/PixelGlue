@@ -8,21 +8,13 @@ namespace Shared.ECS
     public static class ComponentArray<T> where T : struct
     {
         public const int AMOUNT = 1000000;
-        public static ConcurrentStack<int> AvailableIndicies = new ConcurrentStack<int>(Enumerable.Range(0, AMOUNT));
-        public static ConcurrentDictionary<int, int> EntityIdToArrayOffset = new ConcurrentDictionary<int, int>();
         private readonly static T[] array = new T[AMOUNT];
+        private readonly static ConcurrentStack<int> AvailableIndicies = new ConcurrentStack<int>(Enumerable.Range(0, AMOUNT));
+        private readonly static ConcurrentDictionary<int, int> EntityIdToArrayOffset = new ConcurrentDictionary<int, int>();
+
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T Get(int owner)
-        {
-            if (EntityIdToArrayOffset.TryGetValue(owner, out var index))
-                return ref array[index];
-            throw new KeyNotFoundException($"{nameof(array)} is {array.Length} long, index for entity#{owner} not found.");
-        }
-
+        public static void AddFor(int owner) => AddFor(owner, default);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AddFor(int owner, T component)
         {
@@ -32,15 +24,24 @@ namespace Shared.ECS
                 array[offset] = component;
             }
             else
-                throw new System.Exception("AHHHHH");
+                throw new System.Exception("Bitch starved, nigga!");
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void AddFor(int owner) => AddFor(owner, default);
+        public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T Get(int owner)
+        {
+            if (EntityIdToArrayOffset.TryGetValue(owner, out var index))
+                return ref array[index];
+            throw new KeyNotFoundException($"Fucking index not found. ({nameof(array)} Len: {array.Length}, index for entity {owner} not found.)");
+        }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Remove(int owner)
         {
             if (EntityIdToArrayOffset.TryRemove(owner, out int offset))
                 AvailableIndicies.Push(offset);
+            World.Register(owner);
         }
     }
 }

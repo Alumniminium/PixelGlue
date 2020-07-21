@@ -3,6 +3,9 @@ using Pixel.Scenes;
 using Shared.IO;
 using System;
 using System.Threading;
+using System.Reflection;
+using System.Linq;
+using Shared.ECS;
 
 namespace Pixel
 {
@@ -11,7 +14,7 @@ namespace Pixel
         public static void Main()
         {
             FConsole.LogToFile = false;
-            FConsole.WriteLine("PID: "+Process.GetCurrentProcess().Id);
+            FConsole.WriteLine("PID: " + Process.GetCurrentProcess().Id);
             FConsole.WriteLine("Current Root: " + Environment.CurrentDirectory);
             FConsole.WriteLine("Setting Thread Priority to highest...");
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -33,6 +36,7 @@ namespace Pixel
 
             FConsole.WriteLine("Initializing scene systems...");
             FConsole.WriteLine("Running game...");
+
             engine.Run();
         }
     }

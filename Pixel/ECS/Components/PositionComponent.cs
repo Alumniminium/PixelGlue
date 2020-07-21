@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
+using Shared.ECS;
 
 namespace Pixel.ECS.Components
 {
+    [Component]
     public struct PositionComponent
     {
         public Vector2 Value;

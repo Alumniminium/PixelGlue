@@ -1,9 +1,10 @@
-﻿using System.Globalization;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Shared;
+using Shared.ECS;
 
 namespace Pixel.ECS.Components
 {
+    [Component]
     public struct CameraComponent
     {
         public Matrix Transform;

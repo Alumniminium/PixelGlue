@@ -1,9 +1,11 @@
 ﻿using Shared.Enums;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Shared.ECS;
 
 namespace Pixel.ECS.Components
 {
+    [Component]
     public struct KeyboardComponent
     {
         public Vector2 Axis;

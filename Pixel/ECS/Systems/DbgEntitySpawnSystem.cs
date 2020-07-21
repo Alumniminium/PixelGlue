@@ -21,7 +21,7 @@ namespace Pixel.ECS.Systems
         }
         public override void FixedUpdate(float dt)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 ref var entity = ref World.CreateEntity();
                 SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Npc);
@@ -37,7 +37,7 @@ namespace Pixel.ECS.Systems
                 drw.SrcRect = srcEntity.SrcRect;
                 drw.TextureName = srcEntity.TextureName;
                 dst.Value = new Vector2(Global.Random.Next(int.MinValue, int.MaxValue), Global.Random.Next(int.MinValue, int.MaxValue));
-                entity.Register();
+                World.Register(entity.EntityId);
             }
         }
     }

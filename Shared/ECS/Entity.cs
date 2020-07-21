@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -21,7 +22,7 @@ namespace Shared.ECS
         public bool Has<T>() where T : struct => ComponentArray<T>.HasFor(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
-
+        public void Remove<T>() => ReflectionHelper.Remove<T>(EntityId);
         public bool Has<T, T2>() where T : struct where T2 : struct => Has<T>() && Has<T2>();
         public bool Has<T, T2,T3>() where T : struct where T2 : struct where T3 : struct => Has<T,T2>() && Has<T3>();
         public bool Has<T, T2,T3,T4>() where T : struct where T2 : struct where T3 : struct where T4 : struct => Has<T,T2,T3>() && Has<T4>();
@@ -33,12 +34,6 @@ namespace Shared.ECS
         {
             nt.Parent = EntityId;
             Children = new List<int> { nt.EntityId };
-        }
-
-        public void Register()
-        {
-            foreach (var sys in World.Systems)
-                sys.AddEntity(EntityId);
         }
     }
 }
