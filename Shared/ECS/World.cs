@@ -62,19 +62,16 @@ namespace Shared.ECS
         public static void Register(ref Entity entity) => Register(entity.EntityId);
         public static void Register(int entityId)
         {
-            Global.PostUpdateQueue.Enqueue(() =>
+            for (int i = 0; i < Systems.Count; i++)
             {
-                for (int i = 0; i < Systems.Count; i++)
-                {
-                    var sys = Systems[i];
-                    sys.RemoveEntity(entityId);
-                }
-                for (int i = 0; i < Systems.Count; i++)
-                {
-                    var sys = Systems[i];
-                    sys.AddEntity(entityId);
-                }
-            });
+                var sys = Systems[i];
+                sys.RemoveEntity(entityId);
+            }
+            for (int i = 0; i < Systems.Count; i++)
+            {
+                var sys = Systems[i];
+                sys.AddEntity(entityId);
+            }
         }
 
         public static bool IdExists(int id) => EntityToArrayOffset.ContainsKey(id);
@@ -89,7 +86,7 @@ namespace Shared.ECS
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
             {
                 ref var actualEntity = ref Entities[arrayOffset];
-
+                actualEntity.Recycle();
                 if (actualEntity.Children != null)
                 {
                     foreach (var childId in actualEntity.Children)

@@ -8,7 +8,7 @@ namespace Shared.ECS
     {
         private static readonly List<Action<int>> RemoveMethodCache;
         private static readonly List<Type> ComponentTypes;
-        private static Dictionary<Type,Action<int>> Cache = new Dictionary<Type, Action<int>>();
+        private static Dictionary<Type, Action<int>> Cache = new Dictionary<Type, Action<int>>();
         static ReflectionHelper()
         {
             var types =
@@ -22,29 +22,23 @@ namespace Shared.ECS
 
             RemoveMethodCache = new List<Action<int>>(methods);
             ComponentTypes = new List<Type>(types);
-            
+
             for (int i = 0; i < ComponentTypes.Count; i++)
             {
                 var type = ComponentTypes[i];
                 var method = RemoveMethodCache[i];
-                Cache.Add(type,method);
-            }            
+                Cache.Add(type, method);
+            }
         }
         public static void Remove<T>(int entityId)
         {
-            Global.PostUpdateQueue.Enqueue(() =>
-            {
-                if(Cache.TryGetValue(typeof(T),out var method))
-                    method.Invoke(entityId);
-            });
+            if (Cache.TryGetValue(typeof(T), out var method))
+                method.Invoke(entityId);
         }
         public static void RecycleComponents(int entityId)
         {
-            Global.PostUpdateQueue.Enqueue(() =>
-            {
-                for (int i = 0; i < RemoveMethodCache.Count; i++)
-                        RemoveMethodCache[i].Invoke(entityId);
-            });
+            for (int i = 0; i < RemoveMethodCache.Count; i++)
+                RemoveMethodCache[i].Invoke(entityId);
         }
     }
 }
