@@ -21,6 +21,7 @@ namespace Pixel.Helpers
         {
             ChunkLoader.Name = "Chunkloader";
             ChunkLoader.Priority = ThreadPriority.Highest;
+            ChunkLoader.IsBackground=true;
             ChunkLoader.Start();
         }
         public static void QueueChunk(Point point)

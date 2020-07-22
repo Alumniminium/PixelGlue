@@ -17,7 +17,7 @@ namespace Pixel.Networking.Handlers
             var player = SceneManager.ActiveScene.Player;
             player.Add(new NetworkComponent(packet.UniqueId));
             World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
-            player.Register();
+            World.Register(ref player);
 
             var child = World.GetEntity(player.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
             ref var txt = ref child.Get<TextComponent>();

@@ -1,13 +1,11 @@
 using Microsoft.Xna.Framework;
+using Shared.ECS;
 
 namespace Pixel.ECS.Components
 {
+    [Component]
     public struct DestinationComponent
     {
         public Vector2 Value;
-        public DestinationComponent(int x, int y)
-        {
-            Value = new Vector2(x, y);
-        }
     }
 }

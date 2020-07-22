@@ -1,5 +1,8 @@
+using Shared.ECS;
+
 namespace Pixel.ECS.Components
 {
+    [Component]
     public struct SpeedComponent
     {
         public float SpeedMulti;

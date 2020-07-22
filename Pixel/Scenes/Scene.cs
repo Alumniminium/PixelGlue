@@ -96,7 +96,7 @@ namespace Pixel.Scenes
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
                     nameTag.Add(new PositionComponent(-16, -16, 0));
                     entity.AddChild(ref nameTag);
-                    nameTag.Register();
+                    World.Register(ref nameTag);
                     break;
                 case EntityType.Npc:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
@@ -113,7 +113,7 @@ namespace Pixel.Scenes
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
                     nameTag.Add(new PositionComponent(-16, -16, 0));
                     entity.AddChild(ref nameTag);
-                    nameTag.Register();
+                    World.Register(ref nameTag);
                     break;
             }
         }

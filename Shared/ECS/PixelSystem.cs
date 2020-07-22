@@ -21,11 +21,11 @@ namespace Shared.ECS
         public virtual void Update(float deltaTime) { }
         public virtual void FixedUpdate(float deltaTime) { }
         public virtual void Draw(SpriteBatch spriteBatch) { }
-        public virtual void AddEntity(int entity) => Global.PostUpdateQueue.Enqueue(() =>
+        public virtual void AddEntity(int entity)
         {
             if (!Entities.Contains(entity))
                 Entities.Add(entity);
-        });
-        public void RemoveEntity(int entity) => Global.PostUpdateQueue.Enqueue(() => Entities.Remove(entity));
+        }
+        public void RemoveEntity(int entity) => Entities.Remove(entity);
     }
 }

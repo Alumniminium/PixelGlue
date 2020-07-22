@@ -88,6 +88,14 @@ namespace Pixel.ECS.Systems
             {
                 var system = World.GetSystem<NameTagRenderSystem>();
                 system.IsActive = !system.IsActive;
+
+                for (int i = 5; i < 1000000; i++)
+                    if (World.IdExists(i))
+                    {
+                        ref var entity = ref World.GetEntity(i);
+                        entity.Remove<DestinationComponent>();
+                        World.Register(ref entity);
+                    }
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))
                 Environment.Exit(0);

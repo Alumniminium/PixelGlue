@@ -19,7 +19,7 @@ namespace Pixel.ECS.Systems
             if (entity.Has<PositionComponent, CameraComponent, DrawableComponent>())
                 base.AddEntity(entityId);
         }
-        public override void Update(float dt)
+        public override void FixedUpdate(float dt)
         {
             for (int i = 0; i < 1; i++)
             {
@@ -37,7 +37,7 @@ namespace Pixel.ECS.Systems
                 drw.SrcRect = srcEntity.SrcRect;
                 drw.TextureName = srcEntity.TextureName;
                 dst.Value = new Vector2(Global.Random.Next(int.MinValue, int.MaxValue), Global.Random.Next(int.MinValue, int.MaxValue));
-                entity.Register();
+                World.Register(entity.EntityId);
             }
         }
     }

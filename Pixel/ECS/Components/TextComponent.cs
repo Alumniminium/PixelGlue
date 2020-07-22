@@ -1,5 +1,8 @@
-﻿namespace Pixel.ECS.Components
+﻿using Shared.ECS;
+
+namespace Pixel.ECS.Components
 {
+    [Component]
     public struct TextComponent
     {
         public string Value;

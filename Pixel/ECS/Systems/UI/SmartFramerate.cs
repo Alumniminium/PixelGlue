@@ -56,7 +56,7 @@ namespace Pixel.ECS.Systems
             for (int i = lastLine; i < lines.Length; i++)
                 lines[i] = string.Empty;
 
-            FConsole.WriteLine($"FPS: {updateRate:###0}");
+            //FConsole.WriteLine($"FPS: {updateRate:###0}");
         }
         public override void Update(float timeSinceLastFrame)
         {

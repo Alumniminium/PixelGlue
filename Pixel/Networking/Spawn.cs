@@ -24,7 +24,7 @@ namespace Pixel.Networking
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
                 World.GetEntity(entity.Children[0]).Get<TextComponent>().Value = packet.GetName();
-                entity.Register();
+                World.Register(ref entity);
             }
             else
             {
