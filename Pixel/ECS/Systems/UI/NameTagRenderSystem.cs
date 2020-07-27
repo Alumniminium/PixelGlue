@@ -19,18 +19,18 @@ namespace Pixel.ECS.Systems
         }
         public override void Draw(SpriteBatch sb)
         {
+            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
             foreach (var id in Entities)
             {
                 ref readonly var entity = ref World.GetEntity(id);
                 ref readonly var parent = ref World.GetEntity(entity.Parent);
 
-                ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
                 ref readonly var parentPos = ref parent.Get<PositionComponent>();
                 ref readonly var txt = ref entity.Get<TextComponent>();
                 ref readonly var posOff = ref entity.Get<PositionComponent>();
 
-                var textPos = parentPos.Value + posOff.Value;
-                AssetManager.Fonts[txt.FontName].DrawText(sb, textPos.X, textPos.Y, txt.Value, Color.Blue, 0.25f);
+                var textPos = cam.WorldToScreen(parentPos.Value + posOff.Value);
+                AssetManager.Fonts[txt.FontName].DrawText(sb, textPos.X, textPos.Y, txt.Value, Color.Blue, 1f);
             }
         }
     }

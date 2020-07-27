@@ -2,9 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
 using Shared;
-using System.Runtime.CompilerServices;
 using Shared.ECS;
-using Pixel.Scenes;
 using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
@@ -20,7 +18,7 @@ namespace Pixel.ECS.Systems
             if (entity.Has<DbgBoundingBoxComponent>())
                 base.AddEntity(entityId);
         }
-        public override void Draw(SpriteBatch sb)
+        public unsafe override void Draw(SpriteBatch sb)
         {
             var pxl = AssetManager.GetTexture("pixel");
             var dbg = AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName);

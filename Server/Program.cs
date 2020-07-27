@@ -11,7 +11,8 @@ namespace Server
 {
     public static class Program
     {
-        public static Random Random = new Random(1337);
+        private const int TickRate = 30;
+        private const int SleepTime = 1000 / TickRate;
         public static int BotCount;
         public static void Main(string[] args)
         {
@@ -22,63 +23,18 @@ namespace Server
             ServerSocket.Start(13338);
             Console.WriteLine("Server running!");
 
-            var t = new Thread(() =>
-            {
-                Console.WriteLine("Heartbeat Thread started.");
-                for (int i = 0; i < BotCount; i++)
-                    Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
-                Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
-                while (true)
-                {
-                    foreach (var kvp in Collections.Npcs)
-                    {
-                        var npc = kvp.Value;
-                        if (DateTime.Now >= npc.LastMove.AddMilliseconds(850))
-                        {
-                            npc.LastMove = DateTime.Now;
-                            var dir = Vector2.Zero;
+            for (int i = 0; i < BotCount; i++)
+                Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
+            Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
 
-                            dir.X += Random.Next(-1, 2);
-                            if(dir.X==0)
-                            dir.Y += Random.Next(-1, 2);
-
-                            npc.Position += dir * 16;
-                            foreach (var kvp2 in Collections.Players)
-                            {
-                                var player = kvp2.Value;
-
-                                if (npc.Position.X < player.ViewBounds.Left || npc.Position.X >  player.ViewBounds.Right)
-                                    continue;
-                                if (npc.Position.Y < player.ViewBounds.Top || npc.Position.Y >  player.ViewBounds.Bottom)
-                                    continue;
-
-                                if (Global.Verbose)
-                                    Console.WriteLine($"Sending Walk/{npc.UniqueId} {(int)npc.Position.X},{(int)npc.Position.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
-                                kvp2.Value.Socket.Send(MsgSpawn.Create(npc.UniqueId, (int)npc.Position.X, (int)npc.Position.Y, Global.Random.Next(0,12), "sup"));
-                                kvp2.Value.Socket.Send(MsgWalk.Create(npc.UniqueId, npc.Position));
-                            }
-                        }
-                    }
-                    foreach (var kvp in Collections.Players)
-                    {
-                        var player = kvp.Value;
-
-                        if (DateTime.Now >= player.LastPing.AddSeconds(5))
-                        {
-                            if (Global.Verbose)
-                                Console.WriteLine($"Sending Ping to {player.Name}/{player.Username}.");
-                            player.Socket.Send(MsgPing.Create(player.UniqueId));
-                            player.LastPing = DateTime.Now;
-                        }
-                    }
-
-                    Thread.Sleep(100);
-                }
-            });
-            t.Start();
             while (true)
             {
-                Console.ReadLine();
+                var ticks = DateTime.UtcNow.Ticks;
+                Simulation.Step();
+                var postUpdate = DateTime.UtcNow.Ticks;
+
+                var timeSpent = (postUpdate - ticks) / 10000;
+                Thread.Sleep(SleepTime - (int)timeSpent);
             }
         }
     }

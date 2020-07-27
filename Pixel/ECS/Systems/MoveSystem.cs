@@ -36,10 +36,10 @@ namespace Pixel.ECS.Systems
                     var dir = dst.Value - pos.Value;
                     dir.Normalize();
 
-                    vel.Velocity = dir * spd.Speed * spd.SpeedMulti * deltaTime;
+                    vel.Value = dir * spd.Speed * spd.SpeedMulti * deltaTime;
 
                     var distanceToDest = Vector2.Distance(pos.Value, dst.Value);
-                    var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Velocity);
+                    var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Value);
                     var keepmoving = false;
                     if (distanceToDest <= moveDistance && entity.Has<KeyboardComponent>())
                     {
@@ -54,11 +54,11 @@ namespace Pixel.ECS.Systems
                     }
 
                     if (distanceToDest > moveDistance || keepmoving)
-                        pos.Value += vel.Velocity;
+                        pos.Value += vel.Value;
                     else
                     {
                         pos.Value = dst.Value;
-                        vel.Velocity = Vector2.Zero;
+                        vel.Value = Vector2.Zero;
                         if (entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
                         {
                             ref readonly var net = ref entity.Get<NetworkComponent>();

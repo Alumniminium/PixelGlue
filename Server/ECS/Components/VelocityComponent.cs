@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Numerics;
 using Shared.ECS;
 
 namespace Pixel.ECS.Components
@@ -6,6 +6,6 @@ namespace Pixel.ECS.Components
     [Component]
     public struct VelocityComponent
     {
-        public Vector2 Value;
+        public Vector2 Velocity;
     }
 }

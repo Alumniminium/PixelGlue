@@ -10,6 +10,7 @@ namespace Pixel.ECS.Components
         public Matrix Transform;
         public Matrix InverseTransform => Matrix.Invert(Transform);
         public Vector2 ScreenToWorld(Vector2 point) => Vector2.Transform(point, InverseTransform);
+        public Vector2 WorldToScreen(Vector2 point) => Vector2.Transform(point, Transform);
         public Rectangle ScreenRect;
         public float Zoom { get; set; }
         public Vector2 PositionOffset { get; set; }
