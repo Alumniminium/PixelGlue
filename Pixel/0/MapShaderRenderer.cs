@@ -19,31 +19,31 @@ namespace Pixel.zero
         public const int VERTICES_PER_QUAD = 6;
         public const int TRIANGLES_PER_QUAD = 2;
         public static Effect effect;
-        public int mapWidth = 500;
-        public int mapHeight = 500;
+        public int mapWidth = 100;
+        public int mapHeight = 100;
         public List<VertexPositionColorTexture> vertexList = new List<VertexPositionColorTexture>();
         public List<Texture2D> layerTextures = new List<Texture2D>();
         private VertexBuffer vertexBuffer;
-        public Matrix Projection;
-        private Vector3 camera2DScrollPosition;
-        private Vector3 camera2DScrollLookAt;
 
         public MapShaderRenderer(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         public override void Initialize()
         {
+            var Projection = Matrix.CreateScale(1, -1, 1) * Matrix.CreateOrthographicOffCenter(0, Global.ScreenWidth, Global.ScreenHeight, 0, 0, 1) * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f);
+
             CreateTileMapFromSheet(mapWidth, mapHeight);
             CreateTileMapFromSheet(mapWidth, mapHeight);
             CreateTileMapFromSheet(mapWidth, mapHeight);
 
-            CreateBuffers();
-            SetBuffers();
+            var quads = vertexList.ToArray();
+            vertexBuffer = new VertexBuffer(Global.Device, typeof(VertexPositionColorTexture), quads.Length, BufferUsage.WriteOnly);
+            vertexBuffer.SetData(quads);
 
             effect = Global.ContentManager.Load<Effect>("MapRenderer");
             effect.CurrentTechnique = effect.Techniques["QuadDraw"];
-
-            SetProjectionMatrix();
-            SetTexture(AssetManager.GetTexture("pixel"));
+            effect.Parameters["Projection"].SetValue(Projection);
+            effect.Parameters["TextureA"].SetValue(AssetManager.GetTexture("pixel"));
+            effect.Parameters["World"].SetValue(Matrix.Identity);
 
             IsActive = true;
         }
@@ -57,57 +57,35 @@ namespace Pixel.zero
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.End();
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
-            spriteBatch.Begin(SpriteSortMode.Immediate, transformMatrix: cam.Transform);
+            Global.Device.Clear(Color.CornflowerBlue);
+            Global.Device.BlendState = BlendState.AlphaBlend; // AlphaBlend Opaque NonPremultiplied
+            Global.Device.DepthStencilState = DepthStencilState.Default;
+            Global.Device.SamplerStates[0] = SamplerState.PointClamp;
+            Global.Device.RasterizerState = RasterizerState.CullClockwise;
+            Vector3 cameraUp = Vector3.TransformNormal(new Vector3(0, -1, 0), Matrix.CreateRotationZ(0)) * 10f;
+            Matrix World = Matrix.Identity;
+            var player = Global.Player;
+            Matrix View = Matrix.CreateLookAt(new Vector3(0,0, -1), new Vector3(0, 0, 0), cameraUp);
 
-            Global.Device.Clear( Color.CornflowerBlue  );
+            effect.Parameters["World"].SetValue(World);
+            effect.Parameters["View"].SetValue(View);
 
-            // We view the current scrolled position in pixels at.
-            SetCameraTileMapPixelPosition2D(cam.ScreenRect.Location.ToVector2(), Global.TileSize,  Global.TileSize);
-
-            // Were are we on the tile map and how many tiles do we draw in relation to the scrolled world position.
-            var mapVisibleDrawRect = cam.ScreenRect;//new Rectangle((int)cam.X, (int)mapViewedScrollPos.Y, Global.ScreenWidth/ Global.TileSize,Global.ScreenHeight/ Global.TileSize);
-
-            // set states and effect up.
-            SetStates();
-            SetUpEffect();
-
-            // Draw all tiles that are valid from start to end layers.
-            DrawTileMap(mapVisibleDrawRect, 0 , layerTextures.Count);
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred,samplerState: SamplerState.PointClamp, transformMatrix: cam.Transform);
-        }
-        public void SetCameraTileMapPixelPosition2D(Vector2 tilePosition, int currentTileMapDestinationWidth, int currentTileMapDestinationHeight)
-        {
-            var x = tilePosition.X * (float)currentTileMapDestinationWidth;
-            var y = tilePosition.Y * (float)currentTileMapDestinationHeight;
-            SetCameraPixelPosition2D( x, y);
-        }
-        private void SetCameraPixelPosition2D(float x, float y)
-        {
-            camera2DScrollPosition.X = x;
-            camera2DScrollPosition.Y = y;
-            camera2DScrollPosition.Z = -1;
-            camera2DScrollLookAt.X = x;
-            camera2DScrollLookAt.Y = y;
-            camera2DScrollLookAt.Z = 0;
+            Global.Device.SetVertexBuffer(vertexBuffer);
+            var playerPos = player.Get<PositionComponent>().Value;
+            var x = (int)playerPos.X;
+            var y = (int)playerPos.Y;
+            DrawTileMap(new Rectangle(x, y, 1000, 1000), 0, 3);
         }
         public void DrawTileMap(Rectangle TileRegionToDraw, int StartingLayer, int LayerLength)
         {
-            // The total map tiles
             int mapTilesLength = mapWidth * mapHeight;
-
-            // Ensure the buffer is set we could have different buffers for each layer but instead i put it all in one buffer.
-            SetBuffers();
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                // Loop thru the layers we are going to draw.
                 for (int layer = StartingLayer; layer < (StartingLayer + LayerLength); layer++)
                 {
                     // Set the texture that this layer uses on the card.
-                    SetTexture(layerTextures[layer]);
+                    effect.Parameters["TextureA"].SetValue(AssetManager.GetTexture("pixel"));
 
                     // Call apply the set the texture.
                     pass.Apply();
@@ -129,6 +107,7 @@ namespace Pixel.zero
         }
         public void CreateTileMapFromSheet(int mapWidth, int mapHeight)
         {
+            layerTextures.Add(AssetManager.GetTexture("pixel"));
             for (int y = 0; y < mapHeight; y++)
             {
                 for (int x = 0; x < mapWidth; x++)
@@ -150,47 +129,6 @@ namespace Pixel.zero
                     vertexList.Add(new VertexPositionColorTexture(new Vector3(destination.Left, destination.Top, 0f), t.Color, tl));
                 }
             }
-        }
-        public void SetTexture(Texture2D texture)
-        {
-            effect.Parameters["TextureA"].SetValue(texture);
-        }
-
-        public void SetBuffers()
-        {
-            Global.Device.SetVertexBuffer(vertexBuffer);
-        }
-        public void SetProjectionMatrix()
-        {
-            Viewport viewport = Global.Device.Viewport;
-            Projection = Matrix.CreateScale(1, -1, 1) * Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
-            effect.Parameters["Projection"].SetValue(Projection);
-        }
-        public void SetStates()
-        {
-            Global.Device.BlendState = BlendState.AlphaBlend; // AlphaBlend Opaque NonPremultiplied
-            Global.Device.DepthStencilState = DepthStencilState.Default;
-            Global.Device.SamplerStates[0] = SamplerState.PointClamp;
-            Global.Device.RasterizerState = RasterizerState.CullClockwise;
-        }
-        public void SetUpEffect()
-        {
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
-            var x = cam.ScreenRect.Location.X;
-            var y = cam.ScreenRect.Location.Y;
-            Vector3 cameraUp = Vector3.TransformNormal(new Vector3(0, -1, 0), Matrix.CreateRotationZ(0)) * 10f;
-            Matrix World = Matrix.Identity;
-            Matrix View = Matrix.CreateLookAt(new Vector3(x, y, -1), new Vector3(x, y, 0), cameraUp);
-
-            effect.Parameters["World"].SetValue(World);
-            effect.Parameters["View"].SetValue(View);
-        }
-        
-        public void CreateBuffers()
-        {
-            var quads = vertexList.ToArray();
-            vertexBuffer = new VertexBuffer(Global.Device, typeof(VertexPositionColorTexture), quads.Length, BufferUsage.WriteOnly);
-            vertexBuffer.SetData(quads);
         }
     }
 }

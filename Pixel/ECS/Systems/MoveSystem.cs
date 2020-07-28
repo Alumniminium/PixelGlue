@@ -45,7 +45,7 @@ namespace Pixel.ECS.Systems
                     {
                         ref readonly var inp = ref entity.Get<KeyboardComponent>();
                         keepmoving = inp.OldButtons.Contains(PixelGlueButtons.Left) || inp.OldButtons.Contains(PixelGlueButtons.Right) || inp.OldButtons.Contains(PixelGlueButtons.Down) || inp.OldButtons.Contains(PixelGlueButtons.Up);
-                        if (entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
+                        if (entity.Has<NetworkComponent>() && entity.EntityId == Global.Player.EntityId)
                         {
                             ref readonly var net = ref entity.Get<NetworkComponent>();
                             NetworkSystem.Send(MsgWalk.Create(net.UniqueId, dst.Value));
@@ -59,7 +59,7 @@ namespace Pixel.ECS.Systems
                     {
                         pos.Value = dst.Value;
                         vel.Value = Vector2.Zero;
-                        if (entity.Has<NetworkComponent>() && entity.EntityId == Scene.Player.EntityId)
+                        if (entity.Has<NetworkComponent>() && entity.EntityId == Global.Player.EntityId)
                         {
                             ref readonly var net = ref entity.Get<NetworkComponent>();
                             NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pos.Value));

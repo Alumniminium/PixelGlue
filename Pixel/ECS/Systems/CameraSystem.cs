@@ -14,7 +14,7 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent, CameraComponent>())
+            if (entity.Has<PositionComponent, DrawableComponent,CameraComponent>())
                 base.AddEntity(entityId);
         }
         public override void Update(float deltaTime)
@@ -24,19 +24,20 @@ namespace Pixel.ECS.Systems
                 ref var entity = ref World.GetEntity(entityId);
                 
                 ref readonly var pos = ref entity.Get<PositionComponent>();
+                ref readonly var drw = ref entity.Get<DrawableComponent>();
                 ref var cam = ref entity.Get<CameraComponent>();
                 
                 UpdateZoom(ref entity, ref cam);
-
-                var camLoc = pos.Value - cam.PositionOffset;
-                var camX = (int)camLoc.X / Global.TileSize * Global.TileSize;
-                var camY = (int)camLoc.Y / Global.TileSize * Global.TileSize;
+                var entityCenter = pos.Value + (drw.SrcRect.Size.ToVector2() /2);
+                var camCenter = pos.Value - cam.PositionOffset;
+                var camX = (int)(camCenter.X / Global.TileSize) * Global.TileSize;
+                var camY = (int)(camCenter.Y / Global.TileSize) * Global.TileSize;
 
                 cam.ScreenRect = new Rectangle(camX, camY, Global.VirtualScreenWidth, Global.VirtualScreenHeight);
-                cam.Transform = Matrix.CreateTranslation(-pos.Value.X, -pos.Value.Y, 0)
-                                                     * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
-                                                     * Matrix.CreateScale(Math.Max(0.5f, cam.Zoom))
-                                                     * Matrix.CreateTranslation(Global.ScreenWidth / 2, Global.ScreenHeight / 2, 0);
+                cam.Transform = Matrix.CreateTranslation(-entityCenter.X, -entityCenter.Y, 0)
+                                 * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
+                                 * Matrix.CreateScale(Math.Max(0.01f, cam.Zoom))
+                                 * Matrix.CreateTranslation(Global.ScreenWidth / 2, Global.ScreenHeight / 2, 0);
             }
         }
 

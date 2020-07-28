@@ -3,6 +3,7 @@ using Pixel.ECS.Components;
 using Pixel.ECS.Systems;
 using Pixel.Enums;
 using Pixel.Scenes;
+using Shared;
 using Shared.ECS;
 using Shared.IO;
 using Shared.TerribleSockets.Packets;
@@ -14,7 +15,7 @@ namespace Pixel.Networking.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Handle(MsgLogin packet)
         {
-            var player = SceneManager.ActiveScene.Player;
+            var player = Global.Player;
             player.Add(new NetworkComponent(packet.UniqueId));
             World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
             World.Register(ref player);

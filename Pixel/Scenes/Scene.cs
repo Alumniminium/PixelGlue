@@ -18,14 +18,13 @@ namespace Pixel.Scenes
         public int Id;
         public bool IsActive;
         public bool IsReady;
-        public Entity Player;
 
         public virtual void Initialize()
         {
             for (int i = 0; i < World.Systems.Count; i++)
                 World.Systems[i].Initialize();
-            Player = World.CreateEntity();
-            ApplyArchetype(ref Player, EntityType.Player);
+            Global.Player = World.CreateEntity();
+            ApplyArchetype(ref Global.Player, EntityType.Player);
             IsReady = true;
         }
 

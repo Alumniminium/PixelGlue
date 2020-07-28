@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Shared.ECS;
 using System;
 using System.Collections.Generic;
 
@@ -29,5 +30,7 @@ namespace Shared
         public static int Major { get; set; } = 0;
         public static int Minor { get; set; } = 6;
         public static Queue<Action> PostUpdateQueue = new Queue<Action>(128);
+
+        public static Entity Player;
     }
 }
