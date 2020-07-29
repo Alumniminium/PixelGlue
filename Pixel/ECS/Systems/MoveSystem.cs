@@ -5,6 +5,7 @@ using Shared.TerribleSockets.Packets;
 using Shared;
 using Shared.ECS;
 using Pixel.Scenes;
+using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {

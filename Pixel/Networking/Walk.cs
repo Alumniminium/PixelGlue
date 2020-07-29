@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Pixel.ECS.Components;
 using Shared.ECS;
+using Shared.ECS.Components;
 using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking.Handlers

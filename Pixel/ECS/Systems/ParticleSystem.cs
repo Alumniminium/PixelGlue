@@ -1,5 +1,6 @@
 using Pixel.ECS.Components;
 using Shared.ECS;
+using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {

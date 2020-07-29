@@ -8,6 +8,7 @@ using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared;
 using Shared.ECS;
+using Shared.ECS.Components;
 
 namespace Pixel.zero
 {

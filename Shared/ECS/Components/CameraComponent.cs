@@ -2,7 +2,7 @@
 using Shared;
 using Shared.ECS;
 
-namespace Pixel.ECS.Components
+namespace Shared.ECS.Components
 {
     [Component]
     public struct CameraComponent

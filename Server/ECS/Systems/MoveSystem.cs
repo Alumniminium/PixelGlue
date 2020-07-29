@@ -1,8 +1,8 @@
 using System;
-using System.Numerics;
-using Pixel.ECS.Components;
+using Microsoft.Xna.Framework;
 using Shared;
 using Shared.ECS;
+using Shared.ECS.Components;
 using Shared.TerribleSockets.Packets;
 
 namespace Server.ECS.Systems
@@ -34,17 +34,17 @@ namespace Server.ECS.Systems
                     var dir = dst.Value - pos.Value;
                     dir = Vector2.Normalize(dir);
 
-                    vel.Velocity = dir * spd.Speed * spd.SpeedMulti * deltaTime;
+                    vel.Value = dir * spd.Speed * spd.SpeedMulti * deltaTime;
 
                     var distanceToDest = Vector2.Distance(pos.Value, dst.Value);
-                    var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Velocity);
+                    var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Value);
 
                     if (distanceToDest > moveDistance)
-                        pos.Value += vel.Velocity;
+                        pos.Value += vel.Value;
                     else
                     {
                         pos.Value = dst.Value;
-                        vel.Velocity = Vector2.Zero;
+                        vel.Value = Vector2.Zero;
                     }
                 }
                 else
@@ -54,10 +54,10 @@ namespace Server.ECS.Systems
                     {
                         var player = kvp2.Value;
 
-                        if (pos.Value.X < player.ViewBounds.Left || pos.Value.X > player.ViewBounds.Right)
-                            continue;
-                        if (pos.Value.Y < player.ViewBounds.Top || pos.Value.Y > player.ViewBounds.Bottom)
-                            continue;
+                        //if (pos.Value.X < player.ViewBounds.Left || pos.Value.X > player.ViewBounds.Right)
+                        //    continue;
+                        //if (pos.Value.Y < player.ViewBounds.Top || pos.Value.Y > player.ViewBounds.Bottom)
+                        //    continue;
 
                         if (Global.Verbose)
                             Console.WriteLine($"Sending Walk/{entity.EntityId * 1000000} {(int)pos.Value.X},{(int)pos.Value.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");

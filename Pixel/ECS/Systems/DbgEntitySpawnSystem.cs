@@ -5,6 +5,7 @@ using Shared;
 using Pixel.Enums;
 using Shared.ECS;
 using Pixel.Helpers;
+using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {

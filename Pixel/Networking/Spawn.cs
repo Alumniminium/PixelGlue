@@ -6,6 +6,7 @@ using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared.ECS;
+using Shared.ECS.Components;
 using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking

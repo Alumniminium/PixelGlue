@@ -3,7 +3,7 @@ using Shared.IO;
 using System;
 using Shared.ECS;
 
-namespace Pixel.ECS.Systems
+namespace Shared.ECS.Systems
 {
     public class GCMonitor : AsyncPixelSystem
     {

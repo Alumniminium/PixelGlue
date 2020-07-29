@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Shared.ECS;
 
-namespace Pixel.ECS.Components
+namespace Shared.ECS.Components
 {
     [Component]
     public struct DestinationComponent

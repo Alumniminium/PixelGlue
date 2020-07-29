@@ -6,6 +6,8 @@ using Pixel.Helpers;
 using Pixel.zero;
 using Shared;
 using Shared.ECS;
+using Shared.ECS.Components;
+using Shared.ECS.Systems;
 
 namespace Pixel.Scenes
 {

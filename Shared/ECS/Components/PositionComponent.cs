@@ -1,16 +1,16 @@
-using System.Numerics;
+using Microsoft.Xna.Framework;
 using Shared.ECS;
 
-namespace Pixel.ECS.Components
+namespace Shared.ECS.Components
 {
     [Component]
     public struct PositionComponent
     {
         public Vector2 Value;
         public float Rotation;
-        public PositionComponent(int x, int y, int rotation)
+        public PositionComponent(float x, float y, float rotation = 0)
         {
-            Value = new Vector2(x, y);
+           Value= new Vector2(x,y);
             Rotation = rotation;
         }
     }

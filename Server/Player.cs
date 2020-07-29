@@ -7,7 +7,7 @@ namespace Server
 {
     public class Player
     {
-        private Rectangle _viewRect = new Rectangle(0, 0, Global.VirtualScreenWidth + (Global.TileSize * 4), Global.VirtualScreenHeight + (Global.TileSize * 4));
+        private Rectangle _viewRect = new Rectangle(0, 0, Global.VirtualScreenWidth + Global.HalfVirtualScreenWidth, Global.VirtualScreenHeight + Global.HalfVirtualScreenHeight);
         private Vector2 _location = new Vector2(0,0);
         public string Name;
         public int UniqueId;
@@ -18,8 +18,8 @@ namespace Server
             {
                 _location = value;
                 value.Round();
-                var simRectX = (int)value.X - (Global.HalfVirtualScreenWidth + (Global.TileSize * 3));
-                var simRectY = (int)value.Y - (Global.HalfVirtualScreenHeight + (Global.TileSize * 3));
+                var simRectX = (int)value.X - (Global.HalfVirtualScreenWidth + Global.HalfVirtualScreenWidth);
+                var simRectY = (int)value.Y - (Global.HalfVirtualScreenHeight + Global.HalfVirtualScreenHeight);
                 _viewRect.X = simRectX;
                 _viewRect.Y = simRectY;
             }

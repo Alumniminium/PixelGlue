@@ -10,6 +10,7 @@ using Shared.Diagnostics;
 using Shared.ECS;
 using Pixel.ECS.Components;
 using Pixel.Helpers;
+using Shared.ECS.Components;
 
 namespace Pixel.Scenes
 {

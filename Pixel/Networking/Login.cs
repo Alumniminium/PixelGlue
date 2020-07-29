@@ -5,6 +5,7 @@ using Pixel.Enums;
 using Pixel.Scenes;
 using Shared;
 using Shared.ECS;
+using Shared.ECS.Components;
 using Shared.IO;
 using Shared.TerribleSockets.Packets;
 

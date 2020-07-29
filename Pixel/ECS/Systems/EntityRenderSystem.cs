@@ -4,6 +4,7 @@ using Pixel.ECS.Components;
 using Shared.ECS;
 using System.Runtime.CompilerServices;
 using Pixel.Helpers;
+using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {

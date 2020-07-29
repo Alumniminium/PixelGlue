@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Pixel.ECS.Components;
 using Shared;
 using Shared.ECS;
+using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
