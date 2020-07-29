@@ -134,11 +134,13 @@ namespace Pixel.Helpers
             }
             else
             {
-                float val = 0f;
+                float val;
                 switch (GenerateBiome(x2, y2))
                 {
                     case BiomeType.Plains:
                         val = GeneratePlains(x2, y2);
+                        if (val > 0.7f)
+                            tile.Color = "B86F50".ToColor();//wrong colors
                         break;
                     case BiomeType.Desert:
                         val = GenerateDesert(x2, y2);

@@ -26,9 +26,9 @@ namespace Pixel.Scenes
             World.Systems.Add(new EntityRenderSystem(true, true));
             //Systems.Add(new DialogSystem());
 
-            World.Systems.Add(new SmartFramerate(true, false));
             World.Systems.Add(new NameTagRenderSystem(false, true));
             World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
+            World.Systems.Add(new SmartFramerate(true, true));
             base.Initialize();
 
             var cursor = World.CreateEntity();

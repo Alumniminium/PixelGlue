@@ -29,7 +29,7 @@ namespace Pixel.ECS.Systems
                 ref readonly var txt = ref entity.Get<TextComponent>();
                 ref readonly var posOff = ref entity.Get<PositionComponent>();
 
-                var textPos = cam.WorldToScreen(parentPos.Value + posOff.Value);
+                var textPos = parentPos.Value + posOff.Value;
                 AssetManager.Fonts[txt.FontName].DrawText(sb, textPos.X, textPos.Y, txt.Value, Color.Blue, 1f);
             }
         }

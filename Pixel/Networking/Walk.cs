@@ -13,9 +13,16 @@ namespace Pixel.Networking.Handlers
             if (World.UidExists(packet.UniqueId))
             {
                 ref readonly var entity = ref World.GetEntityByUniqueId(packet.UniqueId);
-                ref var dst = ref entity.Get<DestinationComponent>();
 
-                dst.Value = packet.Position;
+                if (entity.Has<DestinationComponent>())
+                {
+                    ref var dst = ref entity.Get<DestinationComponent>();
+                    dst.Value = packet.Position;
+                }
+                else
+                {
+                    entity.Add(new DestinationComponent(packet.Position));
+                }
             }
         }
     }

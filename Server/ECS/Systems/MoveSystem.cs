@@ -1,6 +1,9 @@
+using System;
 using System.Numerics;
 using Pixel.ECS.Components;
+using Shared;
 using Shared.ECS;
+using Shared.TerribleSockets.Packets;
 
 namespace Server.ECS.Systems
 {
@@ -27,7 +30,7 @@ namespace Server.ECS.Systems
                 {
                     ref readonly var spd = ref entity.Get<SpeedComponent>();
                     ref var vel = ref entity.Get<VelocityComponent>();
-                    
+
                     var dir = dst.Value - pos.Value;
                     dir = Vector2.Normalize(dir);
 
@@ -42,8 +45,24 @@ namespace Server.ECS.Systems
                     {
                         pos.Value = dst.Value;
                         vel.Velocity = Vector2.Zero;
-                        //ref readonly var net = ref entity.Get<NetworkComponent>();
-                        //NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pos.Value));
+                    }
+                }
+                else
+                {
+                    dst.Value = new Vector2(dst.Value.X + (Global.Random.Next(0,5) * Global.TileSize), dst.Value.Y + (Global.Random.Next(0,5) * Global.TileSize));
+                    foreach (var kvp2 in Collections.Players)
+                    {
+                        var player = kvp2.Value;
+
+                        if (pos.Value.X < player.ViewBounds.Left || pos.Value.X > player.ViewBounds.Right)
+                            continue;
+                        if (pos.Value.Y < player.ViewBounds.Top || pos.Value.Y > player.ViewBounds.Bottom)
+                            continue;
+
+                        if (Global.Verbose)
+                            Console.WriteLine($"Sending Walk/{entity.EntityId * 1000000} {(int)pos.Value.X},{(int)pos.Value.Y} to player {(int)kvp2.Value.Location.X},{(int)kvp2.Value.Location.Y}");
+                        kvp2.Value.Socket.Send(MsgSpawn.Create(entity.EntityId * 1000000, (int)pos.Value.X, (int)pos.Value.Y, Global.Random.Next(0, 12), "sup"));
+                        kvp2.Value.Socket.Send(MsgWalk.Create(entity.EntityId * 1000000, (int)pos.Value.X, (int)pos.Value.Y));
                     }
                 }
             }

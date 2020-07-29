@@ -28,10 +28,16 @@ namespace Pixel.Networking
             }
             else
             {
+                return;
                 ref var entity = ref World.GetEntityByUniqueId(packet.UniqueId);
                 var srcEntity = Database.Entities[packet.Model];
                 entity.Get<PositionComponent>().Value = new Vector2(packet.X, packet.Y);
-                entity.Get<DestinationComponent>().Value = new Vector2(packet.X, packet.Y);
+
+                if (entity.Has<DestinationComponent>())
+                    entity.Get<DestinationComponent>().Value = new Vector2(packet.X, packet.Y);
+                else
+                    entity.Add(new DestinationComponent(packet.X, packet.Y));
+
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
                 if (entity.Children != null)

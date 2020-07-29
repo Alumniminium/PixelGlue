@@ -66,10 +66,6 @@ namespace Shared.ECS
             {
                 var sys = Systems[i];
                 sys.RemoveEntity(entityId);
-            }
-            for (int i = 0; i < Systems.Count; i++)
-            {
-                var sys = Systems[i];
                 sys.AddEntity(entityId);
             }
         }

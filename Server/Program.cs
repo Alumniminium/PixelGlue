@@ -1,19 +1,16 @@
-﻿using System.Data;
-using Microsoft.Xna.Framework;
-using Shared;
-using Shared.TerribleSockets.Packets;
+﻿using System.Threading;
 using Shared.TerribleSockets.Queues;
 using Shared.TerribleSockets.Server;
 using System;
-using System.Threading;
+using Shared.ECS;
+using Pixel.ECS.Components;
+using Server.ECS.Systems;
 
 namespace Server
 {
     public static class Program
     {
-        private const int TickRate = 30;
-        private const int SleepTime = 1000 / TickRate;
-        public static int BotCount;
+        public static int BotCount=100;
         public static void Main(string[] args)
         {
             if (args.Length > 0)
@@ -23,18 +20,33 @@ namespace Server
             ServerSocket.Start(13338);
             Console.WriteLine("Server running!");
 
+            World.Systems.Add(new MoveSystem(true,false));
+
             for (int i = 0; i < BotCount; i++)
+            {
                 Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
+                ref var npc = ref World.CreateEntity(100_000 + i);
+                npc.Add<PositionComponent>();
+                npc.Add<DestinationComponent>();
+                npc.Add(new SpeedComponent(16));
+                npc.Add<VelocityComponent>();
+                World.Register(ref npc);
+            }
             Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
+
+            var now = DateTime.UtcNow.Ticks;
+            var dt = 0f;
+            var last = DateTime.UtcNow.Ticks;
 
             while (true)
             {
-                var ticks = DateTime.UtcNow.Ticks;
-                Simulation.Step();
-                var postUpdate = DateTime.UtcNow.Ticks;
-
-                var timeSpent = (postUpdate - ticks) / 10000;
-                Thread.Sleep(SleepTime - (int)timeSpent);
+                now = DateTime.UtcNow.Ticks;
+                dt = (now - last) / TimeSpan.TicksPerMillisecond / 1000f;
+                Simulation.Step(dt);
+                var postUpdateTicks = DateTime.UtcNow.Ticks;
+                last = now;
+                var timeTaken = postUpdateTicks-now;
+                Thread.Sleep(Math.Max(0,33 - (int)(timeTaken / TimeSpan.TicksPerMillisecond)));
             }
         }
     }

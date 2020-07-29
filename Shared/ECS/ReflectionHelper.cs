@@ -8,15 +8,14 @@ namespace Shared.ECS
     {
         private static readonly List<Action<int>> RemoveMethodCache;
         private static readonly List<Type> ComponentTypes;
-        private static Dictionary<Type, Action<int>> Cache = new Dictionary<Type, Action<int>>();
+        private static readonly Dictionary<Type, Action<int>> Cache = new Dictionary<Type, Action<int>>();
         static ReflectionHelper()
         {
-            var types =
-                    from a in AppDomain.CurrentDomain.GetAssemblies()
-                    from t in a.GetTypes()
-                    let aList = t.GetCustomAttributes(typeof(ComponentAttribute), true)
-                    where aList != null && aList.Length > 0
-                    select t;
+            var types = from a in AppDomain.CurrentDomain.GetAssemblies()
+                        from t in a.GetTypes()
+                        let aList = t.GetCustomAttributes(typeof(ComponentAttribute), true)
+                        where aList?.Length > 0
+                        select t;
 
             var methods = types.Select(ct => (Action<int>)typeof(ComponentArray<>).MakeGenericType(ct).GetMethod("Remove").CreateDelegate(typeof(Action<int>)));
 
