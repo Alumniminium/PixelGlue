@@ -13,13 +13,17 @@ namespace Pixel.ECS.Systems
     public class WorldRenderSystem : PixelSystem
     {
         public override string Name { get; set; } = "World Rendering System";
-        public Point Overdraw = new Point(Global.TileSize * 4, Global.TileSize * 2);
+        public Point Overdraw = new Point(Global.HalfVirtualScreenWidth, Global.HalfVirtualScreenHeight);
         public WorldRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public Texture2D Pixel;
+        public Texture2D Pixel, WorldTexture;
+        public Color[] Pixels;
 
         public override void Initialize()
         {
             Pixel = AssetManager.GetTexture("pixel");
+            WorldTexture = AssetManager.GetTexture("world");
+            Pixels = new Color[WorldTexture.Width * WorldTexture.Height];
+            WorldTexture.GetData(Pixels);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -30,10 +34,17 @@ namespace Pixel.ECS.Systems
             for (int x = xs; x < xe; x += Global.TileSize)
                 for (int y = ys; y < ye; y += Global.TileSize)
                 {
-                    var tile = Chunkinator.GetTile(x, y);
-                    if (tile == null)
+                    var xx = x / Global.TileSize;
+                    var yy = y / Global.TileSize;
+                    //var tile = Chunkinator.GetTile(x, y);
+                    //if (tile == null)
+                    //    continue;
+                    if (xx < 0 || yy < 0)
                         continue;
-                    sb.Draw(Pixel, tile.Dst, Pixel.Bounds, tile.Color, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    var idx = yy * WorldTexture.Width + xx;
+                    var dst = new Rectangle(x, y, 16, 16);
+                    //sb.Draw(Pixel, tile.Dst, Pixel.Bounds, tile.Color, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    sb.Draw(Pixel, dst, Pixel.Bounds, Pixels[idx], 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
         }
 

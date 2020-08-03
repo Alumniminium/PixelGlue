@@ -38,42 +38,6 @@
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/dawn.png;dawn.png
 
-#begin ../../Build/Content/emoji_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/emoji_0.png;emoji_0.png
-
-#begin ../../Build/Content/emoji_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/emoji_1.png;emoji_1.png
-
-#begin ../../Build/Content/height_mountain_mono.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/height_mountain_mono.png;height_mountain_mono.png
-
 #begin ../../Build/Content/MapRenderer.fx
 /importer:EffectImporter
 /processor:LocalEffectProcessor
@@ -106,18 +70,6 @@
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/profont_12_0.png;profont_12_0.png
 
-#begin ../../Build/Content/rivers.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/rivers.png;rivers.png
-
 #begin ../../Build/Content/selectionrect3.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -141,16 +93,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/selectionrect4.png;selectionrect4.png
-
-#begin ../../Build/Content/tree.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Build/Content/tree.png;tree.png
 

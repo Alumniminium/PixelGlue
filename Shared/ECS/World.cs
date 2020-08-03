@@ -59,7 +59,16 @@ namespace Shared.ECS
 
         public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
         public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
-        public static void Register(ref Entity entity) => Register(entity.EntityId);
+        public static void Register(ref Entity entity)
+        {
+            if (entity.Children != null)
+            {
+                foreach (var childId in entity.Children)
+                    Register(childId);
+            }
+            Register(entity.EntityId);
+        }
+
         public static void Register(int entityId)
         {
             for (int i = 0; i < Systems.Count; i++)

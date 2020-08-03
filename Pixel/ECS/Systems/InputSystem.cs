@@ -6,6 +6,7 @@ using Shared.Enums;
 using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
+using Pixel.Helpers;
 
 namespace Pixel.ECS.Systems
 {
@@ -87,19 +88,13 @@ namespace Pixel.ECS.Systems
             }
             if (inp.IsPressed(PixelGlueButtons.NameTags))
             {
-                var system = World.GetSystem<NameTagRenderSystem>();
+                var system = World.GetSystem<TextRenderSystem>();
                 system.IsActive = !system.IsActive;
 
-                Global.PostUpdateQueue.Enqueue(() =>
-                {
-                    for (int i = 5; i < 1000000; i++)
-                        if (World.IdExists(i))
-                        {
-                            ref var entity = ref World.GetEntity(i);
-                            entity.Remove<DestinationComponent>();
-                            World.Register(ref entity);
-                        }
-                });
+                ref var dialog = ref DialogFactory.Create(ref Global.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
+                World.Register(ref dialog);
+                foreach(var childId in dialog.Children)
+                World.Register(childId);
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))
                 Environment.Exit(0);
