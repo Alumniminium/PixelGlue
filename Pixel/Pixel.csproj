@@ -5,6 +5,7 @@
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
 
   <PropertyGroup>

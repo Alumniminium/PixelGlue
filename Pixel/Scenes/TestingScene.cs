@@ -31,7 +31,7 @@ namespace Pixel.Scenes
 
             World.Systems.Add(new TextRenderSystem(false, true));
             //World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
-            //World.Systems.Add(new SmartFramerate(true, true));
+            World.Systems.Add(new SmartFramerate(true, true));
             base.Initialize();
 
             //var cursor = World.CreateEntity();

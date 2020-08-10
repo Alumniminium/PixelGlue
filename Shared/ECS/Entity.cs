@@ -7,7 +7,6 @@ namespace Shared.ECS
     public partial struct Entity
     {
         public int EntityId;
-        public ulong Components;
         public int Parent;
         public List<int> Children;
 
