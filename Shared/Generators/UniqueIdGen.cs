@@ -4,5 +4,5 @@ namespace Pixel.Helpers
     {
         private static int _lastUid = 0;
         public static int GetNextUID() => ++_lastUid;
-    }
+    }    
 }

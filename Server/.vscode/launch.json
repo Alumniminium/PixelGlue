@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/Server.dll",
+            "program": "${workspaceFolder}/bin/Debug/net5/Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework.Input;
 using Shared.ECS;
 
 namespace Pixel.ECS.Components
@@ -5,8 +6,7 @@ namespace Pixel.ECS.Components
     [Component]
     public struct MouseComponent
     {
-        public float Scroll;
-        public float OldScroll;
-        public float X,Y;
+        public MouseState CurrentState, OldState;
+        public float WorldX,WorldY;
     }
 }

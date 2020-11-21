@@ -24,9 +24,6 @@ namespace Pixel.Scenes
         {
             for (int i = 0; i < World.Systems.Count; i++)
                 World.Systems[i].Initialize();
-            Global.Player = World.CreateEntity();
-            ApplyArchetype(ref Global.Player, EntityType.Player);
-            IsReady = true;
         }
 
         public virtual void LoadContent(ContentManager cm)
@@ -94,7 +91,7 @@ namespace Pixel.Scenes
 
                     ref var nameTag = ref World.CreateEntity();
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
-                    nameTag.Add(new PositionComponent(-16, -16, 0));
+                    nameTag.Add(new PositionComponent(1024, 1024, 0));
                     entity.AddChild(ref nameTag);
                     World.Register(ref nameTag);
                     break;
@@ -103,8 +100,6 @@ namespace Pixel.Scenes
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
 
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
-                    entity.Add<PositionComponent>();
-                    entity.Add<DestinationComponent>();
                     entity.Add<VelocityComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));

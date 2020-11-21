@@ -49,9 +49,9 @@ namespace Pixel.ECS.Systems
 
             ref readonly var mos = ref entity.Get<MouseComponent>();
 
-            if (mos.Scroll > mos.OldScroll)
+            if (mos.CurrentState.ScrollWheelValue > mos.OldState.ScrollWheelValue)
                 cam.Zoom *= 2f;
-            else if (mos.Scroll < mos.OldScroll)
+            else if (mos.CurrentState.ScrollWheelValue < mos.OldState.ScrollWheelValue)
                 cam.Zoom /= 2f;
         }
     }

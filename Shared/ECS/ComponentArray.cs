@@ -14,17 +14,18 @@ namespace Shared.ECS
 
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void AddFor(int owner) => AddFor(owner, default);
+        public static ref T AddFor(int owner) => ref AddFor(owner, default);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void AddFor(int owner, T component)
+        public static ref T AddFor(int owner, T component)
         {
-            if (AvailableIndicies.TryPop(out int offset))
-            {
-                EntityIdToArrayOffset.TryAdd(owner, offset);
-                array[offset] = component;
-            }
-            else
-                throw new System.Exception("Bitch starved, nigga!");
+            if(!EntityIdToArrayOffset.TryGetValue(owner,out var offset))
+                if (AvailableIndicies.TryPop(out offset))
+                    EntityIdToArrayOffset.TryAdd(owner, offset);
+                else
+                    throw new System.Exception("AvailableIndicies.TryPop(out offset)");
+
+            array[offset] = component;
+            return ref array[offset];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
@@ -41,7 +42,6 @@ namespace Shared.ECS
         {
             if (EntityIdToArrayOffset.TryRemove(owner, out int offset))
                 AvailableIndicies.Push(offset);
-            World.Register(owner);
         }
     }
 }

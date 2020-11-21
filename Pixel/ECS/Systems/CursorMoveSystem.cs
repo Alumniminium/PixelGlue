@@ -23,8 +23,8 @@ namespace Pixel.ECS.Systems
                 ref readonly var mos = ref entity.Get<MouseComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
 
-                pos.Value.X = mos.X;
-                pos.Value.Y = mos.Y;
+                pos.Value.X = mos.WorldX;
+                pos.Value.Y = mos.WorldY;
             }
         }
     }

@@ -15,46 +15,40 @@ namespace Pixel
 
         public Engine(bool vsync)
         {
-            SetInitialGraphicsOptions(vsync);
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                GraphicsProfile = GraphicsProfile.HiDef,
+                SynchronizeWithVerticalRetrace=vsync,
+                PreferHalfPixelOffset = false,
+                HardwareModeSwitch = false
+            };
+            _graphics.ApplyChanges();
             Content.RootDirectory = "../Content";
             Global.ContentManager = Content;
 
             IsMouseVisible = true;
-
+        }
+        protected override void Initialize()
+        {
+            _graphics.PreferredBackBufferWidth = Global.ScreenWidth;
+            _graphics.PreferredBackBufferHeight = Global.ScreenHeight;
+            _graphics.ApplyChanges();
+            Global.Device = GraphicsDevice;
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             Window.ClientSizeChanged += (s, e) =>
             {
                 Global.ScreenHeight = Window.ClientBounds.Height;
                 Global.ScreenWidth = Window.ClientBounds.Width;
             };
         }
-
-        private void SetInitialGraphicsOptions(bool vsync)
-        {
-            _graphics = new GraphicsDeviceManager(this)
-            {
-                PreferredBackBufferWidth = Global.ScreenWidth,
-                PreferredBackBufferHeight = Global.ScreenHeight,
-                GraphicsProfile = GraphicsProfile.HiDef,
-                SynchronizeWithVerticalRetrace = vsync,
-                PreferHalfPixelOffset = false,
-                HardwareModeSwitch = false
-            };
-            _graphics.ApplyChanges();
-        }
-        protected override void LoadContent()
-        {
-            Global.Device = GraphicsDevice;
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-        }
-
         protected override void Update(GameTime gameTime)
         {
-            Global.UpdateTime=0;
+            Global.UpdateTime = 0;
             _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             while (SceneManager.QueuedTasks.TryDequeue(out var action))
                 action.Invoke();
-            
+
             SceneManager.ActiveScene.Update(gameTime);
 
             while (_elapsedTime >= _updateTime)
@@ -68,7 +62,7 @@ namespace Pixel
 
         protected override void Draw(GameTime gameTime)
         {
-            Global.DrawTime=0;
+            Global.DrawTime = 0;
             Global.FrameCounter++;
             _graphics.GraphicsDevice.Clear(Color.Black);
 

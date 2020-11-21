@@ -5,6 +5,7 @@ using Shared.ECS;
 using Pixel.Helpers;
 using Shared.ECS.Components;
 using Shared;
+using Pixel.Scenes;
 
 namespace Pixel.ECS.Systems
 {
@@ -56,7 +57,7 @@ namespace Pixel.ECS.Systems
         }
         private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
         {
-            ref readonly var cam = ref Global.Player.Get<CameraComponent>();
+            ref readonly var cam = ref TestingScene.Player.Get<CameraComponent>();
             var bounds = cam.ScreenRect;
             xs = bounds.Left - Overdraw.X;
             ys = bounds.Top - Overdraw.Y;

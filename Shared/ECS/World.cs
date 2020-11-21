@@ -11,10 +11,12 @@ namespace Shared.ECS
         private static readonly Entity[] Entities;
         private static readonly Stack<int> AvailableArrayIndicies;
         private static readonly Dictionary<int, int> EntityToArrayOffset, UniqueIdToEntityId, EntityIdToUniqueId;
+        private static readonly Dictionary<int, List<int>> Children;
         public static List<PixelSystem> Systems;
         static World()
         {
             Entities = new Entity[1_000_001];
+            Children = new Dictionary<int, List<int>>();
             AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1, 1_000_000));
             EntityToArrayOffset = new Dictionary<int, int>();
             UniqueIdToEntityId = new Dictionary<int, int>();
@@ -44,6 +46,16 @@ namespace Shared.ECS
             Entities[arrayIndex] = entity;
             return ref Entities[arrayIndex];
         }
+
+        public static Entity[] GetEntities() => Entities;
+
+        public static unsafe T CreateEntity<T>(int uniqueId) where T : unmanaged
+        {
+            ref var d = ref CreateEntity(uniqueId);
+            var entity = stackalloc T[1];
+            *(Entity*)(entity + 0) = d;
+            return *entity;
+        }
         public static ref Entity CreateEntity(int uniqueId)
         {
             ref var entity = ref CreateEntity();
@@ -56,7 +68,20 @@ namespace Shared.ECS
             UniqueIdToEntityId.TryAdd(uniqueId, entityId);
             EntityIdToUniqueId.TryAdd(entityId, uniqueId);
         }
-
+        public static List<int> GetChildren(ref Entity entity)
+        {
+            if (!Children.ContainsKey(entity.EntityId))
+                Children.Add(entity.EntityId, new List<int>());
+            return Children[entity.EntityId];
+        }
+        internal static void AddChildFor(ref Entity entity, ref Entity nt)
+        {
+            nt.Parent = entity.EntityId;
+            if (!Children.TryGetValue(entity.EntityId, out var children))
+                Children.Add(entity.EntityId, new List<int>());
+            else
+                Children[entity.EntityId].Add(nt.EntityId);
+        }
         public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
         public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
         public static void Register(ref Entity entity)

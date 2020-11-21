@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-server",
-            "program": "${workspaceFolder}/Build/netcoreapp3.1/Server.dll",
+            "program": "${workspaceFolder}/Build/net5/Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Server",
             "stopAtEntry": false,
@@ -21,7 +21,7 @@
              "request": "launch",
              "preLaunchTask": "build",
              // If you have changed target frameworks, make sure to update the program path.
-             "program": "${workspaceFolder}/Build/netcoreapp3.1/Pixel.dll",
+             "program": "${workspaceFolder}/Build/net5/Pixel.dll",
              "args": [],
              "cwd": "${workspaceFolder}/Pixel",
              // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

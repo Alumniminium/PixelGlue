@@ -7,6 +7,7 @@ using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
 using Pixel.Helpers;
+using Pixel.Scenes;
 
 namespace Pixel.ECS.Systems
 {
@@ -26,7 +27,7 @@ namespace Pixel.ECS.Systems
         public override void AddEntity(int entityId)
         {
             ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<KeyboardComponent, DestinationComponent, PositionComponent>())
+            if (entity.Has<KeyboardComponent, PositionComponent>())
                 base.AddEntity(entityId);
         }
 
@@ -36,7 +37,6 @@ namespace Pixel.ECS.Systems
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
                 ref var inp = ref entity.Get<KeyboardComponent>();
-                ref var dst = ref entity.Get<DestinationComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 EnsureReady(ref inp);
 
@@ -48,8 +48,23 @@ namespace Pixel.ECS.Systems
 
                 Keyboard(ref inp);
 
-                if (pos.Value == dst.Value)
-                    dst.Value = pos.Value + (inp.Axis * Global.TileSize);
+                if (inp.Axis.Length() > 0)
+                {
+                    if(entity.Has<DestinationComponent>())
+                    {
+                        ref var dst = ref entity.Get<DestinationComponent>();
+                        var gridPos = pos.Value * Global.TileSize;
+                        gridPos = gridPos / Global.TileSize;
+                        dst.Value = gridPos + (inp.Axis * Global.TileSize);
+                    }
+                    else
+                    {
+                        ref var dst = ref entity.Add<DestinationComponent>();
+                        var gridPos = pos.Value * Global.TileSize;
+                        gridPos = gridPos / Global.TileSize;
+                        dst.Value = gridPos + (inp.Axis * Global.TileSize);
+                    }
+                }
 
                 inp.OldButtons.Clear();
                 inp.OldButtons.AddRange(inp.Buttons);
@@ -91,7 +106,7 @@ namespace Pixel.ECS.Systems
                 var system = World.GetSystem<TextRenderSystem>();
                 system.IsActive = !system.IsActive;
 
-                ref var dialog = ref DialogFactory.Create(ref Global.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
+                ref var dialog = ref DialogFactory.Create(ref TestingScene.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
                 World.Register(ref dialog);
                 foreach(var childId in dialog.Children)
                 World.Register(childId);

@@ -13,8 +13,8 @@ namespace Server
         public Npc(int uid)
         {
             UniqueId = uid;
-            var x = 5000 + (Global.Random.Next(1, 3) * Global.TileSize);
-            var y = 5000 + (Global.Random.Next(1, 3) * Global.TileSize);
+            var x = 1024 + (Global.Random.Next(1, 3) * Global.TileSize);
+            var y = 1024 + (Global.Random.Next(1, 3) * Global.TileSize);
             Position = new Vector2(x, y);
         }
     }

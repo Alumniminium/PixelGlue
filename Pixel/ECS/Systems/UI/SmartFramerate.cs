@@ -36,7 +36,7 @@ namespace Pixel.ECS.Systems
             counter++;
             currentFrametimes /= weight;
             currentFrametimes += timeSinceLastFrame;
-            //if (counter == 150)
+            if (counter == 150)
             {
                 updateRate = numerator / currentFrametimes;
                 counter = 0;

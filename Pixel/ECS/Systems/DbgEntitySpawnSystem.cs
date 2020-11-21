@@ -32,7 +32,7 @@ namespace Pixel.ECS.Systems
                 ref var drw = ref entity.Get<DrawableComponent>();
                 ref var dst = ref entity.Get<DestinationComponent>();
 
-                ref readonly var playerPos = ref Global.Player.Get<PositionComponent>();
+                ref readonly var playerPos = ref TestingScene.Player.Get<PositionComponent>();
                 pos.Value = playerPos.Value;
 
                 drw.SrcRect = srcEntity.SrcRect;

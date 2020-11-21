@@ -10,7 +10,6 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:../../Build/Peon501.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -37,14 +36,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../Build/Content/dawn.png;dawn.png
-
-#begin ../../Build/Content/MapRenderer.fx
-/importer:EffectImporter
-/processor:LocalEffectProcessor
-/processorParam:CompilerPath=/.wine/drive_c/Program Files (x86)/MSBuild/MonoGame/v3.0/Tools/2MGFX.exe
-/processorParam:WinePath=/opt/wine-staging/bin/wine64
-/processorParam:DebugMode=Auto
-/build:../../Build/Content/MapRenderer.fx;MapRenderer.fx
 
 #begin ../../Build/Content/profont_0.png
 /importer:TextureImporter

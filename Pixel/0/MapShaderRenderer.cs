@@ -65,7 +65,7 @@ namespace Pixel.zero
             Global.Device.RasterizerState = RasterizerState.CullClockwise;
             Vector3 cameraUp = Vector3.TransformNormal(new Vector3(0, -1, 0), Matrix.CreateRotationZ(0)) * 10f;
             Matrix World = Matrix.Identity;
-            var player = Global.Player;
+            var player = TestingScene.Player;
             Matrix View = Matrix.CreateLookAt(new Vector3(0,0, -1), new Vector3(0, 0, 0), cameraUp);
 
             effect.Parameters["World"].SetValue(World);

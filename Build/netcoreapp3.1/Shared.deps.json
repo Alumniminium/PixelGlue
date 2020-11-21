@@ -8,17 +8,17 @@
     ".NETCoreApp,Version=v3.1": {
       "Shared/1.0.0": {
         "dependencies": {
-          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13"
+          "MonoGame.Framework.DesktopGL": "3.8.0.1641"
         },
         "runtime": {
           "Shared.dll": {}
         }
       },
-      "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+      "MonoGame.Framework.DesktopGL/3.8.0.1641": {
         "runtime": {
           "lib/netstandard2.0/MonoGame.Framework.dll": {
-            "assemblyVersion": "3.8.0.13",
-            "fileVersion": "3.8.0.13"
+            "assemblyVersion": "3.8.0.1641",
+            "fileVersion": "3.8.0.1641"
           }
         },
         "runtimeTargets": {
@@ -45,7 +45,7 @@
           "runtimes/win-x64/native/SDL2.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "2.0.10.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/soft_oal.dll": {
             "rid": "win-x64",
@@ -55,7 +55,7 @@
           "runtimes/win-x86/native/SDL2.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "2.0.10.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x86/native/soft_oal.dll": {
             "rid": "win-x86",
@@ -72,12 +72,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+    "MonoGame.Framework.DesktopGL/3.8.0.1641": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-cMsc/UZFS8Uk/a1RDc8OZ9Z2EXrEglWGcZGSvPJiWEcUC5Oo9K9uoZXaprvesM3YbyT1ItzqS4jXjTDR4qT4WA==",
-      "path": "monogame.framework.desktopgl.core/3.8.0.13",
-      "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
+      "sha512": "sha512-rJQlrlHQbnOECYV6EcQ8GlGRQ2lzPTroXQcyyOZ0ki+BQRSJEN2zVBm9skqLiXya348aGAfTSSGTaSKjAy9NaA==",
+      "path": "monogame.framework.desktopgl/3.8.0.1641",
+      "hashPath": "monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512"
     }
   }
 }

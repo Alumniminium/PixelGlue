@@ -1,6 +1,3 @@
-using System.Globalization;
-using System.Net.Mime;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Enums;
@@ -13,6 +10,10 @@ using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking
 {
+    public struct Npc
+    {
+        public int EntityId;
+    }
     public static class Spawn
     {
         public static void Handle(MsgSpawn packet)
@@ -20,15 +21,16 @@ namespace Pixel.Networking
             if (!World.UidExists(packet.UniqueId))
             {
                 ref var entity = ref World.CreateEntity(packet.UniqueId);
+                //ref var entity = ref World.CreateEntity<Npc>(packet.UniqueId);
                 if (packet.UniqueId >= 1_000_000)
                 {
-                    entity = Global.Player;
+                    entity = TestingScene.Player;
                 }
                 SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Npc);
                 entity.Add(new NetworkComponent(packet.UniqueId));
                 var srcEntity = Database.Entities[packet.Model];
-                entity.Get<PositionComponent>().Value = new Vector2(packet.X, packet.Y);
-                entity.Get<DestinationComponent>().Value = new Vector2(packet.X,packet.Y);
+                entity.Add(new PositionComponent(packet.X, packet.Y));
+                entity.Add(new DestinationComponent(packet.X,packet.Y));
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
                 World.GetEntity(entity.Children[0]).Get<TextComponent>().Value = packet.GetName();

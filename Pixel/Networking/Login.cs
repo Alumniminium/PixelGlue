@@ -16,10 +16,10 @@ namespace Pixel.Networking.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Handle(MsgLogin packet)
         {
-            var player = Global.Player;
+            var player = TestingScene.Player;
             player.Add(new NetworkComponent(packet.UniqueId));
             World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
-            World.Register(ref player);
+            Global.PostUpdateQueue.Enqueue( () => World.Register(ref player));
 
             var child = World.GetEntity(player.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
             ref var txt = ref child.Get<TextComponent>();
