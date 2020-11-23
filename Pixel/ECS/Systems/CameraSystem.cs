@@ -12,12 +12,7 @@ namespace Pixel.ECS.Systems
         public CameraSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
         public override string Name { get; set; } = "Camera System";
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent, DrawableComponent,CameraComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DrawableComponent, CameraComponent>();
         public override void Update(float deltaTime)
         {
             foreach (var entityId in Entities)

@@ -1,42 +1,90 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
+using Shared.IO;
 
 namespace Shared.ECS
 {
+    public class WorkerThread
+    {
+        public bool Ready;
+        public Thread Worker;
+        public AutoResetEvent Block;
+        public List<int> Entities;
+        public Action<WorkerThread> Target;
+
+        public WorkerThread(Action<WorkerThread> targetMethod, ThreadPriority priority)
+        {
+            Target = targetMethod;
+            Block = new AutoResetEvent(false);
+            Entities = new List<int>();
+            Worker = new Thread(WorkLoop)
+            {
+                IsBackground = true,
+                Priority = priority
+            };
+        }
+        public void Start() => Worker.Start();
+        public void WorkLoop()
+        {
+            while (true)
+            {
+                Ready = true;
+                Block.WaitOne();
+                Target.Invoke(this);
+                Entities.Clear();
+            }
+        }
+    }
     public class AsyncPixelSystem : PixelSystem
     {
-        private Thread[] Workers;
-        private AutoResetEvent[] Blocks;
-        public AsyncPixelSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw){}
-        
-        public void StartWorkerThreads(int count, bool blockState, ThreadPriority priority)
+        public WorkerThread[] WorkerThreads;
+        public AsyncPixelSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+
+        public void StartWorkerThreads(int count, ThreadPriority priority)
         {
-            Workers = new Thread[count];
-            Blocks = new AutoResetEvent[count];
+            WorkerThreads = new WorkerThread[count];
             for (int i = 0; i < count; i++)
             {
-                Blocks[i] = new AutoResetEvent(blockState);
-                Workers[i] = new Thread(AsyncUpdateLoop)
-                {
-                    IsBackground = true,
-                    Priority = priority
-                };
-                Workers[i].Start(i);
+                WorkerThreads[i] = new WorkerThread(ThreadedUpdate, priority);
+                WorkerThreads[i].Start();
             }
         }
         public void UnblockThreads()
         {
-            for (int i = 0; i < Blocks.Length; i++)
-                Blocks[i].Set();
-        }
-        private void AsyncUpdateLoop(object idx)
-        {
-            int id = (int)idx;
-            while (true)
+            var idx = 0;
+
+            foreach (var entity in Entities)
             {
-                Blocks[id].WaitOne();
-                AsyncUpdate(id);
+                var wt = WorkerThreads[idx];
+
+                if (wt.Ready)
+                    wt.Entities.Add(entity);
+                else
+                    FConsole.WriteLine("this shouldnt happen");
+                    
+                idx++;
+
+                if (idx == WorkerThreads.Length)
+                    idx = 0;
+            }
+            foreach (var wt in WorkerThreads)
+            {
+                if (wt.Ready)
+                {   
+                    wt.Ready=false;
+                    wt.Block.Set();
+                }
+            }
+            foreach (var thread in WorkerThreads)
+            {
+                while (!thread.Ready)
+                    Thread.Yield();
             }
         }
-        public virtual void AsyncUpdate(int id) { }
+        public virtual void ThreadedUpdate(WorkerThread wt)
+        {
+            
+        }
     }
 }

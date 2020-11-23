@@ -30,11 +30,9 @@ namespace Pixel.Networking
                 entity.Add(new NetworkComponent(packet.UniqueId));
                 var srcEntity = Database.Entities[packet.Model];
                 entity.Add(new PositionComponent(packet.X, packet.Y));
-                entity.Add(new DestinationComponent(packet.X,packet.Y));
                 entity.Get<DrawableComponent>().SrcRect = srcEntity.SrcRect;
                 entity.Get<DrawableComponent>().TextureName = srcEntity.TextureName;
                 World.GetEntity(entity.Children[0]).Get<TextComponent>().Value = packet.GetName();
-                World.Register(ref entity);
             }
             else
             {

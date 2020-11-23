@@ -15,12 +15,8 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Mouse Input System";
 
         public MouseInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<MouseComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<MouseComponent>();
+        
         public override void Update(float deltaTime)
         {
             foreach (var entityId in Entities)

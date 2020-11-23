@@ -12,12 +12,8 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Name Tag Render System";
 
         public TextRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<TextComponent, PositionComponent>() && entity.Parent != 0)
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<TextComponent, PositionComponent>() && entity.Parent != 0;
+        
         public override void Draw(SpriteBatch sb)
         {
             foreach (var id in Entities)

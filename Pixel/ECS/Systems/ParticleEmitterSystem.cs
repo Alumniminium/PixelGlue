@@ -9,21 +9,16 @@ namespace Pixel.ECS.Systems
 {
     public class ParticleEmitterSystem : PixelSystem
     {
-        public override string Name { get; set; } = "Particle System";
+        public override string Name { get; set; } = "Particle Emitter System";
         public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>();
+        
         public override void Update(float deltaTime)
         {
             foreach (var entityId in Entities)
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
-                ref var pos = ref entity.Get<PositionComponent>();
                 ref var pem = ref entity.Get<ParticleEmitterComponent>();
 
                 if (!pem.Active)
@@ -33,9 +28,11 @@ namespace Pixel.ECS.Systems
                 {
                     for (int i = 0; i < pem.SpawnFrequency; i++)
                     {
+                        ref readonly var pos = ref entity.Get<PositionComponent>();
                         ref var particle = ref World.CreateEntity();
-                        ref var particle_pos = ref particle.Add(new PositionComponent(pos.Value));
-                        ref var particel_drw = ref particle.Add(new DrawableComponent(Color.Red, new Rectangle((int)particle_pos.Value.Y, (int)particle_pos.Value.Y, 4, 4)));
+                        
+                        ref readonly var particle_pos = ref particle.Add(new PositionComponent(pos.Value));
+                        ref var particel_drw = ref particle.Add(new DrawableComponent(Color.Red, new Rectangle((int)particle_pos.Value.Y, (int)particle_pos.Value.Y, 1, 1)));
                         ref var particle_vel = ref particle.Add(new VelocityComponent());
                         ref var particle_par = ref particle.Add(new ParticleComponent());
                         particle_par.FramesLeftToLive = pem.LifetimeFrames;
@@ -60,7 +57,6 @@ namespace Pixel.ECS.Systems
                                 particle_vel.Value = new Vector2(PxlRng.Get(-0.03, 0.03), PxlRng.Get(-0.03, -0.03));
                                 break;
                         }
-                        World.Register(particle.EntityId);
                         pem.Particles++;
                     }
                 }

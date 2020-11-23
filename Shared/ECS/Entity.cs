@@ -15,28 +15,27 @@ namespace Shared.ECS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>(T component) where T : struct 
         {
-            var id = EntityId;
-            Global.PostUpdateQueue.Enqueue(() => World.Register(id));
-            return ref ComponentArray<T>.AddFor(EntityId, component);
+           ref var t = ref ComponentArray<T>.AddFor(EntityId, component);
+           World.Register(EntityId);
+           return ref t;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Add<T>() where T : struct
+        public ref T Add<T>() where T : struct 
         {
-            var id = EntityId;
-            Global.PostUpdateQueue.Enqueue(() => World.Register(id));
-            return ref ComponentArray<T>.AddFor(EntityId);
+           ref var t = ref ComponentArray<T>.AddFor(EntityId);
+           World.Register(EntityId);
+           return ref t;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct => ComponentArray<T>.HasFor(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct => ref ComponentArray<T>.Get(EntityId);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove<T>() 
+        public void Remove<T>()
         {
-            var id = EntityId;
-            Global.PostUpdateQueue.Enqueue(() => World.Register(id));
-            ReflectionHelper.Remove<T>(EntityId);
+           ReflectionHelper.Remove<T>(EntityId);
+           World.Register(EntityId);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T, T2>() where T : struct where T2 : struct => Has<T>() && Has<T2>();

@@ -1,6 +1,7 @@
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using Shared.IO;
 
 namespace Shared.ECS
 {
@@ -44,6 +45,7 @@ namespace Shared.ECS
             var arrayIndex = AvailableArrayIndicies.Pop();
             EntityToArrayOffset.TryAdd(entity.EntityId, arrayIndex);
             Entities[arrayIndex] = entity;
+            Register(entity.EntityId);
             return ref Entities[arrayIndex];
         }
 
@@ -60,6 +62,7 @@ namespace Shared.ECS
         {
             ref var entity = ref CreateEntity();
             RegisterUniqueIdFor(uniqueId, entity.EntityId);
+            Register(entity.EntityId);
             return ref entity;
         }
 
@@ -74,44 +77,40 @@ namespace Shared.ECS
                 Children.Add(entity.EntityId, new List<int>());
             return Children[entity.EntityId];
         }
-        internal static void AddChildFor(ref Entity entity, ref Entity nt)
+        internal static void AddChildFor(ref Entity entity, ref Entity child)
         {
-            nt.Parent = entity.EntityId;
+            child.Parent = entity.EntityId;
             if (!Children.TryGetValue(entity.EntityId, out var children))
                 Children.Add(entity.EntityId, new List<int>());
             else
-                Children[entity.EntityId].Add(nt.EntityId);
+                Children[entity.EntityId].Add(child.EntityId);
         }
         public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
         public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
-        public static void Register(ref Entity entity)
-        {
-            if (entity.Children != null)
-            {
-                foreach (var childId in entity.Children)
-                    Register(childId);
-            }
-            Register(entity.EntityId);
-        }
 
-        public static void Register(int entityId)
+        internal static void Register(int entityId)
         {
-            for (int i = 0; i < Systems.Count; i++)
+            ref readonly var entity = ref GetEntity(entityId);
+
+            if(entity.Children != null)
+                foreach(var childId in entity.Children)
+                    Queue(childId);
+
+            Queue(entityId);
+
+            static void Queue(int id)
             {
-                var sys = Systems[i];
-                sys.RemoveEntity(entityId);
-                sys.AddEntity(entityId);
+                ref readonly var entity = ref GetEntity(id);
+                for (int i = 0; i < Systems.Count; i++)
+                    Systems[i].EntityChanged(entity);
             }
         }
 
         public static bool IdExists(int id) => EntityToArrayOffset.ContainsKey(id);
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
-
-        public static void DestroyAsap(int entity) => Global.PostUpdateQueue.Enqueue(() => DestroyNow(entity));
-        private static void DestroyNow(int id)
+        public static void Destroy(int id)
         {
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].RemoveEntity(id);
+            FConsole.WriteLine("Destroying Entity "+id);
 
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
             {
@@ -122,13 +121,17 @@ namespace Shared.ECS
                     foreach (var childId in actualEntity.Children)
                     {
                         ref var child = ref GetEntity(childId);
-                        DestroyNow(child.EntityId);
+                        Destroy(child.EntityId);
                     }
                 }
+                
+                for (int i = 0; i < Systems.Count; i++)
+                    Systems[i].EntityChanged(actualEntity);
+
+                EntityIdToUniqueId.Remove(id, out var uid);
+                UniqueIdToEntityId.Remove(uid, out _);
+                AvailableArrayIndicies.Push(arrayOffset);
             }
-            EntityIdToUniqueId.Remove(id, out var uid);
-            UniqueIdToEntityId.Remove(uid, out _);
-            AvailableArrayIndicies.Push(arrayOffset);
         }
     }
 }

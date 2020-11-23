@@ -36,17 +36,22 @@ namespace Pixel.Scenes
         {
             for (int i = 0; i < World.Systems.Count; i++)
             {
+                var system = World.Systems[i];
+                system.PreUpdate();
+            }
+            for (int i = 0; i < World.Systems.Count; i++)
+            {
                 var preUpdateTicks = DateTime.UtcNow.Ticks;
                 var system = World.Systems[i];
+
                 if (!system.WantsUpdate)
                     continue;
                 if (system.IsActive)
                     system.Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+
                 var postUpdateTicks = DateTime.UtcNow.Ticks;
                 Profiler.AddUpdate(system.Name, (postUpdateTicks - preUpdateTicks) / 10000f);
             }
-            while (Global.PostUpdateQueue.Count > 0)
-                Global.PostUpdateQueue.Dequeue().Invoke();
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void FixedUpdate(float deltaTime)
@@ -66,6 +71,7 @@ namespace Pixel.Scenes
                 var system = World.Systems[i];
                 if (!system.WantsDraw)
                     continue;
+                system.PreUpdate();
                 if (system.IsActive)
                     system.Draw(sb);
                 var postDrawTicks = DateTime.UtcNow.Ticks;
@@ -81,26 +87,21 @@ namespace Pixel.Scenes
                 case EntityType.Player:
                     entity.Add<KeyboardComponent>();
                     entity.Add<MouseComponent>();
-                    entity.Add<PositionComponent>();
-                    entity.Add<DestinationComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
-                    entity.Add<VelocityComponent>();
                     entity.Add(new SpeedComponent(128));
                     entity.Add(new CameraComponent(1));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
 
                     ref var nameTag = ref World.CreateEntity();
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
-                    nameTag.Add(new PositionComponent(1024, 1024, 0));
+                    nameTag.Add(new PositionComponent(-64, -24, 0));
                     entity.AddChild(ref nameTag);
-                    World.Register(ref nameTag);
                     break;
                 case EntityType.Npc:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
                     var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
 
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
-                    entity.Add<VelocityComponent>();
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
 
@@ -108,7 +109,6 @@ namespace Pixel.Scenes
                     nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
                     nameTag.Add(new PositionComponent(-16, -16, 0));
                     entity.AddChild(ref nameTag);
-                    World.Register(ref nameTag);
                     break;
             }
         }

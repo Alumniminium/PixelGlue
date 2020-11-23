@@ -14,12 +14,7 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Entity Spawner System";
 
         public DbgEntitySpawnSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent, CameraComponent, DrawableComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, CameraComponent, DrawableComponent>();
         public override void FixedUpdate(float dt)
         {
             for (int i = 0; i < 1; i++)
@@ -38,7 +33,6 @@ namespace Pixel.ECS.Systems
                 drw.SrcRect = srcEntity.SrcRect;
                 drw.TextureName = srcEntity.TextureName;
                 dst.Value = new Vector2(Global.Random.Next(int.MinValue, int.MaxValue), Global.Random.Next(int.MinValue, int.MaxValue));
-                World.Register(entity.EntityId);
             }
         }
     }

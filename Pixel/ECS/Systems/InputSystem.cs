@@ -23,13 +23,8 @@ namespace Pixel.ECS.Systems
             _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
             base.Initialize();
         }
-
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<KeyboardComponent, PositionComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<KeyboardComponent, PositionComponent>();
+        
 
         public override void Update(float deltaTime)
         {
@@ -50,20 +45,15 @@ namespace Pixel.ECS.Systems
 
                 if (inp.Axis.Length() > 0)
                 {
-                    if(entity.Has<DestinationComponent>())
-                    {
-                        ref var dst = ref entity.Get<DestinationComponent>();
-                        var gridPos = pos.Value * Global.TileSize;
-                        gridPos = gridPos / Global.TileSize;
-                        dst.Value = gridPos + (inp.Axis * Global.TileSize);
-                    }
-                    else
-                    {
-                        ref var dst = ref entity.Add<DestinationComponent>();
-                        var gridPos = pos.Value * Global.TileSize;
-                        gridPos = gridPos / Global.TileSize;
-                        dst.Value = gridPos + (inp.Axis * Global.TileSize);
-                    }
+                    ref var dst = ref entity.Has<DestinationComponent>() ? ref entity.Get<DestinationComponent>() : ref entity.Add<DestinationComponent>();
+                    var tileX = ((int)pos.Value.X+(Global.TileSize/2)) / Global.TileSize;
+                    var tileY = ((int)pos.Value.Y+(Global.TileSize/2)) / Global.TileSize;
+                    tileX = tileX * Global.TileSize;
+                    tileY = tileY * Global.TileSize;
+                    tileX = tileX + (int)(inp.Axis.X * Global.TileSize);
+                    tileY = tileY + (int)(inp.Axis.Y * Global.TileSize);
+                    
+                    dst.Value = new Vector2(tileX,tileY);
                 }
 
                 inp.OldButtons.Clear();
@@ -72,8 +62,6 @@ namespace Pixel.ECS.Systems
             }
         }
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EnsureReady(ref KeyboardComponent inp)
         {
             if (inp.Buttons == null)
@@ -82,7 +70,6 @@ namespace Pixel.ECS.Systems
                 inp.OldButtons = new System.Collections.Generic.List<PixelGlueButtons>();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Keyboard(ref KeyboardComponent inp)
         {
             var axis = Vector2.Zero;
@@ -107,9 +94,7 @@ namespace Pixel.ECS.Systems
                 system.IsActive = !system.IsActive;
 
                 ref var dialog = ref DialogFactory.Create(ref TestingScene.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
-                World.Register(ref dialog);
-                foreach(var childId in dialog.Children)
-                World.Register(childId);
+                //World.Register(dialog.EntityId);
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))
                 Environment.Exit(0);

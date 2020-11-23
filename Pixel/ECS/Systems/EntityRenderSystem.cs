@@ -15,32 +15,18 @@ namespace Pixel.ECS.Systems
         public Point Overdraw = new Point(Global.HalfVirtualScreenWidth, Global.HalfVirtualScreenHeight);
 
         public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent, DrawableComponent>())
-                base.AddEntity(entityId);
-        }
-        public override void Update(float deltaTime)
-        {
-            foreach (var entityId in Entities)
-            {
-                ref readonly var entity = ref World.GetEntity(entityId);
-                ref readonly var pos = ref entity.Get<PositionComponent>();
-
-                if (entityId == 1 || entity.Parent != 0)
-                    continue;
-
-                //if (OutOfRange(pos.Value))
-                //    World.DestroyAsap(entity.EntityId);
-            }
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DrawableComponent>();
+        
         public override void Draw(SpriteBatch sb)
         {
             foreach (var entityId in Entities)
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
                 ref readonly var pos = ref entity.Get<PositionComponent>();
+
+                //if (OutOfRange(pos.Value))
+                //    continue;
+
                 ref readonly var drw = ref entity.Get<DrawableComponent>();
 
                 if (drw.DestRect.IsEmpty)

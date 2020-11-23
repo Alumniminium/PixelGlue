@@ -15,17 +15,17 @@ namespace Pixel.ECS.Systems
         public Scene Scene => SceneManager.ActiveScene;
 
         public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void AddEntity(int entityId)
-        {
-            ref readonly var entity = ref World.GetEntity(entityId);
-            if (entity.Has<PositionComponent, DestinationComponent, SpeedComponent>())
-                base.AddEntity(entityId);
-        }
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DestinationComponent, SpeedComponent>();
+        
         public override void Update(float deltaTime)
         {
             foreach (var entityId in Entities)
             {
                 ref readonly var entity = ref World.GetEntity(entityId);
+
+                if(!entity.Has<PositionComponent, DestinationComponent, SpeedComponent>())
+                    continue;
+
                 ref readonly var spd = ref entity.Get<SpeedComponent>();
 
                 ref var vel = ref entity.Add<VelocityComponent>();
@@ -37,7 +37,6 @@ namespace Pixel.ECS.Systems
                 if (dir == Vector2.Zero)
                 {
                     entity.Remove<DestinationComponent>();
-                    Global.PostUpdateQueue.Enqueue(()=> World.Register(entityId));
                     continue;
                 }
                 dir.Normalize();

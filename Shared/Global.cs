@@ -34,6 +34,6 @@ namespace Shared
         public static Vector2 HalfTileSizeVector { get; set; } =  new Vector2(TileSize/2,TileSize/2);
         public static ConcurrentDictionary<Entity,Prefab> Prefabs = new ConcurrentDictionary<Entity, Prefab>();
 
-        public static Queue<Action> PostUpdateQueue = new Queue<Action>(128);
+        //public static Queue<Action> PostUpdateQueue = new Queue<Action>(128);
     }
 }

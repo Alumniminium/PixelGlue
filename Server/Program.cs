@@ -35,7 +35,6 @@ namespace Server
                 npc.Add<DestinationComponent>();
                 npc.Add(new SpeedComponent(16));
                 npc.Add<VelocityComponent>();
-                World.Register(ref npc);
                 Collections.Npcs.TryAdd(100_000 + i, new Npc(100_000 + i));
             }
             Console.WriteLine("NPCs Active: " + Collections.Npcs.Count);
@@ -62,6 +61,8 @@ namespace Server
 
         private static void Update(float dt)
         {
+            foreach (var system in World.Systems)
+                system.PreUpdate();
             foreach (var system in World.Systems)
                 system.Update(dt);
 

@@ -19,7 +19,6 @@ namespace Pixel.Networking.Handlers
             var player = TestingScene.Player;
             player.Add(new NetworkComponent(packet.UniqueId));
             World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
-            Global.PostUpdateQueue.Enqueue( () => World.Register(ref player));
 
             var child = World.GetEntity(player.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
             ref var txt = ref child.Get<TextComponent>();
