@@ -13,11 +13,13 @@ namespace Shared.ECS
         private static readonly Stack<int> AvailableArrayIndicies;
         private static readonly Dictionary<int, int> EntityToArrayOffset, UniqueIdToEntityId, EntityIdToUniqueId;
         private static readonly Dictionary<int, List<int>> Children;
+        private static readonly List<int> ToBeRemoved;
         public static List<PixelSystem> Systems;
         static World()
         {
             Entities = new Entity[1_000_001];
             Children = new Dictionary<int, List<int>>();
+            ToBeRemoved=new List<int>();
             AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1, 1_000_000));
             EntityToArrayOffset = new Dictionary<int, int>();
             UniqueIdToEntityId = new Dictionary<int, int>();
@@ -51,13 +53,6 @@ namespace Shared.ECS
 
         public static Entity[] GetEntities() => Entities;
 
-        public static unsafe T CreateEntity<T>(int uniqueId) where T : unmanaged
-        {
-            ref var d = ref CreateEntity(uniqueId);
-            var entity = stackalloc T[1];
-            *(Entity*)(entity + 0) = d;
-            return *entity;
-        }
         public static ref Entity CreateEntity(int uniqueId)
         {
             ref var entity = ref CreateEntity();
@@ -100,21 +95,26 @@ namespace Shared.ECS
 
             static void Queue(int id)
             {
-                ref readonly var entity = ref GetEntity(id);
+                ref var entity = ref GetEntity(id);
                 for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityChanged(entity);
+                    Systems[i].EntityChanged(ref entity);
             }
         }
-
-        public static bool IdExists(int id) => EntityToArrayOffset.ContainsKey(id);
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
         public static void Destroy(int id)
         {
             FConsole.WriteLine("Destroying Entity "+id);
-
+            ToBeRemoved.Add(id);
+        }
+        private static void DestroyInternal(int id)
+        {
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
             {
                 ref var actualEntity = ref Entities[arrayOffset];
+
+                for (int i = 0; i < Systems.Count; i++)
+                    Systems[i].EntityRemoved(ref actualEntity);
+
                 actualEntity.Recycle();
                 if (actualEntity.Children != null)
                 {
@@ -124,14 +124,16 @@ namespace Shared.ECS
                         Destroy(child.EntityId);
                     }
                 }
-                
-                for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityChanged(actualEntity);
 
                 EntityIdToUniqueId.Remove(id, out var uid);
                 UniqueIdToEntityId.Remove(uid, out _);
                 AvailableArrayIndicies.Push(arrayOffset);
             }
+        }
+        public static void Update()
+        {
+            foreach(var id in ToBeRemoved)
+                DestroyInternal(id);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Shared.ECS
         public virtual void Draw(SpriteBatch spriteBatch) { }
         public virtual bool MatchesFilter(Entity entityId) => false;
         
-        public void EntityChanged(Entity entity)
+        public void EntityChanged(ref Entity entity)
         {
             if (MatchesFilter(entity))
             {
@@ -51,5 +51,7 @@ namespace Shared.ECS
             else if (Entities.Contains(entity.EntityId) && !removedEntities.Contains(entity.EntityId))
                 removedEntities.Add(entity.EntityId);
         }
+
+        internal void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
     }
 }

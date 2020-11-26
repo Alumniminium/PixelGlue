@@ -34,6 +34,7 @@ namespace Pixel.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(GameTime deltaTime)
         {
+            World.Update();
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var system = World.Systems[i];
@@ -82,6 +83,13 @@ namespace Pixel.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ApplyArchetype(ref Entity entity, EntityType et)
         {
+            var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
+
+            ref var nameTag = ref World.CreateEntity();
+            nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
+            nameTag.Add(new PositionComponent(-16, -16, 0));
+            entity.AddChild(ref nameTag);
+
             switch (et)
             {
                 case EntityType.Player:
@@ -91,24 +99,13 @@ namespace Pixel.Scenes
                     entity.Add(new SpeedComponent(128));
                     entity.Add(new CameraComponent(1));
                     entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
-
-                    ref var nameTag = ref World.CreateEntity();
-                    nameTag.Add(new TextComponent($"{entity.EntityId}: {entity}"));
-                    nameTag.Add(new PositionComponent(-64, -24, 0));
-                    entity.AddChild(ref nameTag);
                     break;
                 case EntityType.Npc:
                     var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-                    var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
 
                     entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
-
-                    nameTag = ref World.CreateEntity();
-                    nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
-                    nameTag.Add(new PositionComponent(-16, -16, 0));
-                    entity.AddChild(ref nameTag);
                     break;
             }
         }
