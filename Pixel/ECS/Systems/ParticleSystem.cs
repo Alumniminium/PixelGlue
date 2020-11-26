@@ -1,17 +1,19 @@
+using System;
 using System.Threading;
 using Pixel.ECS.Components;
 using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
+using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
     public class ParticleSystem : AsyncPixelSystem
     {
-        public const int THREAD_COUNT = 4;
+        public const int THREAD_COUNT = 1;
         public override string Name { get; set; } = "Particle System";
         public ParticleSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void Initialize() => StartWorkerThreads(THREAD_COUNT, ThreadPriority.Lowest);
+        public override void Initialize() => StartWorkerThreads(THREAD_COUNT, ThreadPriority.Highest);
         public override void Update(float gameTime) => UnblockThreads();
 
         public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, VelocityComponent, DrawableComponent, ParticleComponent>();
@@ -46,6 +48,9 @@ namespace Pixel.ECS.Systems
                         prtcl.Energy += 0.6f;
                 }
             }
+            var dt = DateTime.UtcNow - wt.StartTime;
+            if(wt.Entities.Count>0)
+            FConsole.WriteLine($"Particle System WT {wt.Id} -> {wt.Entities.Count} in {dt.TotalMilliseconds.ToString("0.00")}ms");
             base.ThreadedUpdate(wt);
         }
     }

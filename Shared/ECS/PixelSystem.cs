@@ -10,8 +10,8 @@ namespace Shared.ECS
         public bool IsActive { get; set; } = true;
         public virtual string Name { get; set; } = "Unnamed System";
         public List<int> Entities { get; set; } = new List<int>();
-        private List<int> addedEntities { get; set; } = new List<int>();
-        private List<int> removedEntities { get; set; } = new List<int>();
+        internal List<int> addedEntities { get; set; } = new List<int>();
+        internal List<int> removedEntities { get; set; } = new List<int>();
         public bool WantsUpdate, WantsDraw;
 
         public PixelSystem(bool doUpdate, bool doDraw)
@@ -36,7 +36,7 @@ namespace Shared.ECS
         public virtual void Draw(SpriteBatch spriteBatch) { }
         public virtual bool MatchesFilter(Entity entityId) => false;
         
-        public void EntityChanged(ref Entity entity)
+        public virtual void EntityChanged(ref Entity entity)
         {
             if (MatchesFilter(entity))
             {
@@ -52,6 +52,6 @@ namespace Shared.ECS
                 removedEntities.Add(entity.EntityId);
         }
 
-        internal void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
+        public virtual void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
     }
 }

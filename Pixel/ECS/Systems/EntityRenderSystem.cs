@@ -24,8 +24,8 @@ namespace Pixel.ECS.Systems
                 ref readonly var entity = ref World.GetEntity(entityId);
                 ref readonly var pos = ref entity.Get<PositionComponent>();
 
-                //if (OutOfRange(pos.Value))
-                //    continue;
+                if (OutOfRange(pos.Value))
+                    continue;
 
                 ref readonly var drw = ref entity.Get<DrawableComponent>();
 

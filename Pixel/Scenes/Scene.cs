@@ -98,12 +98,8 @@ namespace Pixel.Scenes
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(128));
                     entity.Add(new CameraComponent(1));
-                    entity.Add(new DrawableComponent("character.png", new Rectangle(0, 2, 16, 16)));
                     break;
                 case EntityType.Npc:
-                    var srcEntity = Database.Entities[Global.Random.Next(0, Database.Entities.Count)];
-
-                    entity.Add(new DrawableComponent(srcEntity.TextureName, srcEntity.SrcRect));
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
                     break;
