@@ -34,12 +34,12 @@ namespace Pixel.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(GameTime deltaTime)
         {
-            World.Update();
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var system = World.Systems[i];
                 system.PreUpdate();
             }
+            World.Update();
             for (int i = 0; i < World.Systems.Count; i++)
             {
                 var preUpdateTicks = DateTime.UtcNow.Ticks;
@@ -72,7 +72,6 @@ namespace Pixel.Scenes
                 var system = World.Systems[i];
                 if (!system.WantsDraw)
                     continue;
-                system.PreUpdate();
                 if (system.IsActive)
                     system.Draw(sb);
                 var postDrawTicks = DateTime.UtcNow.Ticks;

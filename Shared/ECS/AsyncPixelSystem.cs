@@ -36,7 +36,6 @@ namespace Shared.ECS
                 StartTime=DateTime.UtcNow;
                 Target.Invoke(this);
                 StopTime=DateTime.UtcNow;
-                Entities.Clear();
             }
         }
     }
@@ -44,18 +43,17 @@ namespace Shared.ECS
     {
         public int Idx=0;
         public WorkerThread[] WorkerThreads;
-        public AsyncPixelSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        public void StartWorkerThreads(int count, ThreadPriority priority)
-        {
-            WorkerThreads = new WorkerThread[count];
-            for (int i = 0; i < count; i++)
+        public AsyncPixelSystem(bool doUpdate, bool doDraw, int threads) : base(doUpdate, doDraw)
+        {             
+            WorkerThreads = new WorkerThread[threads];
+            for (int i = 0; i < threads; i++)
             {
-                WorkerThreads[i] = new WorkerThread(ThreadedUpdate, priority);
+                WorkerThreads[i] = new WorkerThread(ThreadedUpdate, ThreadPriority.Normal);
                 WorkerThreads[i].Id=i;
                 WorkerThreads[i].Start();
             }
         }
+        public override void Update(float deltaTime) => UnblockThreads();
         public void UnblockThreads()
         {
             foreach (var entity in Entities)

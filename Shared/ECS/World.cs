@@ -85,19 +85,19 @@ namespace Shared.ECS
 
         internal static void Register(int entityId)
         {
-            ref readonly var entity = ref GetEntity(entityId);
+            ref var entity = ref GetEntity(entityId);
 
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].EntityChanged(ref entity);
+            
             if (entity.Children != null)
-                foreach (var childId in entity.Children)
-                    Queue(childId);
-
-            Queue(entityId);
-
-            static void Queue(int id)
             {
-                ref var entity = ref GetEntity(id);
-                for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityChanged(ref entity);
+                foreach (var childId in entity.Children)
+                {
+                    ref var child = ref GetEntity(childId);
+                    for (int i = 0; i < Systems.Count; i++)
+                        Systems[i].EntityChanged(ref child);
+                }
             }
         }
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
