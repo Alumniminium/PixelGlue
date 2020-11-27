@@ -19,7 +19,7 @@ namespace Shared.ECS
         {
             Entities = new Entity[1_000_001];
             Children = new Dictionary<int, List<int>>();
-            ToBeRemoved=new List<int>();
+            ToBeRemoved = new List<int>();
             AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1, 1_000_000));
             EntityToArrayOffset = new Dictionary<int, int>();
             UniqueIdToEntityId = new Dictionary<int, int>();
@@ -85,27 +85,23 @@ namespace Shared.ECS
 
         internal static void Register(int entityId)
         {
-            ref readonly var entity = ref GetEntity(entityId);
+            ref var entity = ref GetEntity(entityId);
 
-            if(entity.Children != null)
-                foreach(var childId in entity.Children)
-                    Queue(childId);
-
-            Queue(entityId);
-
-            static void Queue(int id)
+            for (int i = 0; i < Systems.Count; i++)
+                Systems[i].EntityChanged(ref entity);
+            
+            if (entity.Children != null)
             {
-                ref var entity = ref GetEntity(id);
-                for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityChanged(ref entity);
+                foreach (var childId in entity.Children)
+                {
+                    ref var child = ref GetEntity(childId);
+                    for (int i = 0; i < Systems.Count; i++)
+                        Systems[i].EntityChanged(ref child);
+                }
             }
         }
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
-        public static void Destroy(int id)
-        {
-            FConsole.WriteLine("Destroying Entity "+id);
-            ToBeRemoved.Add(id);
-        }
+        public static void Destroy(int id) => ToBeRemoved.Add(id);
         private static void DestroyInternal(int id)
         {
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
@@ -121,19 +117,19 @@ namespace Shared.ECS
                     foreach (var childId in actualEntity.Children)
                     {
                         ref var child = ref GetEntity(childId);
-                        Destroy(child.EntityId);
+                        DestroyInternal(child.EntityId);
                     }
                 }
-
-                EntityIdToUniqueId.Remove(id, out var uid);
-                UniqueIdToEntityId.Remove(uid, out _);
-                AvailableArrayIndicies.Push(arrayOffset);
             }
+            EntityIdToUniqueId.Remove(id, out var uid);
+            UniqueIdToEntityId.Remove(uid, out _);
+            AvailableArrayIndicies.Push(arrayOffset);
         }
         public static void Update()
         {
-            foreach(var id in ToBeRemoved)
+            foreach (var id in ToBeRemoved)
                 DestroyInternal(id);
+            ToBeRemoved.Clear();
         }
     }
 }

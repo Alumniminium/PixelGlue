@@ -12,7 +12,7 @@ namespace Pixel.ECS.Systems
         public override string Name { get; set; } = "Particle Emitter System";
         public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
 
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent>() && entity.Has<ParticleEmitterComponent>();
+        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent,ParticleEmitterComponent>();
         
         public override void Update(float deltaTime)
         {
@@ -42,21 +42,22 @@ namespace Pixel.ECS.Systems
                         switch (pem.EmitterType)
                         {
                             case EmitterType.Up:
-                                particle_vel.Value = new Vector2(PxlRng.Get(-0.01, 0.01), PxlRng.Get(-0.03, -0.01));
+                                particle_vel.Value = new Vector2(PxlRng.Get(-1, 1), PxlRng.Get(-1, -1));
                                 break;
                             case EmitterType.Down:
-                                particle_vel.Value = new Vector2(PxlRng.Get(-0.01, 0.01), PxlRng.Get(0.01, 0.03));
+                                particle_vel.Value = new Vector2(PxlRng.Get(-1, 1), PxlRng.Get(1, 3));
                                 break;
                             case EmitterType.Left:
-                                particle_vel.Value = new Vector2(PxlRng.Get(-0.03, -0.01), PxlRng.Get(-0.01, 0.01));
+                                particle_vel.Value = new Vector2(PxlRng.Get(-3, -1), PxlRng.Get(-1, 1));
                                 break;
                             case EmitterType.Right:
-                                particle_vel.Value = new Vector2(PxlRng.Get(0.01, 0.03), PxlRng.Get(-0.01, 0.01));
+                                particle_vel.Value = new Vector2(PxlRng.Get(1, 3), PxlRng.Get(-1, 1));
                                 break;
                             case EmitterType.Sphere:
-                                particle_vel.Value = new Vector2(PxlRng.Get(-0.03, 0.03), PxlRng.Get(-0.03, -0.03));
+                                particle_vel.Value = new Vector2(PxlRng.Get(-3, 3), PxlRng.Get(-3, -3));
                                 break;
                         }
+                        particle_vel.Value = particle_vel.Value * deltaTime;
                         pem.Particles++;
                     }
                 }

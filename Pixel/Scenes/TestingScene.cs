@@ -19,7 +19,7 @@ namespace Pixel.Scenes
             World.Systems.Add(new NetworkSystem(true, false));
             World.Systems.Add(new MouseInputSystem(true, false));
             World.Systems.Add(new PlayerInputSystem(true, false));
-            World.Systems.Add(new CursorMoveSystem(true, false));
+            //World.Systems.Add(new CursorMoveSystem(true, false));
             World.Systems.Add(new MoveSystem(true, false));
             World.Systems.Add(new CameraSystem(true, false));
             //World.Systems.Add(new MapShaderRenderer(true,true));

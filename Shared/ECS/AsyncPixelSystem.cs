@@ -7,11 +7,13 @@ namespace Shared.ECS
 {
     public class WorkerThread
     {
+        public int Id;
         public bool Ready;
         public Thread Worker;
         public AutoResetEvent Block;
         public List<int> Entities;
         public Action<WorkerThread> Target;
+        public DateTime StartTime,StopTime;
 
         public WorkerThread(Action<WorkerThread> targetMethod, ThreadPriority priority)
         {
@@ -31,60 +33,69 @@ namespace Shared.ECS
             {
                 Ready = true;
                 Block.WaitOne();
+                StartTime=DateTime.UtcNow;
                 Target.Invoke(this);
-                Entities.Clear();
+                StopTime=DateTime.UtcNow;
             }
         }
     }
     public class AsyncPixelSystem : PixelSystem
     {
+        public int Idx=0;
         public WorkerThread[] WorkerThreads;
-        public AsyncPixelSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        public void StartWorkerThreads(int count, ThreadPriority priority)
-        {
-            WorkerThreads = new WorkerThread[count];
-            for (int i = 0; i < count; i++)
+        public AsyncPixelSystem(bool doUpdate, bool doDraw, int threads) : base(doUpdate, doDraw)
+        {             
+            WorkerThreads = new WorkerThread[threads];
+            for (int i = 0; i < threads; i++)
             {
-                WorkerThreads[i] = new WorkerThread(ThreadedUpdate, priority);
+                WorkerThreads[i] = new WorkerThread(ThreadedUpdate, ThreadPriority.Normal);
+                WorkerThreads[i].Id=i;
                 WorkerThreads[i].Start();
             }
         }
+        public override void Update(float deltaTime) => UnblockThreads();
         public void UnblockThreads()
         {
-            var idx = 0;
-
             foreach (var entity in Entities)
             {
-                var wt = WorkerThreads[idx];
-
-                if (wt.Ready)
-                    wt.Entities.Add(entity);
-                else
-                    FConsole.WriteLine("this shouldnt happen");
+                var wt = WorkerThreads[Idx];
+                wt.Entities.Add(entity);
                     
-                idx++;
+                Idx++;
 
-                if (idx == WorkerThreads.Length)
-                    idx = 0;
+                if (Idx == WorkerThreads.Length)
+                    Idx = 0;
             }
             foreach (var wt in WorkerThreads)
-            {
-                if (wt.Ready)
-                {   
-                    wt.Ready=false;
-                    wt.Block.Set();
-                }
-            }
+                wt.Block.Set();
             foreach (var thread in WorkerThreads)
-            {
                 while (!thread.Ready)
                     Thread.Yield();
-            }
         }
-        public virtual void ThreadedUpdate(WorkerThread wt)
+        public virtual void ThreadedUpdate(WorkerThread wt){}
+
+        public override void EntityChanged(ref Entity entity)
         {
-            
+            if (MatchesFilter(entity))
+            {
+                if(removedEntities.Contains(entity.EntityId))
+                    removedEntities.Remove(entity.EntityId);
+
+                for(int i = 0; i < WorkerThreads.Length; i++)
+                {
+                    if (Entities.Contains(entity.EntityId))
+                        return;
+                }
+
+                if (addedEntities.Contains(entity.EntityId))
+                    return;
+                    
+                addedEntities.Add(entity.EntityId);
+            }
+            else if (Entities.Contains(entity.EntityId) && !removedEntities.Contains(entity.EntityId))
+                removedEntities.Add(entity.EntityId);
         }
+
+        public override void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
     }
 }

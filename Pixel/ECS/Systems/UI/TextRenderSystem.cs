@@ -20,8 +20,10 @@ namespace Pixel.ECS.Systems
             {
                 ref readonly var entity = ref World.GetEntity(id);
                 ref readonly var parent = ref World.GetEntity(entity.Parent);
-                if(!parent.Has<PositionComponent>())
+                
+                if(!parent.Has<PositionComponent,TextComponent>())
                     continue;
+                    
                 ref readonly var parentPos = ref parent.Get<PositionComponent>();
                 ref readonly var txt = ref entity.Get<TextComponent>();
                 ref readonly var posOff = ref entity.Get<PositionComponent>();

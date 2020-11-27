@@ -10,9 +10,7 @@ namespace Shared.ECS.Systems
         public override string Name { get; set; } = "GC Monitoring System";
         public int[] GenCollections = new int[3];
 
-        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void Initialize() => StartWorkerThreads(1, ThreadPriority.Lowest);
-        public override void FixedUpdate(float gameTime) => UnblockThreads();
+        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw,1) { }
         public override void ThreadedUpdate(WorkerThread wt)
         {
             for (int i = 0; i < GenCollections.Length; i++)
