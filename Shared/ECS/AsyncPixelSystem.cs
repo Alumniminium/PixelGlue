@@ -33,6 +33,7 @@ namespace Shared.ECS
             {
                 Ready = true;
                 Block.WaitOne();
+                Ready=false;
                 StartTime=DateTime.UtcNow;
                 Target.Invoke(this);
                 StopTime=DateTime.UtcNow;
@@ -72,7 +73,7 @@ namespace Shared.ECS
                 while (!thread.Ready)
                     Thread.Yield();
         }
-        public virtual void ThreadedUpdate(WorkerThread wt){}
+        public virtual void ThreadedUpdate(WorkerThread wt) => wt.Entities.Clear();
 
         public override void EntityChanged(ref Entity entity)
         {
@@ -96,6 +97,6 @@ namespace Shared.ECS
                 removedEntities.Add(entity.EntityId);
         }
 
-        public override void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
+        public override void EntityRemoved(ref Entity entity) => Entities.Remove(entity.EntityId);
     }
 }

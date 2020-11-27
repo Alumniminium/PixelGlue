@@ -26,7 +26,7 @@ namespace Pixel.ECS.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
-            ExtendBounds(out int xs, out int ys, out int xe, out int ye);
+            ExtendBounds(out int xs, out int ys, out int xe, out int ye);// make sure this is correct...
             var color = Colors[0];
 
             sb.GraphicsDevice.Clear(color);

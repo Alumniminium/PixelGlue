@@ -22,7 +22,7 @@ public class BloodSpawner : Prefab, IInteractable
         Entity = World.CreateEntity();
         Entity.Add(new PositionComponent(x, y));
         Entity.Add(new DbgBoundingBoxComponent());
-        Entity.Add(new ParticleEmitterComponent(50000,128,10000));
+        Entity.Add(new ParticleEmitterComponent(1000,1,1000,1f,0.1f,EmitterType.Sphere));
 
         ref var nameTag = ref World.CreateEntity();
         nameTag.Add(new TextComponent($"{Entity.EntityId}: Blood Spawner {x},{y}, Active: {Active}"));
@@ -30,6 +30,7 @@ public class BloodSpawner : Prefab, IInteractable
 
         Entity.AddChild(ref nameTag);
         Global.Prefabs.TryAdd(Entity, this);
+        Activate();
     }
 
     public void Start()

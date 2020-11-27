@@ -19,17 +19,16 @@ namespace Pixel.ECS.Systems
         {
             foreach (var entityId in wt.Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
+                ref var entity = ref World.GetEntity(entityId);
                 ref var prtcl = ref entity.Get<ParticleComponent>();
+                ref readonly var emitter = ref World.GetEntity(prtcl.EmitterId);
+                ref var pem = ref emitter.Get<ParticleEmitterComponent>();
 
                 if (prtcl.FramesLeftToLive == 0)
                 {
-                    ref readonly var emitter = ref World.GetEntity(prtcl.EmitterId);
-                    ref var pem = ref emitter.Get<ParticleEmitterComponent>();
-
                     pem.Particles--;
                     World.Destroy(entity.EntityId);
-                    return;
+                    continue;
                 }
 
                 if (prtcl.FramesLeftToLive > 0)
@@ -41,10 +40,11 @@ namespace Pixel.ECS.Systems
                     pos.Value += (vel.Value * prtcl.Energy);
                     drw.DestRect.Location = pos.Value.ToPoint();
                     prtcl.FramesLeftToLive--;
-                    if (prtcl.FramesLeftToLive == 3000)
-                        prtcl.Energy += 0.6f;
+                    // add different energy decay calcs
+                    prtcl.Energy -= prtcl.Energy * pem.DecayFactor;
                 }
             }
+            base.ThreadedUpdate(wt);
         }
     }
 }

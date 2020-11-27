@@ -10,10 +10,6 @@ using Shared.TerribleSockets.Packets;
 
 namespace Pixel.Networking
 {
-    public struct Npc
-    {
-        public int EntityId;
-    }
     public static class Spawn
     {
         public static void Handle(MsgSpawn packet)
@@ -35,10 +31,7 @@ namespace Pixel.Networking
                 }
                 
                 entity.Add(new PositionComponent(packet.X, packet.Y));
-
-                ref var drw = ref entity.Add<DrawableComponent>();
-                drw.SrcRect = srcEntity.SrcRect;
-                drw.TextureName = srcEntity.TextureName;
+                entity.Add(new DrawableComponent(srcEntity.TextureName,srcEntity.SrcRect));
 
                 ref var nameTag = ref World.GetEntity(entity.Children[0]);
                 ref var txt = ref nameTag.Get<TextComponent>();

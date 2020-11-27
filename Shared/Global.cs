@@ -12,10 +12,10 @@ namespace Shared
     {
         public static Random Random { get; set; } = new Random(1337);
         public static float FixedUpdateHz { get; set; } = 10;
-        public static int ScreenWidth { get; set; } = 1600;//1440;//1600;
-        public static int ScreenHeight { get; set; } = 900;//960;//900;
-        public const int VirtualScreenWidth = 400;//400;//320;
-        public const int VirtualScreenHeight = 225;//225;//180;
+        public static int ScreenWidth { get; set; } = 720;//1440;//1600;
+        public static int ScreenHeight { get; set; } = 1280;//960;//900;
+        public const int VirtualScreenWidth = 360;//400;//320;
+        public const int VirtualScreenHeight = 640;//225;//180;
         public const int HalfVirtualScreenWidth = VirtualScreenWidth / 2;
         public const int HalfVirtualScreenHeight = VirtualScreenHeight / 2;
         public static int HalfScreenWidth => ScreenWidth / 2;

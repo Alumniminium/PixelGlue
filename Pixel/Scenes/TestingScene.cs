@@ -22,13 +22,13 @@ namespace Pixel.Scenes
             //World.Systems.Add(new CursorMoveSystem(true, false));
             World.Systems.Add(new MoveSystem(true, false));
             World.Systems.Add(new CameraSystem(true, false));
+            World.Systems.Add(new ParticleEmitterSystem(true, false));
+            World.Systems.Add(new ParticleSystem(true, false));
             //World.Systems.Add(new MapShaderRenderer(true,true));
             //World.Systems.Add(new WorldRenderSystem(false, true));
             World.Systems.Add(new BackgroundRenderSystem(false, true));
             //World.Systems.Add(new DbgEntitySpawnSystem(true, false));
             World.Systems.Add(new EntityRenderSystem(true, true));
-            World.Systems.Add(new ParticleEmitterSystem(true, true));
-            World.Systems.Add(new ParticleSystem(true, true));
             //World.Systems.Add(new DialogSystem(true,true));
 
             World.Systems.Add(new TextRenderSystem(false, true));

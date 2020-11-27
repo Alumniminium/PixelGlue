@@ -36,7 +36,7 @@ namespace Pixel.ECS.Systems
                         ref var particle_vel = ref particle.Add(new VelocityComponent());
                         ref var particle_par = ref particle.Add(new ParticleComponent());
                         particle_par.FramesLeftToLive = pem.LifetimeFrames;
-                        particle_par.Energy = 1f;
+                        particle_par.Energy = pem.ParticleStartingEnergy;
                         particle_par.EmitterId = entity.EntityId;
 
                         switch (pem.EmitterType)
@@ -57,7 +57,7 @@ namespace Pixel.ECS.Systems
                                 particle_vel.Value = new Vector2(PxlRng.Get(-3, 3), PxlRng.Get(-3, -3));
                                 break;
                         }
-                        particle_vel.Value = particle_vel.Value * deltaTime;
+                        particle_vel.Value = (particle_vel.Value * particle_par.Energy) * deltaTime;
                         pem.Particles++;
                     }
                 }

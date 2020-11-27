@@ -27,7 +27,7 @@ namespace Pixel.ECS.Systems
             weight = 3 / (3 - 1d);
             for (int i = 0; i < lines.Length; i++)
                 lines[i] = string.Empty;
-            lines[4] = "Legend: last, 30s avg, 30s max";
+            lines[7] = "Legend: last, 30s avg, 30s max";
             IsActive = true;
         }
 
@@ -40,11 +40,15 @@ namespace Pixel.ECS.Systems
             {
                 updateRate = numerator / currentFrametimes;
                 counter = 0;
-                lines[0] = $"| Pixel Engine | Entities: {World.EntityCount}, Primitives: {Global.Metrics.PrimitiveCount}, Textures: {Global.Metrics.TextureCount}, Targets: {Global.Metrics.TargetCount}";
-                lines[1] = $"|   v {Global.Major}.{Global.Minor:00}     | Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
-                lines[2] = $"|  {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:0000}  | FPS: {updateRate:##0} (Total: {Global.DrawTime + Global.UpdateTime:##0.00}ms, Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms)";
+                lines[0] = $"| Pixel Engine | Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
+                lines[0] = $"| Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
+                lines[1] = $"| Primitives: {Global.Metrics.PrimitiveCount}, Targets: {Global.Metrics.TargetCount}";
+                lines[2] = $"| Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
+                lines[3] = $"| FPS: {updateRate:##0} Frametime: {Global.DrawTime + Global.UpdateTime:##0.00}ms";
+                lines[4] = $"| Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms";
+                lines[5] = $"| v {Global.Major}.{Global.Minor:00}, {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:00}";
 
-                int lastLine = 5;
+                int lastLine = 8;
                 for (int i = 0; i < World.Systems.Count; i++)
                 {
                     var system = World.Systems[i];
