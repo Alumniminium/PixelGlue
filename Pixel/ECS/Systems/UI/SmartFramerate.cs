@@ -1,4 +1,3 @@
-using System.Threading;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,7 +5,6 @@ using Shared;
 using Shared.ECS;
 using Shared.Diagnostics;
 using Pixel.Helpers;
-using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
@@ -36,31 +34,54 @@ namespace Pixel.ECS.Systems
             counter++;
             currentFrametimes /= weight;
             currentFrametimes += timeSinceLastFrame;
-            if (counter == 150)
+            if (counter == 60)
             {
                 updateRate = numerator / currentFrametimes;
                 counter = 0;
-                lines[0] = $"| Pixel Engine | Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
-                lines[0] = $"| Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
-                lines[1] = $"| Primitives: {Global.Metrics.PrimitiveCount}, Targets: {Global.Metrics.TargetCount}";
-                lines[2] = $"| Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
-                lines[3] = $"| FPS: {updateRate:##0} Frametime: {Global.DrawTime + Global.UpdateTime:##0.00}ms";
-                lines[4] = $"| Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms";
-                lines[5] = $"| v {Global.Major}.{Global.Minor:00}, {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:00}";
+                lines[0] = $"| Pixel Engine v {Global.Major}.{Global.Minor:00}, {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:00}";
+                lines[1] = $"| Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
+                lines[2] = $"| Primitives: {Global.Metrics.PrimitiveCount}, Targets: {Global.Metrics.TargetCount}";
+                lines[3] = $"| Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
+                lines[4] = $"| FPS: {updateRate:##0} Frametime: {Global.DrawTime + Global.UpdateTime:##0.00}ms";
+                lines[5] = $"| Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms";
 
-                int lastLine = 8;
+                int lastLine = 7;
                 for (int i = 0; i < World.Systems.Count; i++)
                 {
                     var system = World.Systems[i];
                     if (!system.IsActive)
                         continue;
-                    lines[lastLine++] = string.Empty;
-                    lines[lastLine++] = $"{system.Name}";
-                    if (Profiler.SystemUpdateTimes.ContainsKey(system.Name))
-                        lines[lastLine++] = $"Update: {Profiler.SystemUpdateTimes[system.Name].Values[^1].ToString("#0.00")}, {Profiler.SystemUpdateTimes[system.Name].Avg:#0.00}, {Profiler.SystemUpdateTimes[system.Name].Max:#0.00}";
-                    if (Profiler.SystemDrawTimes.ContainsKey(system.Name))
-                        lines[lastLine++] = $"Draw:   {Profiler.SystemDrawTimes[system.Name].Values[^1].ToString("#0.00")}, {Profiler.SystemDrawTimes[system.Name].Avg:#0.00}, {Profiler.SystemDrawTimes[system.Name].Max:#0.00}";
 
+                    var updateCur = 0f;
+                    var updateAvg = 0f;
+                    var updateMax = 0f;
+                    var drawCur = 0f;
+                    var drawAvg = 0f;
+                    var drawMax = 0f;
+
+                    if (Profiler.SystemUpdateTimes.ContainsKey(system.Name))
+                    {
+                        updateCur = Profiler.SystemUpdateTimes[system.Name].Values[^1];
+                        updateAvg = Profiler.SystemUpdateTimes[system.Name].Avg;
+                        updateMax = Profiler.SystemUpdateTimes[system.Name].Max;
+                    }
+                    if (Profiler.SystemDrawTimes.ContainsKey(system.Name))
+                    {
+                        drawCur = Profiler.SystemDrawTimes[system.Name].Values[^1];
+                        drawAvg = Profiler.SystemDrawTimes[system.Name].Avg;
+                        drawMax = Profiler.SystemDrawTimes[system.Name].Max;
+                    }
+                    
+                    if(updateMax >0.5f || drawMax >0.5f)
+                    {
+                        lines[lastLine++] = string.Empty;
+                        lines[lastLine++] = $"{system.Name}";
+                        
+                        if(updateMax > 0.5f)
+                                lines[lastLine++] = $"Update: {updateCur.ToString("#0.00")}, {updateAvg:#0.00}, {updateMax:#0.00}";
+                        if(drawMax > 0.5f)
+                                lines[lastLine++] = $"Draw: {drawCur.ToString("#0.00")}, {drawAvg:#0.00}, {drawMax:#0.00}";
+                    }
                 }
                 for (int i = lastLine; i < lines.Length; i++)
                     lines[i] = string.Empty;

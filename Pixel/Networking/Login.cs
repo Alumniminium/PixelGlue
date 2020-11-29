@@ -17,10 +17,10 @@ namespace Pixel.Networking.Handlers
         internal static void Handle(MsgLogin packet)
         {
             var player = TestingScene.Player;
-            player.Add(new NetworkComponent(packet.UniqueId));
-            World.RegisterUniqueIdFor(player.EntityId, packet.UniqueId);
+            player.Entity.Add(new NetworkComponent(packet.UniqueId));
+            World.RegisterUniqueIdFor(player.Entity.EntityId, packet.UniqueId);
 
-            var child = World.GetEntity(player.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
+            var child = World.GetEntity(player.Entity.Children.Find(c => World.GetEntity(c).Has<TextComponent>()));
             ref var txt = ref child.Get<TextComponent>();
             txt.Value = $"Name: {packet.GetUsername()}";
             

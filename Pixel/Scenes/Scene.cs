@@ -5,10 +5,8 @@ using Shared;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using Pixel.Enums;
 using Shared.Diagnostics;
 using Shared.ECS;
-using Pixel.ECS.Components;
 using Pixel.Helpers;
 using Shared.ECS.Components;
 
@@ -78,31 +76,6 @@ namespace Pixel.Scenes
                 Profiler.AddDraw(system.Name, (postDrawTicks - preDrawTicks) / 10000f);
             }
             sb.End();
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ApplyArchetype(ref Entity entity, EntityType et)
-        {
-            var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
-
-            ref var nameTag = ref World.CreateEntity();
-            nameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
-            nameTag.Add(new PositionComponent(-16, -16, 0));
-            entity.AddChild(ref nameTag);
-
-            switch (et)
-            {
-                case EntityType.Player:
-                    entity.Add<KeyboardComponent>();
-                    entity.Add<MouseComponent>();
-                    entity.Add<DbgBoundingBoxComponent>();
-                    entity.Add(new SpeedComponent(128));
-                    entity.Add(new CameraComponent(1));
-                    break;
-                case EntityType.Npc:
-                    entity.Add<DbgBoundingBoxComponent>();
-                    entity.Add(new SpeedComponent(32));
-                    break;
-            }
         }
     }
 }

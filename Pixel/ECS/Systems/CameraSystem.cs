@@ -4,6 +4,7 @@ using Pixel.ECS.Components;
 using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
+using Shared.Maths;
 
 namespace Pixel.ECS.Systems
 {
@@ -26,10 +27,10 @@ namespace Pixel.ECS.Systems
                 UpdateZoom(ref entity, ref cam);
                 var entityCenter = pos.Value + (drw.SrcRect.Size.ToVector2() /2);
                 var camCenter = pos.Value - cam.PositionOffset;
-                var camX = (int)(camCenter.X / Global.TileSize) * Global.TileSize;
-                var camY = (int)(camCenter.Y / Global.TileSize) * Global.TileSize;
 
-                cam.ScreenRect = new Rectangle(camX, camY, Global.VirtualScreenWidth, Global.VirtualScreenHeight);
+                var camGridPos = PixelMath.ToGridPosition(pos.Value);
+
+                cam.ScreenRect = new Rectangle(camGridPos.X, camGridPos.Y, Global.VirtualScreenWidth, Global.VirtualScreenHeight);
                 cam.Transform = Matrix.CreateTranslation(-entityCenter.X, -entityCenter.Y, 0)
                                  * Matrix.CreateScale(Global.ScreenWidth / Global.VirtualScreenWidth, Global.ScreenHeight / Global.VirtualScreenHeight, 1f)
                                  * Matrix.CreateScale(Math.Max(0.01f, cam.Zoom))

@@ -57,7 +57,6 @@ namespace Shared.ECS
         {
             ref var entity = ref CreateEntity();
             RegisterUniqueIdFor(uniqueId, entity.EntityId);
-            Register(entity.EntityId);
             return ref entity;
         }
 
@@ -82,6 +81,7 @@ namespace Shared.ECS
         }
         public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
         public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
+        public static bool EntityExists(int entityId) => EntityToArrayOffset.ContainsKey(entityId);
 
         internal static void Register(int entityId)
         {
@@ -109,7 +109,7 @@ namespace Shared.ECS
                 ref var actualEntity = ref Entities[arrayOffset];
 
                 for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityRemoved(ref actualEntity);
+                    Systems[i].EntityRemoved(actualEntity.EntityId);
 
                 actualEntity.Recycle();
                 if (actualEntity.Children != null)

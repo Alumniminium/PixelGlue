@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Shared.IO;
 
 namespace Shared.ECS
 {
     public class WorkerThread
     {
         public int Id;
-        public bool Ready;
-        public Thread Worker;
+        public volatile bool Ready;
+        private Thread Worker;
         public AutoResetEvent Block;
-        public List<int> Entities;
-        public Action<WorkerThread> Target;
+        public List<int> Entities,ToBeAdded;
+        private Action<WorkerThread> Target;
         public DateTime StartTime,StopTime;
 
         public WorkerThread(Action<WorkerThread> targetMethod, ThreadPriority priority)
@@ -20,6 +19,7 @@ namespace Shared.ECS
             Target = targetMethod;
             Block = new AutoResetEvent(false);
             Entities = new List<int>();
+            ToBeAdded = new List<int>();
             Worker = new Thread(WorkLoop)
             {
                 IsBackground = true,
@@ -34,15 +34,29 @@ namespace Shared.ECS
                 Ready = true;
                 Block.WaitOne();
                 Ready=false;
+
                 StartTime=DateTime.UtcNow;
+
+            lock(ToBeAdded)
+                foreach(var id in ToBeAdded)
+                    Entities.Add(id);
+
+            lock(ToBeAdded)
+                ToBeAdded.Clear();
+                
                 Target.Invoke(this);
+
                 StopTime=DateTime.UtcNow;
             }
+        }
+        public void AddEntity(int entityId) 
+        {
+            lock(ToBeAdded)
+             ToBeAdded.Add(entityId);
         }
     }
     public class AsyncPixelSystem : PixelSystem
     {
-        public int Idx=0;
         public WorkerThread[] WorkerThreads;
         public AsyncPixelSystem(bool doUpdate, bool doDraw, int threads) : base(doUpdate, doDraw)
         {             
@@ -54,24 +68,31 @@ namespace Shared.ECS
                 WorkerThreads[i].Start();
             }
         }
-        public override void Update(float deltaTime) => UnblockThreads();
-        public void UnblockThreads()
+        public override void Update(float deltaTime)
         {
+            int threadIndex=0;
             foreach (var entity in Entities)
             {
-                var wt = WorkerThreads[Idx];
-                wt.Entities.Add(entity);
+                var wt = WorkerThreads[threadIndex];
+                wt.AddEntity(entity);
                     
-                Idx++;
+                threadIndex++;
 
-                if (Idx == WorkerThreads.Length)
-                    Idx = 0;
+                if (threadIndex == WorkerThreads.Length)
+                    threadIndex = 0;
             }
             foreach (var wt in WorkerThreads)
+            {
+                wt.StartTime = DateTime.UtcNow;
                 wt.Block.Set();
-            foreach (var thread in WorkerThreads)
-                while (!thread.Ready)
+            }
+            
+            foreach (var wt in WorkerThreads)
+            {
+                while (!wt.Ready)
                     Thread.Yield();
+                wt.StopTime=DateTime.UtcNow;
+            }
         }
         public virtual void ThreadedUpdate(WorkerThread wt) => wt.Entities.Clear();
 
@@ -97,6 +118,6 @@ namespace Shared.ECS
                 removedEntities.Add(entity.EntityId);
         }
 
-        public override void EntityRemoved(ref Entity entity) => Entities.Remove(entity.EntityId);
+        public override void EntityRemoved(int entityId) => Entities.Remove(entityId);
     }
 }

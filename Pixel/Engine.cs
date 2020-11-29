@@ -17,7 +17,7 @@ namespace Pixel
         {
             _graphics = new GraphicsDeviceManager(this)
             {
-                GraphicsProfile = GraphicsProfile.HiDef,
+                GraphicsProfile = GraphicsProfile.Reach,
                 SynchronizeWithVerticalRetrace=vsync,
                 PreferHalfPixelOffset = false,
                 HardwareModeSwitch = false

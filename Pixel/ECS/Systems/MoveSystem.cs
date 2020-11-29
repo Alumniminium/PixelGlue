@@ -58,7 +58,7 @@ namespace Pixel.ECS.Systems
                 else
                     pos.Value += vel.Value;
 
-                if (entity.Has<NetworkComponent>() && entity.EntityId == TestingScene.Player.EntityId)
+                if (entity.Has<NetworkComponent>() && entity.EntityId == TestingScene.Player.Entity.EntityId)
                 {
                     ref readonly var net = ref entity.Get<NetworkComponent>();
                     NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pos.Value));

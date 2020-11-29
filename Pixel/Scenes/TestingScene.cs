@@ -12,7 +12,7 @@ namespace Pixel.Scenes
     public class TestingScene : Scene
     {
         public BloodSpawner Spawner;
-        public static Entity Player;
+        public static Player Player;
         public override void Initialize()
         {
             World.Systems.Add(new GCMonitor(true, false));
@@ -36,9 +36,10 @@ namespace Pixel.Scenes
             World.Systems.Add(new SmartFramerate(true, true));
             base.Initialize();
 
-            Player = World.CreateEntity();
-            ApplyArchetype(ref Player, EntityType.Player);
-            Spawner = new BloodSpawner(1024,1024);
+            //Player = World.CreateEntity();
+            Player= new Player(1024,1008);
+            //Spawner = new BloodSpawner(1024,1024);
+
             
             IsReady=true;
             //var cursor = World.CreateEntity();

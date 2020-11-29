@@ -54,7 +54,7 @@ namespace Pixel.ECS.Systems
 
         private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
         {
-            ref readonly var cam = ref TestingScene.Player.Get<CameraComponent>();
+            ref readonly var cam = ref TestingScene.Player.Camera;
             var bounds = cam.ScreenRect;
             xs = bounds.Left - Overdraw.X;
             ys = bounds.Top - Overdraw.Y;

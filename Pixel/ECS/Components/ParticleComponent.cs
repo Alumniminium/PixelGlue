@@ -9,5 +9,12 @@ namespace Pixel.ECS.Components
 
         public float Energy { get; internal set; }
         public int EmitterId { get; internal set; }
+
+        public ParticleComponent(int framesToLive, float energy, int emitterId)
+        {
+            FramesLeftToLive=framesToLive;
+            Energy=energy;
+            EmitterId=emitterId;
+        }
     }
 }

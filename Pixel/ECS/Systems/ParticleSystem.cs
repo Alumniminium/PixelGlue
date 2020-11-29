@@ -1,20 +1,16 @@
-using System;
-using System.Threading;
 using Pixel.ECS.Components;
-using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
-using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
     public class ParticleSystem : AsyncPixelSystem
     {
-        public const int THREAD_COUNT = 1;
+        public const int THREAD_COUNT = 12;
         public override string Name { get; set; } = "Particle System";
-        public ParticleSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw,THREAD_COUNT) { }
+        public ParticleSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw, THREAD_COUNT) { }
         public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, VelocityComponent, DrawableComponent, ParticleComponent>();
-        
+
         public override void ThreadedUpdate(WorkerThread wt)
         {
             foreach (var entityId in wt.Entities)
@@ -31,18 +27,15 @@ namespace Pixel.ECS.Systems
                     continue;
                 }
 
-                if (prtcl.FramesLeftToLive > 0)
-                {
-                    ref var drw = ref entity.Get<DrawableComponent>();
-                    ref var pos = ref entity.Get<PositionComponent>();
-                    ref readonly var vel = ref entity.Get<VelocityComponent>();
+                ref var drw = ref entity.Get<DrawableComponent>();
+                ref var pos = ref entity.Get<PositionComponent>();
+                ref readonly var vel = ref entity.Get<VelocityComponent>();
 
-                    pos.Value += (vel.Value * prtcl.Energy);
-                    drw.DestRect.Location = pos.Value.ToPoint();
-                    prtcl.FramesLeftToLive--;
-                    // add different energy decay calcs
-                    prtcl.Energy -= prtcl.Energy * pem.DecayFactor;
-                }
+                pos.Value += ((vel.Value * 0.01f) * prtcl.Energy);
+                drw.DestRect.Location = pos.Value.ToPoint();
+                prtcl.FramesLeftToLive--;
+                // add different energy decay calcs
+                prtcl.Energy -= prtcl.Energy * pem.DecayFactor;
             }
             base.ThreadedUpdate(wt);
         }

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
-using Shared.IO;
 
 namespace Shared.ECS
 {
@@ -23,6 +21,14 @@ namespace Shared.ECS
 
         public void PreUpdate()
         {
+            foreach (var id in Entities)
+                if (!removedEntities.Contains(id) && !World.EntityExists(id))
+                    removedEntities.Add(id);
+
+            foreach (var id in addedEntities)
+                if (!World.EntityExists(id))
+                    addedEntities.Remove(id);
+
             foreach (var id in removedEntities)
                 Entities.Remove(id);
             Entities.AddRange(addedEntities);
@@ -35,12 +41,12 @@ namespace Shared.ECS
         public virtual void FixedUpdate(float deltaTime) { }
         public virtual void Draw(SpriteBatch spriteBatch) { }
         public virtual bool MatchesFilter(Entity entityId) => false;
-        
+
         public virtual void EntityChanged(ref Entity entity)
         {
             if (MatchesFilter(entity))
             {
-                if(removedEntities.Contains(entity.EntityId))
+                if (removedEntities.Contains(entity.EntityId))
                     removedEntities.Remove(entity.EntityId);
                 if (Entities.Contains(entity.EntityId))
                     return;
@@ -52,6 +58,6 @@ namespace Shared.ECS
                 removedEntities.Add(entity.EntityId);
         }
 
-        public virtual void EntityRemoved(ref Entity entity) => removedEntities.Add(entity.EntityId);
+        public virtual void EntityRemoved(int entityId) => removedEntities.Add(entityId);
     }
 }

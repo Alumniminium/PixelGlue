@@ -16,26 +16,32 @@ namespace Pixel.Networking
         {
             if (!World.UidExists(packet.UniqueId))
             {
-                ref var entity = ref World.CreateEntity(packet.UniqueId);
                 var srcEntity = Database.Entities[packet.Model];
 
                 if (packet.UniqueId >= 1_000_000)
                 {
-                    entity = TestingScene.Player;
-                    SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Player);
+                    var player = TestingScene.Player;
+
+                    player.Speed = 128;
+                    player.Position = new Vector2(packet.X, packet.Y);
+                    player.DrawableComponent.TextureName = srcEntity.TextureName;
+                    player.DrawableComponent.SrcRect = srcEntity.SrcRect;
                 }
                 else
                 {
+                    ref var entity = ref World.CreateEntity(packet.UniqueId);
                     entity.Add(new NetworkComponent(packet.UniqueId));
-                    SceneManager.ActiveScene.ApplyArchetype(ref entity, EntityType.Npc);
+                    entity.Add<DbgBoundingBoxComponent>();
+                    entity.Add(new SpeedComponent(32));
+                    entity.Add(new PositionComponent(packet.X, packet.Y));
+                    entity.Add(new DrawableComponent(srcEntity.TextureName,srcEntity.SrcRect));
+                    var name = Global.Names[Global.Random.Next(0, Global.Names.Length)];
+                    ref var npcNameTag = ref World.CreateEntity();
+                    npcNameTag.Add(new TextComponent($"{entity.EntityId}: {name}"));
+                    npcNameTag.Add(new PositionComponent(-16, -16, 0));
+                    entity.AddChild(ref npcNameTag);
                 }
-                
-                entity.Add(new PositionComponent(packet.X, packet.Y));
-                entity.Add(new DrawableComponent(srcEntity.TextureName,srcEntity.SrcRect));
 
-                ref var nameTag = ref World.GetEntity(entity.Children[0]);
-                ref var txt = ref nameTag.Get<TextComponent>();
-                txt.Value = packet.GetName();
             }
             else
             {

@@ -1,17 +1,14 @@
-using System.Threading;
 using Shared.IO;
 using System;
-using Shared.ECS;
 
 namespace Shared.ECS.Systems
 {
-    public class GCMonitor : AsyncPixelSystem
+    public class GCMonitor : PixelSystem
     {
         public override string Name { get; set; } = "GC Monitoring System";
         public int[] GenCollections = new int[3];
-
-        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw,1) { }
-        public override void ThreadedUpdate(WorkerThread wt)
+        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public override void FixedUpdate(float dt)
         {
             for (int i = 0; i < GenCollections.Length; i++)
             {

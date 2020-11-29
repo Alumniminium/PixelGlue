@@ -93,7 +93,7 @@ namespace Pixel.ECS.Systems
                 var system = World.GetSystem<TextRenderSystem>();
                 system.IsActive = !system.IsActive;
 
-                ref var dialog = ref DialogFactory.Create(ref TestingScene.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
+                //1ref var dialog = ref DialogFactory.Create(ref TestingScene.Player, "TEST TEXT", new string[] {"one", "two","three","four"});
                 //World.Register(dialog.EntityId);
             }
             if (inp.IsPressed(PixelGlueButtons.EscapeMenu))

@@ -57,7 +57,7 @@ namespace Pixel.ECS.Systems
                                     FConsole.WriteLine($"Found Prefab for Entity {e.EntityId}!");
                                     FConsole.WriteLine($"It's a {prefab.ToString()}");
 
-                                    if(prefab is IInteractable iPrefab)
+                                    if(prefab is ICanActivate iPrefab)
                                         iPrefab.Activate();
                                 }
                             }

@@ -6,6 +6,7 @@ using Pixel.Helpers;
 using Shared.ECS.Components;
 using Shared;
 using Pixel.Scenes;
+using Shared.Maths;
 
 namespace Pixel.ECS.Systems
 {
@@ -50,21 +51,20 @@ namespace Pixel.ECS.Systems
         }
         private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
         {
-            ref readonly var cam = ref TestingScene.Player.Get<CameraComponent>();
+            ref readonly var cam = ref TestingScene.Player.Camera;
             var bounds = cam.ScreenRect;
             xs = bounds.Left - Overdraw.X;
             ys = bounds.Top - Overdraw.Y;
-            xs /= Global.TileSize;
-            xs *= Global.TileSize;
-            ys /= Global.TileSize;
-            ys *= Global.TileSize;
-
             xe = bounds.Right + Overdraw.X;
             ye = bounds.Bottom + Overdraw.Y;
-            xe /= Global.TileSize;
-            xe *= Global.TileSize;
-            ye /= Global.TileSize;
-            ye *= Global.TileSize;
+
+            var start = PixelMath.ToGridPosition(xs,ys);
+            var end = PixelMath.ToGridPosition(xs,ys);
+
+            xs = (int)start.X;
+            xe = (int)end.X;
+            ys = (int)start.Y;
+            ye = (int)end.Y;
         }
     }
 }

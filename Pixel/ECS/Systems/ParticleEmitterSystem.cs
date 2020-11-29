@@ -34,10 +34,7 @@ namespace Pixel.ECS.Systems
                         ref readonly var particle_pos = ref particle.Add(new PositionComponent(pos.Value));
                         ref var particel_drw = ref particle.Add(new DrawableComponent(Color.Red, new Rectangle((int)particle_pos.Value.Y, (int)particle_pos.Value.Y, 1, 1)));
                         ref var particle_vel = ref particle.Add(new VelocityComponent());
-                        ref var particle_par = ref particle.Add(new ParticleComponent());
-                        particle_par.FramesLeftToLive = pem.LifetimeFrames;
-                        particle_par.Energy = pem.ParticleStartingEnergy;
-                        particle_par.EmitterId = entity.EntityId;
+                        ref var particle_par = ref particle.Add(new ParticleComponent(pem.LifetimeFrames,pem.ParticleStartingEnergy,entity.EntityId));
 
                         switch (pem.EmitterType)
                         {

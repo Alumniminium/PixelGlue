@@ -4,7 +4,7 @@ using Shared;
 using Shared.ECS;
 using Shared.ECS.Components;
 
-public class BloodSpawner : Prefab, IInteractable
+public class BloodSpawner : Prefab, ICanActivate
 {
     public bool Active 
     { 

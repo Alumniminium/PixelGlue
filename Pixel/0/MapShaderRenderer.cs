@@ -72,7 +72,7 @@ namespace Pixel.zero
             effect.Parameters["View"].SetValue(View);
 
             Global.Device.SetVertexBuffer(vertexBuffer);
-            var playerPos = player.Get<PositionComponent>().Value;
+            var playerPos = player.Position;
             var x = (int)playerPos.X;
             var y = (int)playerPos.Y;
             DrawTileMap(new Rectangle(x, y, 1000, 1000), 0, 3);
