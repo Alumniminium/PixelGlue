@@ -14,7 +14,6 @@ namespace Pixel.zero
 {
     public class MapShaderRenderer : PixelSystem
     {
-        public override string Name => "Map Shader Renderer";
         public DateTime LastUpdate { get; set; }
 
         public const int VERTICES_PER_QUAD = 6;
@@ -26,7 +25,7 @@ namespace Pixel.zero
         public List<Texture2D> layerTextures = new List<Texture2D>();
         private VertexBuffer vertexBuffer;
 
-        public MapShaderRenderer(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public MapShaderRenderer(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "Map Shader Renderer";}
 
         public override void Initialize()
         {
@@ -49,10 +48,10 @@ namespace Pixel.zero
             IsActive = true;
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> _)
         {
             LastUpdate = DateTime.Now;
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            ref readonly var cam = ref ComponentList<CameraComponent>.Get(1);
             effect.Parameters["View"].SetValue(cam.Transform);
         }
 

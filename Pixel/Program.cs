@@ -3,9 +3,6 @@ using Pixel.Scenes;
 using Shared.IO;
 using System;
 using System.Threading;
-using System.Reflection;
-using System.Linq;
-using Shared.ECS;
 
 namespace Pixel
 {

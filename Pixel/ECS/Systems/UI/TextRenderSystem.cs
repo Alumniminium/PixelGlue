@@ -7,18 +7,15 @@ using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class TextRenderSystem : PixelSystem
+    public class TextRenderSystem : PixelSystem<TextComponent,PositionComponent>
     {
-        public override string Name { get; set; } = "Name Tag Render System";
-
-        public TextRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<TextComponent, PositionComponent>() && entity.Parent != 0;
+        public TextRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) {Name= "Name Tag Render System"; }
         
         public override void Draw(SpriteBatch sb)
-        {
-            foreach (var id in Entities)
+        {   
+            foreach (var entityList in Entities)
+            foreach (var entity in entityList)
             {
-                ref readonly var entity = ref World.GetEntity(id);
                 ref readonly var parent = ref World.GetEntity(entity.Parent);
                 
                 if(!parent.Has<PositionComponent,TextComponent>())

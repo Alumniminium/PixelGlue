@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Scenes;
@@ -15,6 +16,7 @@ namespace Pixel
 
         public Engine(bool vsync)
         {
+            Thread.CurrentThread.Name = "Main/Render Thread";
             _graphics = new GraphicsDeviceManager(this)
             {
                 GraphicsProfile = GraphicsProfile.Reach,
@@ -50,13 +52,6 @@ namespace Pixel
                 action.Invoke();
 
             SceneManager.ActiveScene.Update(gameTime);
-
-            while (_elapsedTime >= _updateTime)
-            {
-                _elapsedTime -= _updateTime;
-                SceneManager.ActiveScene.FixedUpdate((float)gameTime.TotalGameTime.TotalSeconds);
-            }
-
             base.Update(gameTime);
         }
 

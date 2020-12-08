@@ -22,7 +22,7 @@ namespace Shared.TerribleSockets.Queues
         {
             OnPacket = onPacket;
             if (_workerThread == null)
-                _workerThread = new Thread(WorkLoop) { IsBackground = true };
+                _workerThread = new Thread(WorkLoop) { IsBackground = true, Name = "Receive Queue Thread" };
             if (!_workerThread.IsAlive)
                 _workerThread.Start();
         }

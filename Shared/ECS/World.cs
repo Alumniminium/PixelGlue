@@ -5,11 +5,12 @@ using Shared.IO;
 
 namespace Shared.ECS
 {
-    public static partial class World
+    public static class World
     {
         public static int EntityCount => 1_000_000 - AvailableArrayIndicies.Count;
         private static int LastEntityId = 1;
         private static readonly Entity[] Entities;
+        private static readonly List<int> ChangedEntities;
         private static readonly Stack<int> AvailableArrayIndicies;
         private static readonly Dictionary<int, int> EntityToArrayOffset, UniqueIdToEntityId, EntityIdToUniqueId;
         private static readonly Dictionary<int, List<int>> Children;
@@ -18,6 +19,7 @@ namespace Shared.ECS
         static World()
         {
             Entities = new Entity[1_000_001];
+            ChangedEntities = new List<int>();
             Children = new Dictionary<int, List<int>>();
             ToBeRemoved = new List<int>();
             AvailableArrayIndicies = new Stack<int>(Enumerable.Range(1, 1_000_000));
@@ -53,6 +55,8 @@ namespace Shared.ECS
 
         public static Entity[] GetEntities() => Entities;
 
+        public static List<int> GetChangedEntities() => ChangedEntities;
+
         public static ref Entity CreateEntity(int uniqueId)
         {
             ref var entity = ref CreateEntity();
@@ -79,39 +83,28 @@ namespace Shared.ECS
             else
                 Children[entity.EntityId].Add(child.EntityId);
         }
+
         public static ref Entity GetEntity(int entityId) => ref Entities[EntityToArrayOffset[entityId]];
         public static ref Entity GetEntityByUniqueId(int uniqueId) => ref Entities[EntityToArrayOffset[UniqueIdToEntityId[uniqueId]]];
         public static bool EntityExists(int entityId) => EntityToArrayOffset.ContainsKey(entityId);
 
         internal static void Register(int entityId)
         {
+            ChangedEntities.Add(entityId);
             ref var entity = ref GetEntity(entityId);
 
-            for (int i = 0; i < Systems.Count; i++)
-                Systems[i].EntityChanged(ref entity);
-            
             if (entity.Children != null)
-            {
                 foreach (var childId in entity.Children)
-                {
-                    ref var child = ref GetEntity(childId);
-                    for (int i = 0; i < Systems.Count; i++)
-                        Systems[i].EntityChanged(ref child);
-                }
-            }
+                    ChangedEntities.Add(childId);
         }
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
         public static void Destroy(int id) => ToBeRemoved.Add(id);
         private static void DestroyInternal(int id)
         {
+            FConsole.WriteLine("World.DestroyInternal");
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
             {
                 ref var actualEntity = ref Entities[arrayOffset];
-
-                for (int i = 0; i < Systems.Count; i++)
-                    Systems[i].EntityRemoved(actualEntity.EntityId);
-
-                actualEntity.Recycle();
                 if (actualEntity.Children != null)
                 {
                     foreach (var childId in actualEntity.Children)
@@ -120,15 +113,25 @@ namespace Shared.ECS
                         DestroyInternal(child.EntityId);
                     }
                 }
+                actualEntity.Recycle();
+                AvailableArrayIndicies.Push(arrayOffset);
             }
             EntityIdToUniqueId.Remove(id, out var uid);
             UniqueIdToEntityId.Remove(uid, out _);
-            AvailableArrayIndicies.Push(arrayOffset);
         }
         public static void Update()
         {
             foreach (var id in ToBeRemoved)
                 DestroyInternal(id);
+
+            foreach(var entityId in ChangedEntities)
+            {
+                ref var entity = ref GetEntity(entityId);
+                for(int i =0;i<Systems.Count;i++)
+                        Systems[i].EntityChanged(ref entity);
+            }
+
+            ChangedEntities.Clear();
             ToBeRemoved.Clear();
         }
     }

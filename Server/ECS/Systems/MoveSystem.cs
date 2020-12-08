@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Shared;
 using Shared.ECS;
@@ -7,19 +8,14 @@ using Shared.TerribleSockets.Packets;
 
 namespace Server.ECS.Systems
 {
-    public class MoveSystem : PixelSystem
+    public class MoveSystem : PixelSystem<PositionComponent, DestinationComponent, SpeedComponent>
     {
-        public override string Name { get; set; } = "Move System";
-
-        public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DestinationComponent, SpeedComponent>();
+        public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Move System"; }
         
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
-
                 if(!entity.Has<PositionComponent, DestinationComponent, SpeedComponent>())
                     continue;
                     

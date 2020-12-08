@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Systems;
-using Pixel.Enums;
 using Pixel.Helpers;
 using Shared;
 using Shared.ECS;
@@ -28,7 +26,7 @@ namespace Pixel.Scenes
             //World.Systems.Add(new WorldRenderSystem(false, true));
             World.Systems.Add(new BackgroundRenderSystem(false, true));
             //World.Systems.Add(new DbgEntitySpawnSystem(true, false));
-            World.Systems.Add(new EntityRenderSystem(true, true));
+            World.Systems.Add(new EntityRenderSystem(false, true));
             //World.Systems.Add(new DialogSystem(true,true));
 
             World.Systems.Add(new TextRenderSystem(false, true));
@@ -38,7 +36,7 @@ namespace Pixel.Scenes
 
             //Player = World.CreateEntity();
             Player= new Player(1024,1008);
-            //Spawner = new BloodSpawner(1024,1024);
+            Spawner = new BloodSpawner(1024,1024);
 
             
             IsReady=true;
@@ -51,15 +49,15 @@ namespace Pixel.Scenes
         }
         public override void LoadContent(ContentManager cm)
         {
-            var worldTexture = Texture2D.FromFile(Global.Device,"../Build/Content/RuntimeContent/Biomes.bmp");
-            AssetManager.LoadTexture("world",worldTexture);
+            //var worldTexture = Texture2D.FromFile(Global.Device,"../Build/Content/RuntimeContent/Biomes.bmp");
+            //AssetManager.LoadTexture("world",worldTexture);
 
             Database.Load("../Build/Content/RuntimeContent/Equipment.txt");
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont_12.fnt", "profont_12");
             AssetManager.LoadFont("../Build/Content/RuntimeContent/profont.fnt", "profont");
             AssetManager.LoadTexture("selectionrect4");
             //AssetManager.LoadTexture("tree");
-            AssetManager.LoadTexture("dawn");
+            //AssetManager.LoadTexture("dawn");
             AssetManager.LoadTexture("pixel", TextureGen.Pixel(Global.Device, "ffffff"));
             base.LoadContent(cm);
         }

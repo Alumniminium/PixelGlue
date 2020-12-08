@@ -9,6 +9,7 @@ using Shared.Diagnostics;
 using Shared.ECS;
 using Pixel.Helpers;
 using Shared.ECS.Components;
+using Shared.IO;
 
 namespace Pixel.Scenes
 {
@@ -35,34 +36,26 @@ namespace Pixel.Scenes
             World.Update();
             for (int i = 0; i < World.Systems.Count; i++)
             {
-                var system = World.Systems[i];
-                system.PreUpdate();
-            }
-            for (int i = 0; i < World.Systems.Count; i++)
-            {
                 var preUpdateTicks = DateTime.UtcNow.Ticks;
                 var system = World.Systems[i];
-
+                
                 if (!system.WantsUpdate)
                     continue;
                 if (system.IsActive)
+                {
+                    FConsole.WriteLine("Update Starting for "+system.Name);
                     system.Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
-
+                    FConsole.WriteLine("Done "+system.Name);
+                }
                 var postUpdateTicks = DateTime.UtcNow.Ticks;
                 Profiler.AddUpdate(system.Name, (postUpdateTicks - preUpdateTicks) / 10000f);
             }
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void FixedUpdate(float deltaTime)
-        {
-            for (int i = 0; i < World.Systems.Count; i++)
-                if (World.Systems[i].IsActive)
-                    World.Systems[i].FixedUpdate(deltaTime);
-        }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(SpriteBatch sb)
         {
-            ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+            ref readonly var cam = ref ComponentList<CameraComponent>.Get(1);
             sb.Begin(SpriteSortMode.Deferred, transformMatrix: cam.Transform, samplerState: SamplerState.PointClamp);
             for (int i = 0; i < World.Systems.Count; i++)
             {

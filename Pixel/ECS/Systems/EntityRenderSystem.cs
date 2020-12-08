@@ -10,30 +10,16 @@ using Shared.Maths;
 
 namespace Pixel.ECS.Systems
 {
-    public class EntityRenderSystem : PixelSystem
+    public class EntityRenderSystem : PixelSystem<PositionComponent,DrawableComponent>
     {
-        public override string Name { get; set; } = "Entity Rendering System";
         public Point Overdraw = new Point(Global.HalfVirtualScreenWidth, Global.HalfVirtualScreenHeight);
-
-        public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) 
-        {
-            if(entity.Has<PositionComponent, DrawableComponent>())
-            {
-                ref readonly var pos = ref entity.Get<PositionComponent>();
-                return true;//!OutOfRange(pos.Value);
-            }
-            return false;
-        }
+        public EntityRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "Entity Rendering System";}
         public override void Draw(SpriteBatch sb)
         {
-            foreach (var entityId in Entities)
+            foreach (var entityList in Entities)
+            foreach (var entity in entityList)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
-                ref readonly var pos = ref entity.Get<PositionComponent>();
-
-                //if (OutOfRange(pos.Value))
-                //    continue;
+                ref readonly var pos = ref entity.Get<PositionComponent>();;
 
                 ref readonly var drw = ref entity.Get<DrawableComponent>();
 
@@ -44,11 +30,6 @@ namespace Pixel.ECS.Systems
             }
         }
 
-        private bool OutOfRange(Vector2 pos)
-        {
-            ExtendBounds(out var xs, out var ys, out var xe, out var ye);
-            return pos.X < xs || pos.X > xe || pos.Y <= ys || pos.Y >= ye;
-        }
         private void ExtendBounds(out int xs, out int ys, out int xe, out int ye)
         {
             ref readonly var cam = ref TestingScene.Player.Camera;

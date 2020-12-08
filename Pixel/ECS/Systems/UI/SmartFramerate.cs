@@ -5,12 +5,12 @@ using Shared;
 using Shared.ECS;
 using Shared.Diagnostics;
 using Pixel.Helpers;
+using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems
 {
     public class SmartFramerate : PixelSystem
     {
-        public override string Name { get; set; } = "Metrics UI Overlay System";
         private double currentFrametimes;
         private int counter;
         public double updateRate;
@@ -18,7 +18,7 @@ namespace Pixel.ECS.Systems
         private int numerator;
         private readonly string[] lines = new string[64];
 
-        public SmartFramerate(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public SmartFramerate(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Metrics UI Overlay System";}
         public override void Initialize()
         {
             numerator = 3;
@@ -29,11 +29,11 @@ namespace Pixel.ECS.Systems
             IsActive = true;
         }
 
-        public override void Update(float timeSinceLastFrame)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
             counter++;
             currentFrametimes /= weight;
-            currentFrametimes += timeSinceLastFrame;
+            currentFrametimes += deltaTime;
             if (counter == 60)
             {
                 updateRate = numerator / currentFrametimes;
@@ -42,7 +42,7 @@ namespace Pixel.ECS.Systems
                 lines[1] = $"| Entities: {World.EntityCount}, Textures: {Global.Metrics.TextureCount}";
                 lines[2] = $"| Primitives: {Global.Metrics.PrimitiveCount}, Targets: {Global.Metrics.TargetCount}";
                 lines[3] = $"| Draw calls: {Global.Metrics.DrawCount} (Pre Batch: {Global.Metrics.SpriteCount})";
-                lines[4] = $"| FPS: {updateRate:##0} Frametime: {Global.DrawTime + Global.UpdateTime:##0.00}ms";
+                lines[4] = $"| FPS: {updateRate:########0} Frametime: {Global.DrawTime + Global.UpdateTime:##0.00}ms";
                 lines[5] = $"| Draw: {Global.DrawTime:##0.00}ms, Update: {Global.UpdateTime:##0.00}ms";
 
                 int lastLine = 7;
@@ -72,16 +72,16 @@ namespace Pixel.ECS.Systems
                         drawMax = Profiler.SystemDrawTimes[system.Name].Max;
                     }
                     
-                    if(updateMax >0.5f || drawMax >0.5f)
-                    {
+                    //if(updateMax >0.5f || drawMax >0.5f)
+                    //{
                         lines[lastLine++] = string.Empty;
                         lines[lastLine++] = $"{system.Name}";
                         
-                        if(updateMax > 0.5f)
+                    //    if(updateMax > 0.5f)
                                 lines[lastLine++] = $"Update: {updateCur.ToString("#0.00")}, {updateAvg:#0.00}, {updateMax:#0.00}";
-                        if(drawMax > 0.5f)
+                    //    if(drawMax > 0.5f)
                                 lines[lastLine++] = $"Draw: {drawCur.ToString("#0.00")}, {drawAvg:#0.00}, {drawMax:#0.00}";
-                    }
+                    //}
                 }
                 for (int i = lastLine; i < lines.Length; i++)
                     lines[i] = string.Empty;

@@ -7,6 +7,7 @@ using Shared.ECS.Components;
 
 public class Player : Prefab
 {
+    public int UniqueId => Entity.Get<NetworkComponent>().UniqueId;
     public string Name {
         get=> World.GetEntity(Entity.Children[0]).Get<TextComponent>().Value;
         set=> World.GetEntity(Entity.Children[0]).Get<TextComponent>().Value=value;

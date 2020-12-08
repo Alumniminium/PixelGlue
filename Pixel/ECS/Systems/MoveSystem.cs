@@ -6,23 +6,18 @@ using Shared;
 using Shared.ECS;
 using Pixel.Scenes;
 using Shared.ECS.Components;
+using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems
 {
-    public class MoveSystem : PixelSystem
+    public class MoveSystem : PixelSystem<PositionComponent, DestinationComponent, SpeedComponent>
     {
-        public override string Name { get; set; } = "Move System";
-        public Scene Scene => SceneManager.ActiveScene;
+        public MoveSystem(bool doUpdate, bool doDraw, int threads = 1) : base(doUpdate, doDraw, threads) { }
 
-        public MoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DestinationComponent, SpeedComponent>();
-        
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
-
                 if(!entity.Has<PositionComponent, DestinationComponent, SpeedComponent>())
                     continue;
 
@@ -47,7 +42,12 @@ namespace Pixel.ECS.Systems
                 var moveDistance = Vector2.Distance(pos.Value, pos.Value + vel.Value);
                 var keepmoving = false;
 
-                PlayerMovement(entity, ref dst, distanceToDest, moveDistance, ref keepmoving);
+                if (distanceToDest <= moveDistance && entity.Has<KeyboardComponent>())
+                {
+                    ref readonly var inp = ref entity.Get<KeyboardComponent>();
+                    keepmoving = inp.OldButtons.Contains(PixelGlueButtons.Left) || inp.OldButtons.Contains(PixelGlueButtons.Right) || inp.OldButtons.Contains(PixelGlueButtons.Down) || inp.OldButtons.Contains(PixelGlueButtons.Up);
+                    dst.Value += inp.Axis * Global.TileSize;
+                }
 
                 if (distanceToDest <= moveDistance && !keepmoving)
                 {
@@ -63,16 +63,6 @@ namespace Pixel.ECS.Systems
                     ref readonly var net = ref entity.Get<NetworkComponent>();
                     NetworkSystem.Send(MsgWalk.Create(net.UniqueId, pos.Value));
                 }
-            }
-        }
-
-        private static void PlayerMovement(Entity entity, ref DestinationComponent dst, float distanceToDest, float moveDistance, ref bool keepmoving)
-        {
-            if (distanceToDest <= moveDistance && entity.Has<KeyboardComponent>())
-            {
-                ref readonly var inp = ref entity.Get<KeyboardComponent>();
-                keepmoving = inp.OldButtons.Contains(PixelGlueButtons.Left) || inp.OldButtons.Contains(PixelGlueButtons.Right) || inp.OldButtons.Contains(PixelGlueButtons.Down) || inp.OldButtons.Contains(PixelGlueButtons.Up);
-                dst.Value += inp.Axis * Global.TileSize;
             }
         }
     }

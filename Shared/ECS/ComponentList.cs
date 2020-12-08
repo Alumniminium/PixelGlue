@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Shared.IO;
 
 namespace Shared.ECS
 {
-    public static class ComponentArray<T> where T : struct
+    public static class ComponentList<T> where T : struct
     {
         public const int AMOUNT = 1000000;
         private readonly static T[] array = new T[AMOUNT];
@@ -20,6 +21,7 @@ namespace Shared.ECS
                     throw new System.Exception("ran out of available indicies");
 
             array[offset] = component;
+            World.Register(owner);
             return ref array[offset];
         }
         public static bool HasFor(int owner) => EntityIdToArrayOffset.ContainsKey(owner);
@@ -30,10 +32,13 @@ namespace Shared.ECS
                 return ref array[index];
             throw new KeyNotFoundException($"Fucking index not found. ({nameof(array)} Len: {array.Length}, index for entity {owner} not found.)");
         }
+        // called via refelction @ ReflectionHelper.Remove<T>()
         public static void Remove(int owner)
         {
+            FConsole.WriteLine($"Remove Component for "+owner);
             if (EntityIdToArrayOffset.Remove(owner, out int offset))
                 AvailableIndicies.Push(offset);
+            World.Register(owner);
         }
     }
 }

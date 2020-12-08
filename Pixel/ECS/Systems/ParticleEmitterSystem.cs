@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Pixel.Helpers;
@@ -7,18 +8,14 @@ using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class ParticleEmitterSystem : PixelSystem
+    public class ParticleEmitterSystem : PixelSystem<PositionComponent,ParticleEmitterComponent>
     {
-        public override string Name { get; set; } = "Particle Emitter System";
-        public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent,ParticleEmitterComponent>();
+        public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Particle Emitter System"; }
         
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
                 ref var pem = ref entity.Get<ParticleEmitterComponent>();
 
                 if (!pem.Active)

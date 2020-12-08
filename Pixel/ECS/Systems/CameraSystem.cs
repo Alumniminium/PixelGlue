@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
 using Shared;
@@ -8,23 +9,29 @@ using Shared.Maths;
 
 namespace Pixel.ECS.Systems
 {
-    public class CameraSystem : PixelSystem
+    public class CameraSystem : PixelSystem<PositionComponent,DrawableComponent,CameraComponent>
     {
-        public CameraSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-
-        public override string Name { get; set; } = "Camera System";
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DrawableComponent, CameraComponent>();
-        public override void Update(float deltaTime)
+        public CameraSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { 
+            Name = "Camera System";
+        }
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
-            {
-                ref var entity = ref World.GetEntity(entityId);
-                
+            foreach (var entity in Entities)
+            {                
                 ref readonly var pos = ref entity.Get<PositionComponent>();
                 ref readonly var drw = ref entity.Get<DrawableComponent>();
                 ref var cam = ref entity.Get<CameraComponent>();
                 
-                UpdateZoom(ref entity, ref cam);
+                if (entity.Has<MouseComponent>())
+                {
+                    ref readonly var mos = ref entity.Get<MouseComponent>();
+
+                    if (mos.CurrentState.ScrollWheelValue > mos.OldState.ScrollWheelValue)
+                        cam.Zoom *= 2f;
+                    else if (mos.CurrentState.ScrollWheelValue < mos.OldState.ScrollWheelValue)
+                        cam.Zoom /= 2f;
+                }
+                
                 var entityCenter = pos.Value + (drw.SrcRect.Size.ToVector2() /2);
                 var camCenter = pos.Value - cam.PositionOffset;
 
@@ -40,15 +47,7 @@ namespace Pixel.ECS.Systems
 
         private static void UpdateZoom(ref Entity entity, ref CameraComponent cam)
         {
-            if (!entity.Has<MouseComponent>())
-                return;
-
-            ref readonly var mos = ref entity.Get<MouseComponent>();
-
-            if (mos.CurrentState.ScrollWheelValue > mos.OldState.ScrollWheelValue)
-                cam.Zoom *= 2f;
-            else if (mos.CurrentState.ScrollWheelValue < mos.OldState.ScrollWheelValue)
-                cam.Zoom /= 2f;
+            
         }
     }
 }

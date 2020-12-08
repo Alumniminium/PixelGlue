@@ -1,14 +1,18 @@
 using Shared.IO;
 using System;
+using System.Collections.Generic;
 
 namespace Shared.ECS.Systems
 {
     public class GCMonitor : PixelSystem
     {
-        public override string Name { get; set; } = "GC Monitoring System";
         public int[] GenCollections = new int[3];
-        public GCMonitor(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override void FixedUpdate(float dt)
+        public GCMonitor(bool doUpdate, bool doDraw, int threads = 1) : base(doUpdate, doDraw, threads)
+        {
+            Name = "GC Monitoring System";
+        }
+
+        public override void Update(float dt, List<Entity> entities)
         {
             for (int i = 0; i < GenCollections.Length; i++)
             {

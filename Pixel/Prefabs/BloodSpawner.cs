@@ -22,7 +22,7 @@ public class BloodSpawner : Prefab, ICanActivate
         Entity = World.CreateEntity();
         Entity.Add(new PositionComponent(x, y));
         Entity.Add(new DbgBoundingBoxComponent());
-        Entity.Add(new ParticleEmitterComponent(1000,1,1000,1f,0.1f,EmitterType.Sphere));
+        Entity.Add(new ParticleEmitterComponent(1000,1,1000,2f,0.001f,EmitterType.Sphere));
 
         ref var nameTag = ref World.CreateEntity();
         nameTag.Add(new TextComponent($"{Entity.EntityId}: Blood Spawner {x},{y}, Active: {Active}"));

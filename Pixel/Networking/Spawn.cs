@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Pixel.ECS.Components;
-using Pixel.Enums;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared;
@@ -18,7 +17,7 @@ namespace Pixel.Networking
             {
                 var srcEntity = Database.Entities[packet.Model];
 
-                if (packet.UniqueId >= 1_000_000)
+                if (packet.UniqueId == TestingScene.Player.UniqueId)
                 {
                     var player = TestingScene.Player;
 
@@ -26,11 +25,11 @@ namespace Pixel.Networking
                     player.Position = new Vector2(packet.X, packet.Y);
                     player.DrawableComponent.TextureName = srcEntity.TextureName;
                     player.DrawableComponent.SrcRect = srcEntity.SrcRect;
+                    player.Name = packet.GetName();
                 }
                 else
                 {
                     ref var entity = ref World.CreateEntity(packet.UniqueId);
-                    entity.Add(new NetworkComponent(packet.UniqueId));
                     entity.Add<DbgBoundingBoxComponent>();
                     entity.Add(new SpeedComponent(32));
                     entity.Add(new PositionComponent(packet.X, packet.Y));

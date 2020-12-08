@@ -8,29 +8,29 @@ using Shared.ECS;
 using Shared.ECS.Components;
 using Pixel.Helpers;
 using Pixel.Scenes;
+using System.Collections.Generic;
 
 namespace Pixel.ECS.Systems
 {
-    public class PlayerInputSystem : PixelSystem
+    public class PlayerInputSystem : PixelSystem<KeyboardComponent, PositionComponent>
     {
-        public override string Name { get; set; } = "Input System";
         private PixelGlueButtons[] _mappedButtons;
 
-        public PlayerInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public PlayerInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) 
+        {
+            Name = "Input System";
+         }
 
         public override void Initialize()
         {
             _mappedButtons = (PixelGlueButtons[])Enum.GetValues(typeof(PixelGlueButtons));
             base.Initialize();
-        }
-        public override bool MatchesFilter(Entity entity) => entity.Has<KeyboardComponent, PositionComponent>();
-        
+        }        
 
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
                 ref var inp = ref entity.Get<KeyboardComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 EnsureReady(ref inp);

@@ -10,19 +10,18 @@ using Shared.IO;
 
 namespace Pixel.ECS.Systems
 {
-    public class MouseInputSystem : PixelSystem
+    public class MouseInputSystem : PixelSystem<MouseComponent>
     {
-        public override string Name { get; set; } = "Mouse Input System";
-
-        public MouseInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<MouseComponent>();
+        public MouseInputSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) 
+        { 
+            Name = "Mouse Input System";
+        }
         
-        public override void Update(float deltaTime)
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
-                ref readonly var cam = ref ComponentArray<CameraComponent>.Get(1);
+                ref readonly var cam = ref ComponentList<CameraComponent>.Get(1);
                 ref var mos = ref entity.Get<MouseComponent>();
 
                 mos.OldState = mos.CurrentState;

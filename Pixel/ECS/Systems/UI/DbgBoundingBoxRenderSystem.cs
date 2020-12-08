@@ -8,21 +8,17 @@ using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class DbgBoundingBoxRenderSystem : PixelSystem
+    public class DbgBoundingBoxRenderSystem : PixelSystem<DbgBoundingBoxComponent>
     {
-        public override string Name { get; set; } = "Debug Boundingbox System";
+        public DbgBoundingBoxRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "Debug Boundingbox System"; }
 
-        public DbgBoundingBoxRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<DbgBoundingBoxComponent>();
-        
         public unsafe override void Draw(SpriteBatch sb)
         {
             var pxl = AssetManager.GetTexture("pixel");
             var dbg = AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName);
-
-            foreach (var entityId in Entities)
+            foreach (var entityList in Entities)
+            foreach (var entity in entityList)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
                 if (entity.Has<CameraComponent>())
                 {
                     ref readonly var cam = ref entity.Get<CameraComponent>();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,9 +13,8 @@ namespace Pixel.ECS.Systems
 {
     public class BackgroundRenderSystem : PixelSystem
     {
-        public override string Name { get; set; } = "Background Rendering System";
         public Point Overdraw = new Point(Global.HalfVirtualScreenWidth, Global.HalfVirtualScreenHeight);
-        public BackgroundRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public BackgroundRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) {Name= "Background Rendering System"; }
         public Texture2D Pixel;
         public Color[] Colors;
 
@@ -24,7 +24,6 @@ namespace Pixel.ECS.Systems
             Colors = new[] { Color.Green, Color.DarkGreen, Color.SaddleBrown, Color.Gray };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Draw(SpriteBatch sb)
         {
             ExtendBounds(out int xs, out int ys, out int xe, out int ye);// make sure this is correct...
@@ -75,5 +74,7 @@ namespace Pixel.ECS.Systems
             ys = (int)start.Y;
             ye = (int)end.Y;
         }
+
+        public override void Update(float deltaTime, List<Entity> entities) { }
     }
 }

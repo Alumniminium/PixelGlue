@@ -17,7 +17,7 @@ namespace Shared.ECS
                         where aList?.Length > 0
                         select t;
 
-            var methods = types.Select(ct => (Action<int>)typeof(ComponentArray<>).MakeGenericType(ct).GetMethod("Remove").CreateDelegate(typeof(Action<int>)));
+            var methods = types.Select(ct => (Action<int>)typeof(ComponentList<>).MakeGenericType(ct).GetMethod("Remove").CreateDelegate(typeof(Action<int>)));
 
             RemoveMethodCache = new List<Action<int>>(methods);
             ComponentTypes = new List<Type>(types);
@@ -32,7 +32,10 @@ namespace Shared.ECS
         public static void Remove<T>(int entityId)
         {
             if (Cache.TryGetValue(typeof(T), out var method))
+            {
                 method.Invoke(entityId);
+                World.Register(entityId);
+            }
         }
         public static void RecycleComponents(int entityId)
         {

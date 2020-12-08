@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.ECS.Components;
@@ -12,9 +13,8 @@ namespace Pixel.ECS.Systems
 {
     public class WorldRenderSystem : PixelSystem
     {
-        public override string Name { get; set; } = "World Rendering System";
         public Point Overdraw = new Point(Global.HalfVirtualScreenWidth, Global.HalfVirtualScreenHeight);
-        public WorldRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
+        public WorldRenderSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "World Rendering System"; }
         public Texture2D Pixel, WorldTexture;
         public Color[] Pixels;
 
@@ -70,5 +70,7 @@ namespace Pixel.ECS.Systems
             ye /= Global.TileSize;
             ye *= Global.TileSize;
         }
+
+        public override void Update(float deltaTime, List<Entity> entities) { }
     }
 }

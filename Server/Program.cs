@@ -61,11 +61,9 @@ namespace Server
 
         private static void Update(float dt)
         {
-            foreach (var system in World.Systems)
-                system.PreUpdate();
+            World.Update();
             foreach (var system in World.Systems)
                 system.Update(dt);
-
             foreach (var kvp in Collections.Players)
             {
                 var player = kvp.Value;

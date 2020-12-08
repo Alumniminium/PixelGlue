@@ -4,13 +4,10 @@ using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class PathfindingSystem : PixelSystem
+    public class PathfindingSystem : PixelSystem<PositionComponent, DestinationComponent, SpeedComponent>
     {
-        public override string Name { get; set; } = "Pathfinding System";
         public Scene Scene => SceneManager.ActiveScene;
-
-        public PathfindingSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DestinationComponent, SpeedComponent>();
+        public PathfindingSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "Pathfinding System";}
         
         
         //public static void Move(Player player, ushort x, ushort y)

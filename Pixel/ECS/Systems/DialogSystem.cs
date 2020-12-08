@@ -6,14 +6,8 @@ using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class DialogSystem : PixelSystem
+    public class DialogSystem : PixelSystem<PositionComponent, DrawableComponent>
     {
-        public override string Name { get; set; } = "Dialog System";
-        public DialogSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, DrawableComponent>() && entity.Children != null;
-        
-        public override void Draw(SpriteBatch sb)
-        {
-        }
+        public DialogSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name= "Dialog System"; }
     }
 }

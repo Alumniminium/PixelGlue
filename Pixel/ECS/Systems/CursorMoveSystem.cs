@@ -1,21 +1,20 @@
+using System.Collections.Generic;
 using Pixel.ECS.Components;
 using Shared.ECS;
 using Shared.ECS.Components;
 
 namespace Pixel.ECS.Systems
 {
-    public class CursorMoveSystem : PixelSystem
+    public class CursorMoveSystem : PixelSystem<PositionComponent, MouseComponent>
     {
-        public override string Name { get; set; } = "Cursor Move System";
-
-        public CursorMoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { }
-        public override bool MatchesFilter(Entity entity) => entity.Has<PositionComponent, MouseComponent>() && !entity.Has<VelocityComponent, SpeedComponent>();
-        
-        public override void Update(float deltaTime)
+        public CursorMoveSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name = "Cursor Move System";}
+        public override void Update(float deltaTime, List<Entity> Entities)
         {
-            foreach (var entityId in Entities)
+            foreach (var entity in Entities)
             {
-                ref readonly var entity = ref World.GetEntity(entityId);
+                if(entity.Has<VelocityComponent, SpeedComponent>())
+                    continue;
+
                 ref readonly var mos = ref entity.Get<MouseComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
 
