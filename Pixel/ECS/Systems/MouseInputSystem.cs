@@ -17,10 +17,11 @@ namespace Pixel.ECS.Systems
             Name = "Mouse Input System";
         }
         
-        public override void Update(float deltaTime, List<Entity> Entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> Entities)
         {
-            foreach (var entity in Entities)
+            for(int i =0; i< Entities.Count; i++)
             {
+                ref var entity = ref Entities[i];
                 ref readonly var cam = ref ComponentList<CameraComponent>.Get(1);
                 ref var mos = ref entity.Get<MouseComponent>();
 

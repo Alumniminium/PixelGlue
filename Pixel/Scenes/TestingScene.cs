@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Pixel.ECS.Systems;
+using Pixel.ECS.Systems.Rendering;
 using Pixel.Helpers;
 using Shared;
 using Shared.ECS;
@@ -31,7 +32,7 @@ namespace Pixel.Scenes
 
             World.Systems.Add(new TextRenderSystem(false, true));
             World.Systems.Add(new DbgBoundingBoxRenderSystem(false, true));
-            World.Systems.Add(new SmartFramerate(true, true));
+            World.Systems.Add(new MetricsOverlaySystem(true, true));
             base.Initialize();
 
             //Player = World.CreateEntity();

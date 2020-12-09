@@ -90,6 +90,9 @@ namespace Shared.ECS
 
         internal static void Register(int entityId)
         {
+            if (ChangedEntities.Contains(entityId))
+                return;
+
             ChangedEntities.Add(entityId);
             ref var entity = ref GetEntity(entityId);
 
@@ -98,9 +101,15 @@ namespace Shared.ECS
                     ChangedEntities.Add(childId);
         }
         public static bool UidExists(int uid) => UniqueIdToEntityId.ContainsKey(uid);
-        public static void Destroy(int id) => ToBeRemoved.Add(id);
+        public static void Destroy(int id)
+        {
+            if (ToBeRemoved.Contains(id))
+                return;
+            ToBeRemoved.Add(id);
+        }
         private static void DestroyInternal(int id)
         {
+            if(Global.Verbose)
             FConsole.WriteLine("World.DestroyInternal");
             if (EntityToArrayOffset.TryGetValue(id, out var arrayOffset))
             {
@@ -124,11 +133,11 @@ namespace Shared.ECS
             foreach (var id in ToBeRemoved)
                 DestroyInternal(id);
 
-            foreach(var entityId in ChangedEntities)
+            foreach (var entityId in ChangedEntities)
             {
                 ref var entity = ref GetEntity(entityId);
-                for(int i =0;i<Systems.Count;i++)
-                        Systems[i].EntityChanged(ref entity);
+                for (int i = 0; i < Systems.Count; i++)
+                    Systems[i].EntityChanged(ref entity);
             }
 
             ChangedEntities.Clear();

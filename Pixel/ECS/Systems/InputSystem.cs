@@ -27,10 +27,12 @@ namespace Pixel.ECS.Systems
             base.Initialize();
         }        
 
-        public override void Update(float deltaTime, List<Entity> Entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> Entities)
         {
-            foreach (var entity in Entities)
+            for(int i =0; i< Entities.Count; i++)
             {
+                ref var entity = ref Entities[i];
+                
                 ref var inp = ref entity.Get<KeyboardComponent>();
                 ref var pos = ref entity.Get<PositionComponent>();
                 EnsureReady(ref inp);

@@ -48,7 +48,7 @@ namespace Pixel.zero
             IsActive = true;
         }
 
-        public override void Update(float deltaTime, List<Entity> _)
+        public override void Update(float deltaTime, GCNeutralList<Entity> _)
         {
             LastUpdate = DateTime.Now;
             ref readonly var cam = ref ComponentList<CameraComponent>.Get(1);

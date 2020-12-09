@@ -14,8 +14,9 @@ namespace Pixel.ECS.Systems
         public override void Draw(SpriteBatch sb)
         {   
             foreach (var entityList in Entities)
-            foreach (var entity in entityList)
+            for(int i =0; i< entityList.Count; i++)
             {
+                ref var entity = ref entityList[i];
                 ref readonly var parent = ref World.GetEntity(entity.Parent);
                 
                 if(!parent.Has<PositionComponent,TextComponent>())

@@ -43,8 +43,12 @@ namespace Pixel.Scenes
                     continue;
                 if (system.IsActive)
                 {
+                    if (Global.Verbose)
                     FConsole.WriteLine("Update Starting for "+system.Name);
+                    
                     system.Update((float)deltaTime.ElapsedGameTime.TotalSeconds);
+                    
+                    if (Global.Verbose)
                     FConsole.WriteLine("Done "+system.Name);
                 }
                 var postUpdateTicks = DateTime.UtcNow.Ticks;

@@ -12,10 +12,11 @@ namespace Pixel.ECS.Systems
     {
         public ParticleEmitterSystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Particle Emitter System"; }
         
-        public override void Update(float deltaTime, List<Entity> Entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> Entities)
         {
-            foreach (var entity in Entities)
+            for(int e =0; e< Entities.Count; e++)
             {
+                ref var entity = ref Entities[e];
                 ref var pem = ref entity.Get<ParticleEmitterComponent>();
 
                 if (!pem.Active)

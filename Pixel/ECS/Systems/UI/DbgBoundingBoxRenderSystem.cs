@@ -17,8 +17,9 @@ namespace Pixel.ECS.Systems
             var pxl = AssetManager.GetTexture("pixel");
             var dbg = AssetManager.GetTexture(DbgBoundingBoxComponent.TextureName);
             foreach (var entityList in Entities)
-            foreach (var entity in entityList)
+            for(int i =0; i< entityList.Count; i++)
             {
+                ref var entity = ref entityList[i];
                 if (entity.Has<CameraComponent>())
                 {
                     ref readonly var cam = ref entity.Get<CameraComponent>();

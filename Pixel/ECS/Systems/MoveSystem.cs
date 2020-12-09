@@ -14,10 +14,11 @@ namespace Pixel.ECS.Systems
     {
         public MoveSystem(bool doUpdate, bool doDraw, int threads = 1) : base(doUpdate, doDraw, threads) { }
 
-        public override void Update(float deltaTime, List<Entity> Entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> Entities)
         {
-            foreach (var entity in Entities)
+            for(int i =0; i< Entities.Count; i++)
             {
+                ref var entity = ref Entities[i];
                 if(!entity.Has<PositionComponent, DestinationComponent, SpeedComponent>())
                     continue;
 

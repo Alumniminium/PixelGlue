@@ -1,15 +1,13 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared;
 using Shared.ECS;
-using Shared.ECS.Components;
 using Shared.Maths;
 
-namespace Pixel.ECS.Systems
+namespace Pixel.ECS.Systems.Rendering
 {
     public class BackgroundRenderSystem : PixelSystem
     {
@@ -75,6 +73,6 @@ namespace Pixel.ECS.Systems
             ye = (int)end.Y;
         }
 
-        public override void Update(float deltaTime, List<Entity> entities) { }
+        public override void Update(float deltaTime, GCNeutralList<Entity> entities) { }
     }
 }

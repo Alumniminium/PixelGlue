@@ -2,14 +2,12 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pixel.ECS.Components;
 using Pixel.Helpers;
 using Pixel.Scenes;
 using Shared;
 using Shared.ECS;
-using Shared.ECS.Components;
 
-namespace Pixel.ECS.Systems
+namespace Pixel.ECS.Systems.Rendering
 {
     public class WorldRenderSystem : PixelSystem
     {
@@ -71,6 +69,6 @@ namespace Pixel.ECS.Systems
             ye *= Global.TileSize;
         }
 
-        public override void Update(float deltaTime, List<Entity> entities) { }
+        public override void Update(float deltaTime, GCNeutralList<Entity> entities) { }
     }
 }

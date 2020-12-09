@@ -35,7 +35,6 @@ namespace Shared.ECS
         // called via refelction @ ReflectionHelper.Remove<T>()
         public static void Remove(int owner)
         {
-            FConsole.WriteLine($"Remove Component for "+owner);
             if (EntityIdToArrayOffset.Remove(owner, out int offset))
                 AvailableIndicies.Push(offset);
             World.Register(owner);

@@ -30,7 +30,7 @@ namespace Pixel.ECS.Systems
             Socket.OnConnected += Connected;
         }
         
-        public override void Update(float deltaTime, List<Entity> entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> entities)
         {
             switch (ConnectionState)
             {

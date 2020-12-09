@@ -7,9 +7,9 @@ using Shared.Diagnostics;
 using Pixel.Helpers;
 using System.Collections.Generic;
 
-namespace Pixel.ECS.Systems
+namespace Pixel.ECS.Systems.Rendering
 {
-    public class SmartFramerate : PixelSystem
+    public class MetricsOverlaySystem : PixelSystem
     {
         private double currentFrametimes;
         private int counter;
@@ -17,8 +17,9 @@ namespace Pixel.ECS.Systems
         private double weight;
         private int numerator;
         private readonly string[] lines = new string[64];
+        private float time =0;
 
-        public SmartFramerate(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Metrics UI Overlay System";}
+        public MetricsOverlaySystem(bool doUpdate, bool doDraw) : base(doUpdate, doDraw) { Name  = "Metrics UI Overlay System";}
         public override void Initialize()
         {
             numerator = 3;
@@ -29,13 +30,15 @@ namespace Pixel.ECS.Systems
             IsActive = true;
         }
 
-        public override void Update(float deltaTime, List<Entity> Entities)
+        public override void Update(float deltaTime, GCNeutralList<Entity> Entities)
         {
             counter++;
             currentFrametimes /= weight;
             currentFrametimes += deltaTime;
-            if (counter == 60)
+            time+= deltaTime;
+            if (time >= 0.25)
             {
+                time =0;
                 updateRate = numerator / currentFrametimes;
                 counter = 0;
                 lines[0] = $"| Pixel Engine v {Global.Major}.{Global.Minor:00}, {DateTime.Now.Day:00}/{DateTime.Now.Month:00}/{DateTime.Now.Year:00}";
